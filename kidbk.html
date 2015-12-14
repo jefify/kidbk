@@ -1,0 +1,579 @@
+<!doctype html>
+<!--
+ Copyright 2013 Google Inc. All Rights Reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS-IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>D-Pad Navigation - Demo 1</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- build:css styles/vendor.css -->
+        <!-- bower:css -->
+        <!-- endbower -->
+        <!-- endbuild -->
+        <!-- build:css(.tmp) styles/main.scss -->
+        <link rel="stylesheet" href="styles/main.css">
+        <!-- endbuild -->
+
+        <link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="video-grid" class="video-grid">
+              <div class="grid-item dpad-focusable" tabindex="0">
+                <img class="thumb" src="./images/thumbs/thumb01.jpg" />
+
+                <div class="title">Item 1</div>
+              </div>
+
+              <div class="grid-item dpad-focusable" tabindex="0">
+                <img class="thumb" src="./images/thumbs/thumb02.jpg">
+
+                <div class="title">Item 2</div>
+              </div>
+
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.maplestage.com/episode?type=show"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="楓林網 - 綜藝" /></a>
+                <div class="title">楓林網 - 綜藝</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.lovetvshow.com/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="Love TV Show 首頁" /></a>
+                <div class="title">Love TV Show 首頁</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.nexttv.com.tw/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="壹電視" /></a>
+                <div class="title">壹電視</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.taiwanus.net/index.php"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="海外網" /></a>
+                <div class="title">海外網</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/playlist?list=PLYzkW1t7hJMyHat6o_GXKIsZGUI1y9OFP"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="Isis" /></a>
+                <div class="title">Isis</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UU2VmWn8dAqkzlQqvy02E1PA"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;民視綜合" /></a>
+                <div class="title">民視綜合</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UU8ROUUjHzEQm-ndb69CX8Ww"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;台視新聞" /></a>
+                <div class="title">台視新聞</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UUDCJyLpbfgeVE9iZiEam-Kg"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;華視新聞" /></a>
+                <div class="title">華視新聞</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UUmdVfsLHu18lCkKYXSOGUxg"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;中天新聞" /></a>
+                <div class="title">中天新聞</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UU6hWBu1hfbNNk8Yeokd5aZQ"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;壹新聞" /></a>
+                <div class="title">壹新聞</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UU2TuODJhC03pLgd6MpWP0iw"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;三立新聞台 CH54" /></a>
+                <div class="title">三立新聞台 CH54</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UUHBv5vSp3pETSLq8oWTsmqA"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;年代新聞" /></a>
+                <div class="title">年代新聞</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=UU5nwNW4KdC0SzrhF9BXEYOQ"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;TVBS" /></a>
+                <div class="title">TVBS</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=qjjTczL3XnE"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;華視新聞 - YouTube 直播頻道" /></a>
+                <div class="title">華視新聞 - YouTube 直播頻道</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/user/newsebc/videos"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;東森新聞 CH51 - YouTube User" /></a>
+                <div class="title">東森新聞 CH51 - YouTube User</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/user/PNNPTS/videos"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="電視 > &#13;公視新聞網 - YouTube User" /></a>
+                <div class="title">公視新聞網 - YouTube User</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=QZiG7IYKQsc&list=PLmpdrw4mNyAmKnJvOXGNbsEMvGQORXadh"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ Isis 精選 2013" /></a>
+                <div class="title">▶ Isis 精選 2013</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=bSXKG1BxIoc&index=1&list=PLmpdrw4mNyAmEf2FRs0UL_NCRqCZ0iUzj"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 巧虎舞台劇" /></a>
+                <div class="title">▶ 巧虎舞台劇</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=aQPp4QQw5VQ&list=PLjg6iPsBEIVCOI0QgOFk0TnlrlSwSxq6s"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 幼幼版 新" /></a>
+                <div class="title">▶ 幼幼版 新</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=aQPp4QQw5VQ&list=PLjg6iPsBEIVCOI0QgOFk0TnlrlSwSxq6s"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 幼幼版 2013" /></a>
+                <div class="title">▶ 幼幼版 2013</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=R5RfwB281PI&list=PL1j8Bvpfk8lf3xsu4iXLsFehj9hRjVav9"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 幼幼版 2012" /></a>
+                <div class="title">▶ 幼幼版 2012</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=HuHuVXd2U0U&list=PL7fjw1DNnEgICnr4Qb7lzb9I8e16A-eXx"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 幼幼版 2011" /></a>
+                <div class="title">▶ 幼幼版 2011</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=7xMcgfu3ssI&list=PLx2I6tF0o2w_i-IWry4G6M-87Gk5lUNLJ"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 幼幼版 2010" /></a>
+                <div class="title">▶ 幼幼版 2010</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=v7dv8pZW89g&list=PLSQhRTAxxYEq8xXu3hgH_MxA6Mz_5FzFx"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 幼幼版 2009" /></a>
+                <div class="title">▶ 幼幼版 2009</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=AdBiXR0yLdU&list=PLls-oL55ft2ZwseI8xtSb9FuVjOZGho6c"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 快樂版" /></a>
+                <div class="title">▶ 快樂版</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=tCNCOyXSQXU&list=PLU2d42qc1Q9KpJ6dvfgAoMfWqO0FJloH9"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 成長版" /></a>
+                <div class="title">▶ 成長版</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=hV3Hlq1t5yA&index=1&list=PLeSzcm4yM1M9XCxKjWA839ZvEMEnSM-UL"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 學習版" /></a>
+                <div class="title">▶ 學習版</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=pI-rcY8KXy0&list=PL6JuuZnt1nboKYVPrPErCDssG8EwY3Vlv&index=1"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 巧虎島 01-14" /></a>
+                <div class="title">▶ 巧虎島 01-14</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=DfLXDCkCTBY&feature=c4-overview-vl&list=PL6JuuZnt1nboGKBdARMmm_lPooNy1tXPt"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ Let's Go English 1-7" /></a>
+                <div class="title">▶ Let's Go English 1-7</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=XpehhHjXkXg&list=PL6JuuZnt1nbrMarPEym1In1YaedvXabUb"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ ABC 01-14" /></a>
+                <div class="title">▶ ABC 01-14</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/user/luckscity?feature=watch"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;巧虎ABC - YouTube User" /></a>
+                <div class="title">巧虎ABC - YouTube User</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/user/qhhome/videos?flow=grid&view=1"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;巧虎 qhhome - YouTube" /></a>
+                <div class="title">巧虎 qhhome - YouTube</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=PIUoGC2Zlfo&list=PLd9JUvH_HeDkE0LiOsE3wE9divV0pKlqK&index=1"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 寶寶版 2013" /></a>
+                <div class="title">▶ 寶寶版 2013</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=0nbrLXSxOBE&list=PLmpdrw4mNyAmBaTU8dFyjvQ0UrEwFD_xj"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 寶寶版 2012" /></a>
+                <div class="title">▶ 寶寶版 2012</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=VeSnFaNhqow&list=PL7fjw1DNnEgI-zx92o0O7u8lqXIy_eW-s"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 寶寶版 2011" /></a>
+                <div class="title">▶ 寶寶版 2011</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=_UZOHFQ4M4I&list=PLfqwu7OrdqmQfAnGKa682yYDpuAsMuZVZ"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 寶寶版 2010" /></a>
+                <div class="title">▶ 寶寶版 2010</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=aIBqCG4x58o&list=PL7fjw1DNnEgJVSj8xOCEpJO2UNatXizpv"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 寶寶版 2009" /></a>
+                <div class="title">▶ 寶寶版 2009</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=gv2mkVZlyus&list=PL7fjw1DNnEgJDGKfc-B9sPVk0RLfmQVBm"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 寶寶版 2008" /></a>
+                <div class="title">▶ 寶寶版 2008</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=rnUMxDFwViw&list=PLqXrMVm2AGRCsgFwSEfoabsFwBpeUzN1x"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="巧虎 > &#13;▶ 寶寶版 mix" /></a>
+                <div class="title">▶ 寶寶版 mix</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=HFxmG8vGlrI&index=1&list=PLmpdrw4mNyAleNpvtIsaWyDlXvgy1TZhQ"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒歌 > &#13;四千金" /></a>
+                <div class="title">四千金</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=K5xGfauOyC0&list=PLXGkq9kNW3Wdf1YIvs7akUU3VXUOPahY5"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒歌 > &#13;唐詩吟唱" /></a>
+                <div class="title">唐詩吟唱</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=kFlWfFeXaw4&list=PLP4iT9odKO0i5Fn42QXMNCp0t4bHl_lP0"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒歌 > &#13;台語歌謠" /></a>
+                <div class="title">台語歌謠</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=V1TVq9_ltD0&list=PLDB3368A60F4BE3C6"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒歌 > &#13;水果冰淇淋" /></a>
+                <div class="title">水果冰淇淋</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=_luN7KF5mGE"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;弟子規 - 卡通 (易解)" /></a>
+                <div class="title">弟子規 - 卡通 (易解)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=GZLwsZHW1i0&list=PL544859D082E28D62"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;▶ 弟子規 - 卡通 (舊)" /></a>
+                <div class="title">▶ 弟子規 - 卡通 (舊)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=qH4L_ZrmSe0&list=PLmpdrw4mNyAlLSNGU_KKuc7WYdpQJn47Q"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;▶ 弟子規 - 卡通 (淨空法師)" /></a>
+                <div class="title">▶ 弟子規 - 卡通 (淨空法師)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=Y8h0UMnKm2w"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;朱子治家格言 - YouTube" /></a>
+                <div class="title">朱子治家格言 - YouTube</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=WgqgzFZgKE4&list=PLD842DE6756CBA32E"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;▶ 三字經 - 念謠 (風車)" /></a>
+                <div class="title">▶ 三字經 - 念謠 (風車)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?feature=addto&list=PLmpdrw4mNyAl_QO8F3q96oejcyL4H5hmR"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;▶ 三字經 - 卡通 (舊)" /></a>
+                <div class="title">▶ 三字經 - 卡通 (舊)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=F8UYvBmoEas"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;大學 (中國經典動畫)" /></a>
+                <div class="title">大學 (中國經典動畫)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=07jeHinGLI0"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;中庸 (中國經典動畫)" /></a>
+                <div class="title">中庸 (中國經典動畫)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=Y8mml9XWtZk"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;孟子 (中國經典動畫)" /></a>
+                <div class="title">孟子 (中國經典動畫)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=zyLZFpToNb4"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;孔子 (中國經典動畫)" /></a>
+                <div class="title">孔子 (中國經典動畫)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=LVIvPwZnr7s"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;六祖禪經 (中國經典動畫)" /></a>
+                <div class="title">六祖禪經 (中國經典動畫)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=0Tqy_bpPBbQ"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;老子 (中國經典動畫)" /></a>
+                <div class="title">老子 (中國經典動畫)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=vlxnqovdcNk"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="讀經 > &#13;莊子 (中國經典動畫)" /></a>
+                <div class="title">莊子 (中國經典動畫)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=pqyEMbPx8fs&list=PL2BF397EB5964320D"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 蔡志忠中國經典動漫系列" /></a>
+                <div class="title">▶ 蔡志忠中國經典動漫系列</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=PLYESP8co6VmsRt0ecomhCTqjP7cCrtTIx"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;一休和尚" /></a>
+                <div class="title">一休和尚</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=PL2B0D6020918B8755"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;小和尚卡通" /></a>
+                <div class="title">小和尚卡通</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=PLD5873F5C66572BE5"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;佛典故事(國台語)" /></a>
+                <div class="title">佛典故事(國台語)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=PLFEDA27F1B3926535"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;佛教卡通" /></a>
+                <div class="title">佛教卡通</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=OO-1ysScKEM&list=PLp9hm7hhhkFO0LxHVyHTvZjQ3E-QjzStI"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 格林童話" /></a>
+                <div class="title">▶ 格林童話</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=FPn7mmI4Y_s&list=PL30EB9F4EFF9B5927"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 阿公講古" /></a>
+                <div class="title">▶ 阿公講古</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=MumZKT8NiWY&list=PL913A237DFA81A99A"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 童話故事" /></a>
+                <div class="title">▶ 童話故事</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=aSfibKnI-wQ&list=PLC49E08D60F3CE68C"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 童話故事2 (短)" /></a>
+                <div class="title">▶ 童話故事2 (短)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=YJj9RSCxh60&list=PLTup-ZoFRXeqG3epA3QR8Rex5o-fjoD4f"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 世界童話故事" /></a>
+                <div class="title">▶ 世界童話故事</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=_YBVlvwAEaE&list=PLMbhFZ2xxV8mvaUZ4AWsfrWduTLKNI8kK"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 凱蒂貓童話故事系列" /></a>
+                <div class="title">▶ 凱蒂貓童話故事系列</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=_3hw_rlBQLo&list=PL2TlTH45pIc7J-JsU5yHu7dUMEgz_hZ9Q"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 英文童話故事" /></a>
+                <div class="title">▶ 英文童話故事</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=iXBLM3ZYCMc&list=PLF4A12C29B9801421"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 至善與德育(中英文字幕)" /></a>
+                <div class="title">▶ 至善與德育(中英文字幕)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=VIdEGQLDPaE&list=PL026AFEDF6E9DABDF"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 二十四孝動畫卡通" /></a>
+                <div class="title">▶ 二十四孝動畫卡通</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=PtWu2SmWI5U&list=PL2823D401962272C8"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 佛典動畫卡通 (日本本願寺)" /></a>
+                <div class="title">▶ 佛典動畫卡通 (日本本願寺)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=_jJJfDbuTjc&list=PLF497F537582FB467"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 護生動畫 (生命電視)" /></a>
+                <div class="title">▶ 護生動畫 (生命電視)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=cO31e2hZe0U&list=PL202417ED666E26A6"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 新版中華德育故事" /></a>
+                <div class="title">▶ 新版中華德育故事</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=eTKMq_EwUKA&list=PLDBFE47BBE513D975"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="兒童 > &#13;▶ 冥報記之" /></a>
+                <div class="title">▶ 冥報記之</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=5hKsuyHdtWI&list=PL6752670BB160D73D"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;▶ IESDE - Educação Infantil" /></a>
+                <div class="title">▶ IESDE - Educação Infantil</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=P6IvZnZdCsI"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;▶ Contando os numeros de 1 a 10 em português para crianças" /></a>
+                <div class="title">▶ Contando os numeros de 1 a 10 em português para crianças</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=J28rcm_fyuY"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;Teleco Teco para Pedrinho deixar a gente quieto por 23 minutos - YouTube" /></a>
+                <div class="title">Teleco Teco para Pedrinho deixar a gente quieto por 23 minutos - YouTube</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=Q70ySmfMGOM"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;▶ Ursinho Pooh 1,2,3: Descobrindo os Números e as Contas - Completo Parte única" /></a>
+                <div class="title">▶ Ursinho Pooh 1,2,3: Descobrindo os Números e as Contas - Completo Parte única</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=cgAVKlcs0dc"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;Peppa Pig - Dublado" /></a>
+                <div class="title">Peppa Pig - Dublado</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/channel/UCLnWTBffzZeFverrVUrsRcA"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;Dora Aventureira" /></a>
+                <div class="title">Dora Aventureira</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=j-SzAEiCoaI"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;Backyardigans Capitulo Completo Novos Episódios (Em Português)" /></a>
+                <div class="title">Backyardigans Capitulo Completo Novos Episódios (Em Português)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=B4USZFBHftw&list=PLAC1D3097484BC845"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="葡文 > &#13;▶ Backyardigans-Vamos lá" /></a>
+                <div class="title">▶ Backyardigans-Vamos lá</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=QZiG7IYKQsc"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;Isis 餵 Tinho" /></a>
+                <div class="title">Isis 餵 Tinho</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.maplestage.com/show/%E6%98%8E%E6%97%A5%E4%B9%8B%E6%98%9F/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;明日之星 - 楓林網" /></a>
+                <div class="title">明日之星 - 楓林網</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.maplestage.com/show/%E6%A8%82%E5%85%89%E5%AF%B6%E7%9B%92/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;樂光寶盒 - 楓林網" /></a>
+                <div class="title">樂光寶盒 - 楓林網</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=V7VmqSKY-BU&list=UUn2pG-bQanjwuYVLtQ_3I1A"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 明日之星 2012 Jan-Oct 藝人交流" /></a>
+                <div class="title">▶ 明日之星 2012 Jan-Oct 藝人交流</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=6doOByG_7O0&list=UUyK8HVZZ9BjeZYA61MCtK7g"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 明日之星 2013 藝人交流" /></a>
+                <div class="title">▶ 明日之星 2013 藝人交流</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=GtxD6oqRS5o&list=UU8n7mbhfUOPuvlGADZMGRNw"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 許富凱 - 明日之星" /></a>
+                <div class="title">▶ 許富凱 - 明日之星</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/playlist?list=PLmpdrw4mNyAljzJGc6fT-Q9xDF9AAz4K6&feature=edit_ok"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 許富凱參賽歷程" /></a>
+                <div class="title">▶ 許富凱參賽歷程</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=rJ0OWC8ORnI&list=PL900E9DFCC0A5A1FE"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 許富凱和藝人交流（從後到前）" /></a>
+                <div class="title">▶ 許富凱和藝人交流（從後到前）</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=SrDpd_8NLkI&list=PLIhymjwk5NNNu5QcGYbG-StF6feXMplRk"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 許富凱2013藝人交流（由後到前）" /></a>
+                <div class="title">▶ 許富凱2013藝人交流（由後到前）</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=FRsTvUJbdis&list=PL078290191D750294"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 許富凱外場的表演歌曲 (由新到舊)" /></a>
+                <div class="title">▶ 許富凱外場的表演歌曲 (由新到舊)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=em6PsNoZEMo&list=PL9C9FF3ED479FEE81"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 許富凱 - 金曲百老匯和其他歌唱節目" /></a>
+                <div class="title">▶ 許富凱 - 金曲百老匯和其他歌唱節目</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=aoSLUoLrmNE&list=PLA90EEC0723D87348"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 丁姵均 明日之星" /></a>
+                <div class="title">▶ 丁姵均 明日之星</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://ftvsuperstar.pixnet.net/blog/post/31328718-%E2%98%85%E5%8F%B0%E8%AA%9E%E7%99%BE%E8%90%AC%E9%97%9C%E4%B8%BB%E2%98%85--%E8%A8%B1%E5%AF%8C%E5%87%B1"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;★台語百萬關主★--許富凱 @ ★明日之星SuperStar★官方部落格 :: 痞客邦 PIXNET ::" /></a>
+                <div class="title">★台語百萬關主★--許富凱 @ ★明日之星SuperStar★官方部落格 :: 痞客邦 PIXNET ::</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=ZGJUjveCNsI&list=PL4ZAuI_IJzuWLe9jmvHz64QkqOLgcnz_N"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 阿基師偷呷步1" /></a>
+                <div class="title">▶ 阿基師偷呷步1</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=rRk9vsLypaA&list=PL4ZAuI_IJzuXjEjpPPTufJQusfkEAc92d"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 阿基師偷呷步2" /></a>
+                <div class="title">▶ 阿基師偷呷步2</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=AKRallHsjfA&list=PLGQp0RrvCha5kc8lK1hC8rq6WpyVy42uM"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;▶ 濟公遊記(HD)" /></a>
+                <div class="title">▶ 濟公遊記(HD)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://taiwantalkshealth.blogspot.com.br/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;挖" /></a>
+                <div class="title">挖</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/user/JustForLaughsTV?feature=watch"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;Just For Laughs Gags - YouTube" /></a>
+                <div class="title">Just For Laughs Gags - YouTube</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=fYHVReeXoVM&list=PLB08C1994A3F8C0C4"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;高從文少林內勁一指禪示範 - 國民大會：冬天養生通氣血 (4/5) 20091126 - YouTube" /></a>
+                <div class="title">高從文少林內勁一指禪示範 - 國民大會：冬天養生通氣血 (4/5) 20091126 - YouTube</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=_m4cC8A5P_4"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;達摩祖師傳 (全長版)" /></a>
+                <div class="title">達摩祖師傳 (全長版)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=3ILzIB6EYgU"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;六祖慧能傳" /></a>
+                <div class="title">六祖慧能傳</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://tv.tunein.com/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;TuneIn Radio" /></a>
+                <div class="title">TuneIn Radio</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.dramaq.org/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;DramaQ" /></a>
+                <div class="title">DramaQ</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://i.dfktv2.com/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;鼎丰在线KTV(Beta) - iPhone移动版 - DFKTV2.Com" /></a>
+                <div class="title">鼎丰在线KTV(Beta) - iPhone移动版 - DFKTV2.Com</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://jp.jplovetv.com/2012/11/doctor-x-list.html"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;外科醫 大門未知子(派遣女醫X) 劇集列表 Doctor-X List - Love TV Show 日本電視劇" /></a>
+                <div class="title">外科醫 大門未知子(派遣女醫X) 劇集列表 Doctor-X List - Love TV Show 日本電視劇</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://jp.jplovetv.com/2013/10/x-2-doctor-x-2-list.html"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="影音 > &#13;派遣女醫X 2 劇集列表 Doctor-X 2 List - Love TV Show 日本電視劇" /></a>
+                <div class="title">派遣女醫X 2 劇集列表 Doctor-X 2 List - Love TV Show 日本電視劇</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="javascript:var p=document.getElementsByTagName('*'); for(i=0;i<p.length;i++){if(p[i].style.fontSize){var s=parseInt(p[i].style.fontSize.replace("px",""));}else{var s=12;}; s=parseInt(s*0.1>=1?s*1.1:s+1); void(p[i].style.fontSize=s+'px');}"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;字＋" /></a>
+                <div class="title">字＋</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="javascript:var p=document.getElementsByTagName('*'); for(i=0;i<p.length;i++){if(p[i].style.fontSize){var s=parseInt(p[i].style.fontSize.replace("px",""));}else{var s=12;}; s=parseInt(s*0.1>=1?s*0.9:s-1); void(p[i].style.fontSize=s+'px');}"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;字－" /></a>
+                <div class="title">字－</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="javascript:(function(){var s=document.getElementById("tongwenlet_tw");if(s!=null){document.body.removeChild(s);}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="http://tongwen.openfoundry.org/NewTongWen/tools/bookmarklet_tw.js";s.id="tongwenlet_tw";document.body.appendChild(s); })();"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;→繁" /></a>
+                <div class="title">→繁</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="javascript:(function(){var s=document.getElementById("tongwenlet_cn");if(s!=null){document.body.removeChild(s);}var s=document.createElement("script");s.language="javascript";s.type="text/javascript";s.src="http://tongwen.openfoundry.org/NewTongWen/tools/bookmarklet_cn.js";s.id="tongwenlet_cn";document.body.appendChild(s); })();"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;→簡" /></a>
+                <div class="title">→簡</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="chrome://sync/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;Sync Internals" /></a>
+                <div class="title">Sync Internals</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=upKY2ymFhaI&list=PL_leXgO_kZ4STQHJDzB1HZG_FI60L1BtY"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;▶ 明日之星 2013" /></a>
+                <div class="title">▶ 明日之星 2013</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://www.youtube.com/watch?v=cE5TiJ9RdPA&list=PLE154AC6D43F0C848"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;▶ 濟公遊記" /></a>
+                <div class="title">▶ 濟公遊記</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 保留用 > &#13;Dropbox - Bookmarks" /></a>
+                <div class="title">Dropbox - Bookmarks</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/user/qhnice?feature=watch"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 巧虎來源頻道 > &#13;寶寶幼幼 - qhnice@YouTube" /></a>
+                <div class="title">寶寶幼幼 - qhnice@YouTube</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/user/tzbatk"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > 巧虎來源頻道 > &#13;好寶寶頻道 - tzbatk@YouTube" /></a>
+                <div class="title">好寶寶頻道 - tzbatk@YouTube</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="https://plus.google.com/photos/107599011712098696186/albums?banner=pwa"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;相片 jefify@g+" /></a>
+                <div class="title">相片 jefify@g+</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.maplestage.com/drama/%E5%8D%8A%E6%BE%A4%E7%9B%B4%E6%A8%B9(%E5%8D%8A%E6%B2%A2%E7%9B%B4%E6%A8%B9)/"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;半澤直樹(半沢直樹) / Hanzawa Naoki - MapleStage" /></a>
+                <div class="title">半澤直樹(半沢直樹) / Hanzawa Naoki - MapleStage</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://xn--fhqp31hmre.xn--g5t518j.net/search/label/%E6%97%A5%E5%8A%87%20%E9%86%AB%E9%BE%8D"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;醫龍1" /></a>
+                <div class="title">醫龍1</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://xn--fhqp31hmre.xn--g5t518j.net/search/label/%E9%86%AB%E9%BE%8D2%E7%B7%9A%E4%B8%8A%E7%9C%8B"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;醫龍2" /></a>
+                <div class="title">醫龍2</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://xn--fhqp31hmre.xn--g5t518j.net/search/label/%E9%86%AB%E9%BE%8D3%E7%B7%9A%E4%B8%8A%E7%9C%8B"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;醫龍3" /></a>
+                <div class="title">醫龍3</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=-xO4Os4mTOs&list=PLmpdrw4mNyAmb_ZJIOCnHIaDIEQ3sZzjA"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;▶ 醫龍第1季(全)" /></a>
+                <div class="title">▶ 醫龍第1季(全)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.youtube.com/watch?v=g0J98Usz8-A&list=PL_9R7TE7Xj8jvDTZvMJS8NTcgFiyLzjPg"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;▶ 醫龍第2季(全)" /></a>
+                <div class="title">▶ 醫龍第2季(全)</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://oursogo.com/forum.php?mod=forumdisplay&fid=77&filter=typeid&typeid=102"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;電影 - 線上影視直播區 - SOGO論壇" /></a>
+                <div class="title">電影 - 線上影視直播區 - SOGO論壇</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://v.youku.com/v_show/id_XNjU5NzExMjU2.html"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;2013《总 铺 师》 BD高清国语配音中文字幕无水印—在线播放—优酷网，视频高清在线观看" /></a>
+                <div class="title">2013《总 铺 师》 BD高清国语配音中文字幕无水印—在线播放—优酷网，视频高清在线观看</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://www.myvideos.com.tw/search?main_type=%E9%9B%BB%E5%BD%B1&order=hot&zone=%E5%8F%B0%E7%81%A3"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="雜 > &#13;檢索 - MyVideos開心土豆-最新最全熱門影片線上看" /></a>
+                <div class="title">檢索 - MyVideos開心土豆-最新最全熱門影片線上看</div><br>
+            </div>
+            <div class="grid-item dpad-focusable" tabindex="0">
+                <a href="http://dev.sencha.com/ext/5.1.0/examples/keynav/keynav.html"><img class="thumb" src="./images/thumbs/thumb01.jpg" title="Jeff Tests > &#13;Key Navigation Sample" /></a>
+                <div class="title">Key Navigation Sample</div><br>
+            </div>
+
+
+        </div>
+
+        <!-- D-Pad Library -->
+        <script src="scripts/dpad-nav-lib.min.js"></script>
+
+        <!-- build:js scripts/main.js -->
+        <script src="scripts/main.js"></script>
+        <!-- endbuild -->
+
+        <!-- Modernizr for Flexbox Testing -->
+        <script src="scripts/modernizr.custom.36460.js"></script>
+</body>
+</html>
