@@ -1,0 +1,727 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keynavigator</title>
+
+
+  <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" 
+  rel="stylesheet" media="screen">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style>
+      body {
+        padding: 60px;
+        margin-bottom: 60px;
+      }
+
+      ul.nav.nav-pills li {
+        margin: .8em;
+      }
+
+      #example2.nav-tabs.nav-stacked > li > a {
+        border: none !important;
+      }
+
+      .active {
+        background: #69f;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+      }
+    </style>    
+
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script>
+    require(['keynavigator-min'], function($) {          
+        /*
+         * Example 1
+         */
+        $('ul#example1 li').keynavigator();
+
+        /*
+         * Example 2
+         */
+        $('ul#example2 li').keynavigator({
+          activeClass: 'alert-error',
+          keys: {
+            /* Callback when key 'escape' is pressed.
+             * here, represented as its key code.
+             * 'escape' could be used instead of '27'.
+             */
+            27: function($el, cellIndex, e) {
+              // 'this' - will be the KeyNavigator instance.
+              // $el - the element
+              // cellIndex - contains the row and column index.
+              // e - the event
+              console.log('pressed ESC!', arguments);
+            },
+
+            /* Callback when key 'a' is pressed */
+            a: function($el, cellIndex, e) {    
+              console.log('pressed "a"', arguments);
+            },
+
+            /* Callback when key 'd' is pressed */
+            d: function($el, cellIndex, e) { /* Key 'd' */    
+            console.log('pressed "d"', arguments);
+          }
+        }
+      });
+
+      /*
+       * Example 3
+       */
+       $('ul#example3 li').keynavigator({ 
+                            cycle: false,
+                            activeClass: 'alert-success'
+                          })
+                          .on('up', function(e) {
+                            console.log('Pressed arrow up on', this);
+                          })
+                          .on('left', function(e) {
+                            console.log('Pressed arrow left on', this);
+                          });
+
+      /*
+       * Example 4
+       */
+      $('table#example4 > tbody tr').keynavigator();
+
+      /*
+       * Example 5
+       */
+      $('table#example5 > tbody td').keynavigator({
+        activateOn: 'click',
+        parentFocusOn: 'mouseover'
+      });
+
+      /*
+       * Example 6
+       */
+      $('ul#example6 li').keynavigator({
+        activeClass: 'alert-info',
+        keys: {
+          w: 'up',
+          a: 'left',
+          s: 'down',
+          d: 'right',
+          enter: function($el, e) {
+            console.log('pressed enter on', $el.text());
+          }
+        }
+      });
+
+      /* Example 7 */
+      var $rows = $('table#example7 > tbody tr').keynavigator({
+        useCache: false,
+
+        onBeforeActive: function($el) {
+          $el.toggleClass(this.options.activeClass);
+          return $el.hasClass(this.options.activeClass);
+        }       
+      });
+
+      $('#btnAddRow').on('click', function() {
+        $rows.parent().append(
+          '<tr><td>Appended!</td></tr>'
+        );
+
+        $rows.keynavigator.reBuild();
+      });
+
+      /* Example 8 */   
+      var $tbody = $('table#example8 > tbody tr').keynavigator({
+        // NOTE: Important to use useCache = false when DOM-nodes are going to be 
+        // added/removed.
+        useCache: false,
+        // Custom parent
+        parent: 'table#example8 > tbody', 
+        keys: {
+          escape: function($el) {
+            // Remove current element and set the active 
+            // element to previous or next.
+            var $prev = $el.prev(),
+                $next = $el.next();
+
+            $el.remove();
+
+            // 'this' is the KeyNavigator instance.
+            // Set active element.
+            this.setActive($prev.length ? $prev : $next);
+          }
+        }
+      }),
+
+      // Get a list of beer breweries.
+      loadBreweries = function() {          
+        $.ajax({
+          url: 'http://api.openbeerdatabase.com/v1/breweries.json?callback=?',
+          dataType: 'jsonp'
+        }).done(render);
+      },
+
+      render = function(data) {
+        // Empty
+        $tbody.keynavigator.$parent.empty();
+
+        // Append rows
+        $.each(data.breweries, function(index, brewerie) {            
+          $tbody.keynavigator.$parent.append(
+            '<tr>' + 
+              '<td>' + brewerie.id + '</td>' +
+              '<td>' + brewerie.name + '</td>' +
+              '<td><a target="_blank" href="{url}">{url}</a></td>'.replace(/{url}/g, brewerie.url) +
+            '</tr>'
+          );
+        });
+
+        $tbody.keynavigator.reBuild();
+      };
+
+      // init
+      $('#btnLoadBreweries').on('click', loadBreweries);  
+
+  });
+  </script>
+</head>
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1>Keynavigator</h1>
+
+      <p class="view"><a href="https://github.com/nekman/keynavigator">View the Project on GitHub <small>nekman/keynavigator</small></a></p>
+
+    </header>
+
+    <p>Key navigaton plugin for <a href="http://jquery.com">jQuery</a>/<a href="http://zeptojs.com">Zepto</a>.
+      <br>
+      Makes it possible to use arrow keys (or any key) for navigation in eg. <code>ul</code> or <code>table</code> elements.</p>
+
+      <hr/>
+      <h2>Usage</h2>
+
+      <p>Include <strong>keynavigator.js</strong> after having included jQuery or Zepto:</p>
+      <em>Copy the script includes for quick start</em>
+<pre class="prettyprint lang-html">
+&lt;script src="http://code.jquery.com/jquery-latest.min.js"&gt;&lt;/script&gt;
+&lt;script src="http://nekman.github.io/keynavigator/keynavigator.js"&gt;&lt;/script&gt;
+</pre>
+
+      <p>Start the keynavigator plugin.</p>
+
+<pre class="prettyprint lang-javascript">
+$(document).ready(function() {
+  $('ul#example li').keynavigator(/* optional settings */);
+});  
+</pre>
+    <h4>RequireJS</h4>
+    <p>Optional <a href="http://requirejs.org">RequireJS</a> usage.
+      <p>Include RequireJS:</p>
+
+<pre class="prettyprint lang-html">
+&lt;script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"&gt;&lt;/script&gt;
+</pre>
+
+<p>Start the keynavigator plugin.</p>
+<pre class="prettyprint lang-javascript">
+require(['keynavigator'], function($) {
+  $('ul#example li').keynavigator(/* optional settings */);
+});  
+</pre>
+
+    <hr/>
+    <h3>Optional settings</h3>
+    <p>Brief explanation of the different settings. See the code examples bellow for more details.</p>
+<pre class="text-large">
+  <code><strong>cycle</strong>: {boolean} - If true, use cycle navigation
+  - default: true     
+
+  <strong>activeClass</strong>: {string} - The name of the class that should be used for the active element.
+  - default: 'active'
+
+  <strong>keys</strong>: {object} (keyCode/keyName: callback): - Callback functions that executes when a key is pressed.
+
+  <strong>tabindex</strong>: {number} - The tabindex that should be used on the parent element.
+  - default: -1
+
+  <strong>useCache</strong>: {boolean} - If false, run the selector on each keydown. 
+  Useful if elements are added/removed from the DOM.
+  - default: true
+
+  <strong>removeOutline</strong>: {boolean} - Sets <em>outline: none;</em> to the parent element.
+  - default: true
+
+  <strong>activateOn</strong>: {string} - jQuery events (separated by space) that activates the
+  key navigation.
+  - default: 'click'
+
+  <strong>parentFocusOn</strong>: {string} - jQuery events (separated by space) that sets the focus on the
+  parent to enable key navigation.
+  - default: 'click'
+
+  <strong>onBeforeActive</strong>: {object} - callback function that executes before an element has activeClass set
+  - default: $.noop
+
+  <strong>onAfterActive</strong>: {object} - callback function that executes after an element has activeClass set
+  - default: $.noop
+
+</code></pre>
+
+    <hr/>
+    <h2>Examples</h2>
+
+    <div class="alert alert-block">  
+      <h4>Warning!</h4>
+      This plugin relies on element position.<br/>
+      If you change element position (eg by adding CSS-properties like padding or margin) the plugin will not work as expected.
+    </div>
+
+    <h4>Example 1 (resize the window)</h4>
+    <p>Re-arrange the <code>li</code> elements by resizing the browser window.</p>
+    <ul id="example1" class="nav nav-pills">
+      <li>
+        <a href="#link" class="">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+    </ul>
+
+    <p>Code:</p>
+<pre class="prettyprint lang-javascript">
+$('ul#example1 li').keynavigator();
+</pre>
+
+  <hr/>
+
+  <h4>Example 2</h4>
+  <p>Open the console and press <strong>a</strong>, <strong>d</strong> or <strong>ESC</strong> key.</p>
+  <div>
+    <ul class="nav nav-tabs nav-stacked" id="example2">
+      <li><a href="#link">Option 1</a></li>
+      <li><a href="#link">Option 2</a></li>
+      <li><a href="#link">Option 3</a></li>
+    </ul>
+
+<pre class="prettyprint lang-javascript">
+$('ul#example2 li').keynavigator({
+  activeClass: 'alert-error',
+  keys: {
+    /* Callback when key 'escape' is pressed.
+    * here, represented as its key code.
+    * 'escape' could be used instead of '27'.
+    */
+    27: function($el, cellIndex, e) {
+      // 'this' - will be the KeyNavigator instance.
+      // $el - the element
+      // cellIndex - contains the row and column index.
+      // e - the event
+      console.log('pressed ESC!', arguments);
+    },
+
+    /* Callback when key 'a' is pressed */
+    a: function($el, cellIndex, e) {    
+      console.log('pressed "a"', arguments);
+    },
+
+    /* Callback when key 'd' is pressed */
+    d: function($el, cellIndex, e) { 
+      console.log('pressed "d"', arguments);
+    }
+  }
+});
+</pre>
+</div>
+
+<hr/>
+
+<h4>Example 3</h4>
+<p>Subscribe to <code>up</code>, <code>down</code>, <code>right</code> and <code>left</code> events. The <code>cycle</code> property is set to false</p>
+<p>Open the console and press <strong>arrow-up</strong> or <strong>arrow-left</strong>:</p>
+<div>
+  <ul class="nav nav-tabs nav-stacked" id="example3">
+    <li><a href="#link">Option 1</a></li>
+    <li><a href="#link">Option 2</a></li>
+    <li><a href="#link">Option 3</a></li>
+  </ul>
+</div>
+
+<p>Code:</p>
+<pre class="prettyprint lang-javascript">
+$('ul#example3 li').keynavigator({ 
+                      cycle: false,
+                      activeClass: 'alert-success'
+                   })
+                   .on('up', function(e) {
+                      console.log('Pressed arrow up on', this);
+                   })
+                   .on('left', function(e) {
+                      console.log('Pressed arrow left on', this);
+                   });
+</pre>
+
+<hr/>
+
+<h4>Example 4</h4>
+<p>Using keynavigation in a <code>table &gt; tbody tr</code> to navigate in rows.</p>
+
+<table class="table" id="example4">
+  <thead>
+    <tr>
+      <th>Column 1</th>
+      <th>Column 2</th>
+      <th>Column 3</th>
+      <th>Column 4</th>
+      <th>Column 5</th>
+    </tr>
+  </thead>
+
+  <tbody >
+    <tr>
+      <td>Row 1</td>
+      <td>Row 1</td>
+      <td>Row 1</td>
+      <td>Row 1</td>
+      <td>Row 1</td>
+    </tr>
+
+    <tr>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+    </tr>
+
+    <tr>
+      <td>Row 3</td>
+      <td>Row 3</td>
+      <td>Row 3</td>
+      <td>Row 3</td>
+      <td>Row 3</td>
+    </tr>
+
+    <tr>
+      <td>Row 4</td>
+      <td>Row 4</td>
+      <td>Row 4</td>
+      <td>Row 4</td>
+      <td>Row 4</td>
+    </tr>
+
+    <tr>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Code:</p>
+<pre class="prettyprint lang-javascript">
+$('table#example4 > tbody tr').keynavigator();
+</pre>
+
+<hr/>
+<h4>Example 5</h4>
+<p>Using keynavigation in a <code>table tbody &gt; td</code> to navigate in cells.</p>
+<table class="table" id="example5">
+  <thead>
+    <tr>
+      <th>Column 1</th>
+      <th>Column 2</th>
+      <th>Column 3</th>
+      <th>Column 4</th>
+      <th>Column 5</th>
+    </tr>
+  </thead>
+
+  <tbody >
+    <tr>
+      <td>Row 1</td>
+      <td>Row 1</td>
+      <td>Row 1</td>
+      <td>Row 1</td>
+      <td>Row 1</td>
+    </tr>
+
+    <tr>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+    </tr>
+
+    <tr>
+      <td>Row 3</td>
+      <td>Row 3</td>
+      <td>Row 3</td>
+      <td>Row 3</td>
+      <td>Row 3</td>
+    </tr>
+
+    <tr>
+      <td>Row 4</td>
+      <td>Row 4</td>
+      <td>Row 4</td>
+      <td>Row 4</td>
+      <td>Row 4</td>
+    </tr>
+
+    <tr>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Code:</p>
+<pre class="prettyprint lang-javascript">
+$('table#example5 > tbody td').keynavigator({
+  activateOn: 'click',
+  parentFocusOn: 'mouseover'
+});
+</pre>
+
+<hr />
+<h4>Example 6 (custom navigation keys)</h4>
+<p>Navigate with <strong>w</strong>, <strong>a</strong>,<strong>s</strong> and <strong>d</strong> keys.</p>
+
+<ul id="example6" class="nav nav-pills">
+  <li>
+    <a href="#link">Custom navigation Item1</a>
+  </li>
+  <li>
+    <a href="#link">Custom navigation Item2</a>
+  </li>  
+  <li>
+    <a href="#link">Custom navigation Item3</a>
+  </li>
+  <li>
+    <a href="#link">Custom navigation Item4</a>
+  </li>
+  <li>
+    <a href="#link">Custom navigation Item5</a>
+  </li>
+  <li>
+    <a href="#link">Custom navigation Item6</a>
+  </li>
+  <li>
+    <a href="#link">Custom navigation Item7</a>
+  </li>
+  <li>
+    <a href="#link">Custom navigation Item8</a>
+  </li>
+</ul>
+
+<p>Code:</p>
+<pre class="prettyprint lang-javascript">
+$('ul#example6 li').keynavigator({
+  activeClass: 'alert-info',
+  keys: {
+    w: 'up',
+    a: 'left',
+    s: 'down',
+    d: 'right',
+    enter: function($el) {
+      console.log('pressed enter on', $el.text());
+    }
+  }
+});
+</pre>
+
+<hr/>
+<h4>Example 7</h4>
+<p>Re-initialize after adding a row. Press the button to add a row.</p>
+<input type="button" class="btn btn-large btn-primary" id="btnAddRow" value="Add row" />
+
+<table class="table" id="example7">
+  <thead>
+    <tr>
+      <th>Items</th>    
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Item 1</td></tr>
+    <tr><td>Item 2</td></tr>
+  </tbody>
+</table>
+
+<p>Code:</p>
+<pre class="prettyprint lang-javascript">
+// The $rows variable is a extended jQuery node with
+// a 'keynavigator' property that points to the 'KeyNavigator' instance.
+var $rows = $('table#example7 > tbody tr').keynavigator({
+  useCache: false,
+
+  onBeforeActive: function($el) {
+    $el.toggleClass(this.options.activeClass);
+    return $el.hasClass(this.options.activeClass);
+  }
+});
+
+$('#btnAddRow').on('click', function() {
+  $rows.parent().append(
+    '&lt;tr&gt;&lt;td&gt;Appended!&lt;/td&gt;&lt;/tr&gt;'
+  );
+
+  //Rebuild
+  $rows.keynavigator.reBuild();
+});
+</pre>
+<hr/>
+<h4>Example 8</h4>
+<p>Re-initialize after a ajax request. Uses a custom parent. Press <code>escape</code> to remove a row.</p>
+<input type="button" class="btn btn-large btn-primary" id="btnLoadBreweries" value="Load beer breweries" />
+<table class="table" id="example8">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Url</th>      
+    </tr>
+  </thead>
+  <tbody>    
+  </tbody>
+</table>
+
+<p>Code:</p>
+<pre class="prettyprint lang-javascript">
+/* Example 8 */   
+
+// The $tbody variable is a extended jQuery node with
+// a 'keynavigator' property that points to the 'KeyNavigator' instance.
+var $tbody = $('table#example8 > tbody tr').keynavigator({
+  // NOTE: Important to use useCache = false when DOM-nodes are going to be 
+  // added/removed.
+  useCache: false,
+  // Custom parent
+  parent: 'table#example8 > tbody', 
+  keys: {
+    escape: function($el) {
+      // Remove current element and set the active 
+      // element to previous or next.
+      var $prev = $el.prev(),
+          $next = $el.next();
+
+      $el.remove();
+
+      // 'this' is the KeyNavigator instance.
+      // Set active element.
+      this.setActive($prev.length ? $prev : $next);
+    }
+  }
+}),
+
+// Get a list of beer breweries.
+loadBreweries = function() {          
+  $.ajax({
+    url: 'http://api.openbeerdatabase.com/v1/breweries.json?callback=?',
+    dataType: 'jsonp'
+  }).done(render);
+},
+
+render = function(data) {
+  // Empty
+  $tbody.keynavigator.$parent.empty();
+
+  // Append rows
+  $.each(data.breweries, function(index, brewerie) {    
+    $tbody.keynavigator.$parent.append(
+      '&lt;tr&gt;' + 
+        '&lt;td&gt;' + brewerie.id + '&lt;/td&gt;' +
+        '&lt;td&gt;' + brewerie.name + '&lt;/td&gt;' +
+        '&lt;td&gt;&lt;a target="_blank" href="{url}"&gt;{url}&lt;/a&gt;&lt;/td&gt;'.replace(/{url}/g, brewerie.url) +
+      '&lt;/tr&gt;'
+    );
+  });
+
+  $tbody.keynavigator.reBuild();
+};
+
+// init
+$('#btnLoadBreweries').on('click', loadBreweries);
+
+</pre>
+
+</div> <!-- main div end -->
+
+<a href="https://github.com/nekman/keynavigator"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-41949108-1', 'nekman.github.io');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
+
