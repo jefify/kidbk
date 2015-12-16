@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test02 Nekman</title>
+
+
+  <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" 
+  rel="stylesheet" media="screen">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style>
+      body {
+        padding: 60px;
+        margin-bottom: 60px;
+      }
+
+      ul.nav.nav-pills li {
+        margin: .8em;
+      }
+
+      .active {
+        background: #69f;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+      }
+    </style>    
+
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script>
+    /* Example 1 */
+    require(['keynavigator-min'], function($) {          
+        $('ul#example1 li').keynavigator();
+    /* Example 5 */
+         $('table#example5 > tbody td').keynavigator({
+         activateOn: 'click',
+         parentFocusOn: 'mouseover'})
+    });
+    </script>
+</head>
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1>Kid Bookmarks</h1>
+
+      <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p>
+
+    </header>
+
+    <hr/>
+    <h2>Examples</h2>
+
+
+    <h4>Example 1 (resize the window)</h4>
+    <p>Re-arrange the <code>li</code> elements by resizing the browser window.</p>
+    <ul id="example1" class="nav nav-pills">
+      <li>
+        <a href="http://www.google.com.br/">Navigation Item</a>
+      </li>
+      <li>
+        <a href="http://www.cnn.com/">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link" class="active">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item Navigation Item Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item Navigation Item Navigation Item Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link"><code>Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item Navigation Item</code></a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+      <li>
+        <a href="#link">Navigation Item</a>
+      </li>
+    </ul>
+
+    <div class="alert alert-block">  
+      <h4>Warning!</h4>
+      This plugin relies on element position.<br/>
+      If you change element position (eg by adding CSS-properties like padding or margin) the plugin will not work as expected.
+    </div>
+
+<h4>Example 5</h4>
+<p>Using keynavigation in a <code>table tbody &gt; td</code> to navigate in cells.</p>
+<table class="table" id="example5">
+  <thead>
+    <tr>
+      <th colspan=5>Column 1</th>
+      <!--<th>Column 2</th>
+      <th>Column 3</th>
+      <th>Column 4</th>
+      <th>Column 5</th>-->
+    </tr>
+  </thead>
+
+  <tbody >
+    <tr>
+      <td width="20%">Row 1</td>
+      <td width="20%">Row 1</td>
+      <td width="20%">Row 1</td>
+      <td width="20%">Row 1</td>
+      <td width="20%">Row 1</td>
+    </tr>
+
+      <th colspan=5>Column 1</th>
+    <tr>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+      <td>Row 2</td>
+    </tr>
+
+    <tr>
+      <td>Row 3</td>
+      <td>Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 </td>
+      <td>Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 </td>
+      <td>Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 </td>
+      <td>Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 Row 3 </td>
+    </tr>
+
+    <tr>
+      <td>Row 4</td>
+      <td>Row 4</td>
+      <td>&nbsp;</td>
+      <td>Row 4</td>
+      <td>Row 4</td>
+    </tr>
+
+    <tr>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+      <td>Row 5</td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- main div end -->
+</body>
+</html>
+
