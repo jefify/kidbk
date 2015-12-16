@@ -48,6 +48,7 @@ sub generateHtmlStrBkDir {
     my $i = 0;
     foreach my $item(@$items){
         if($item->{'type'} eq "url"){
+            next if ($item->{'url'} =~ /^javascript:/);
             if ($i == 0) {
                 $r .= $tab . "<tr>\n";
             }
@@ -63,7 +64,7 @@ sub generateHtmlStrBkDir {
                 $i = 0;
             }
             $r .= $tab . "<tr>\n";
-            $r .= $tab x2 . '<th colspan=5>' . $prefix . encode('utf-8', $item->{'name'}) . "</th>\n";
+            $r .= $tab x2 . '<th colspan=' . $n_columns . '>' . $prefix . encode('utf-8', $item->{'name'}) . "</th>\n";
             $r .= $tab . "</tr>\n";
             $r .= &generateHtmlStrBkDir($item->{'children'}, $prefix . encode('utf-8', $item->{'name'}) . " > ");
         }
