@@ -48,6 +48,17 @@
          parentFocusOn: 'load',
          cycle: false,
          activateOn: 'mouseover'})
+.on('up', function(e) {
+  if ($(this).offset().top - 100 < $(window).scrollTop()){
+    $(document).scrollTop($(window).scrollTop() - 100)
+  }
+})
+.on('down', function(e) {
+  if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
+    $(document).scrollTop($(window).scrollTop() + 100)
+  }
+})
+
     });
     </script>
 </head>
