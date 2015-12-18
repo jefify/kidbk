@@ -15,10 +15,14 @@
     <![endif]-->
     <style>
       body {
-        padding: 60px;
+        padding: 3%;
         margin-bottom: 60px;
       }
 
+      td {
+        font-size: 18px;
+        width: 20%;
+      }
       .active {
         background: #69f;
         color: #fff;
@@ -35,8 +39,15 @@
     require(['keynavigator-min'], function($) {          
     /* Example 5 */
          $('table#example5 > tbody td').keynavigator({
-         activateOn: 'click',
-         parentFocusOn: 'mouseover'})
+         keys: {
+           enter: function($el) {
+             console.log('clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
+             window.location.href = $el.children()[0].href;
+           }
+         },
+         parentFocusOn: 'load',
+         cycle: false,
+         activateOn: 'mouseover'})
     });
     </script>
 </head>
@@ -52,15 +63,15 @@
 
     <hr/>
 
-<table class="table" id="example5">
+<table class="table bk" id="example5">
 <tbody>
-  <tr>
+  <!-- <tr>
     <td width="20%">a</td>
     <td width="20%">b</td>
     <td width="20%">c</td>
     <td width="20%">d</td>
     <td width="20%">e</td>
-  </tr>
+  </tr> -->
 <!-- #####INSERIR-AQUI##### -->
 </tbody>
 </table>

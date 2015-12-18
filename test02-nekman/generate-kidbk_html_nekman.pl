@@ -45,29 +45,33 @@ sub generateHtmlStrBkDir {
     my $items = shift;
     my $prefix = shift;
     $prefix = "" unless defined($prefix);
-    my $i = 0;
+    my $j = 0;
     foreach my $item(@$items){
+        next if (defined($item->{'url'}) && $item->{'url'} =~ /^javascript:/);
+        my $str = encode('utf-8', $item->{'name'});
         if($item->{'type'} eq "url"){
-            next if ($item->{'url'} =~ /^javascript:/);
-            if ($i == 0) {
+            if ($j == 0) {
                 $r .= $tab . "<tr>\n";
             }
-            $r .= $tab x 2 . '<td width="20%"><a href="'. $item->{'url'} .'">' . encode('utf-8', $item->{'name'}). '</a></td>' . "\n";
-            $i++;
-            if ($i == $n_columns) {
+            $r .= $tab x 2 . '<td><a href="'. $item->{'url'} .'"><div style="height:100%;width:100%">' . $str . '</div></a></td>' . "\n";
+            $j++;
+            if ($j == $n_columns) {
                 $r .= $tab . "</tr>\n";
-                $i = 0;
+                $j = 0;
             }
         } elsif ($item->{'type'} eq "folder"){
-            if ($i > 0) {
-                $r .= $tab . "</tr>\n";
-                $i = 0;
-            }
             $r .= $tab . "<tr>\n";
-            $r .= $tab x2 . '<th colspan=' . $n_columns . '>' . $prefix . encode('utf-8', $item->{'name'}) . "</th>\n";
+            $r .= $tab x2 . '<th colspan=' . $n_columns . '>' . $prefix . $str . "</th>\n";
             $r .= $tab . "</tr>\n";
-            $r .= &generateHtmlStrBkDir($item->{'children'}, $prefix . encode('utf-8', $item->{'name'}) . " > ");
+            $r .= &generateHtmlStrBkDir($item->{'children'}, $prefix . $str . " > ");
         }
+    }
+    if ($j > 0) {
+        for (; $j < $n_columns; $j++) {
+            $r .= $tab x 2 . '<td width="20%">&nbsp;</td>' . "\n";
+        }
+        $r .= $tab . "</tr>\n";
+        $j = 0;
     }
     return $r;
 }
