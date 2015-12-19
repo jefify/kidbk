@@ -60,19 +60,21 @@ sub generateHtmlStrBkDir {
                 $j = 0;
             }
         } elsif ($item->{'type'} eq "folder"){
-    if ($j > 0) {
-        for (; $j < $n_columns; $j++) {
-            $r .= $tab x 2 . '<td>&nbsp;</td>' . "\n";
-        }
-        $r .= $tab . "</tr>\n";
-        $j = 0;
-    }
+            # completar celulas
+            if ($j > 0) {
+                for (; $j < $n_columns; $j++) {
+                    $r .= $tab x 2 . '<td>&nbsp;</td>' . "\n";
+                }
+                $r .= $tab . "</tr>\n";
+                $j = 0;
+            }
             $r .= $tab . "<tr>\n";
             $r .= $tab x2 . '<th colspan=' . $n_columns . '>' . $prefix . $str . "</th>\n";
             $r .= $tab . "</tr>\n";
             $r .= &generateHtmlStrBkDir($item->{'children'}, $prefix . $str . " > ");
         }
     }
+    # completar celulas
     if ($j > 0) {
         for (; $j < $n_columns; $j++) {
             $r .= $tab x 2 . '<td>&nbsp;</td>' . "\n";
