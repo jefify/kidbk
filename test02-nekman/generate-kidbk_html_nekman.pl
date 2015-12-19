@@ -10,7 +10,7 @@ my $chrome_bookmark_file = "/home/alik/.config/google-chrome/Default/Bookmarks";
 my $kidbk_template_file = "./generate-kidbk_html_nekman-template.txt";
 my $kidbk_template_marker = '<!-- #####INSERIR-AQUI##### -->';
 my $kidbk_output_file = "./kidbk.html";
-my $n_columns = 5;
+my $n_columns = 4;
 my $tab = "  ";
 
 ## MAIN
@@ -60,6 +60,13 @@ sub generateHtmlStrBkDir {
                 $j = 0;
             }
         } elsif ($item->{'type'} eq "folder"){
+    if ($j > 0) {
+        for (; $j < $n_columns; $j++) {
+            $r .= $tab x 2 . '<td>&nbsp;</td>' . "\n";
+        }
+        $r .= $tab . "</tr>\n";
+        $j = 0;
+    }
             $r .= $tab . "<tr>\n";
             $r .= $tab x2 . '<th colspan=' . $n_columns . '>' . $prefix . $str . "</th>\n";
             $r .= $tab . "</tr>\n";
@@ -68,7 +75,7 @@ sub generateHtmlStrBkDir {
     }
     if ($j > 0) {
         for (; $j < $n_columns; $j++) {
-            $r .= $tab x 2 . '<td width="20%">&nbsp;</td>' . "\n";
+            $r .= $tab x 2 . '<td>&nbsp;</td>' . "\n";
         }
         $r .= $tab . "</tr>\n";
         $j = 0;

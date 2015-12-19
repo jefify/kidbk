@@ -20,9 +20,14 @@
       }
 
       td {
-        font-size: 18px;
-        width: 20%;
+        font-size: 20px;
       }
+
+      th {
+        font-size: 23px;
+        background-color: #f5f5f5;
+      }
+
       .active {
         background: #69f;
         color: #fff;
@@ -38,27 +43,33 @@
     <script>
     require(['keynavigator-min'], function($) {          
     /* Example 5 */
-         $('table#example5 > tbody td').keynavigator({
-         keys: {
-           enter: function($el) {
-             console.log('clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
-             window.location.href = $el.children()[0].href;
-           }
-         },
-         parentFocusOn: 'load',
-         cycle: false,
-         activateOn: 'mouseover'})
-.on('up', function(e) {
-  if ($(this).offset().top - 100 < $(window).scrollTop()){
-    $(document).scrollTop($(window).scrollTop() - 100)
-  }
-})
-.on('down', function(e) {
-  if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
-    $(document).scrollTop($(window).scrollTop() + 100)
-  }
-})
-
+        $('table')
+            .find('td')
+            .keynavigator() // all cells
+            .eq(0) // start from 0
+            .addClass('active')
+            .parent() //tbody
+            .focus();
+        $('table#example5 > tbody td').keynavigator({
+        keys: {
+          enter: function($el) {
+            console.log('clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
+            window.location.href = $el.children()[0].href;
+          }
+        },
+        parentFocusOn: 'ready',
+        cycle: false,
+        activateOn: 'mouseover'})
+        .on('up', function(e) {
+          if ($(this).offset().top - 100 < $(window).scrollTop()){
+            $(document).scrollTop($(window).scrollTop() - 100)
+          }
+        })
+        .on('down', function(e) {
+          if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
+            $(document).scrollTop($(window).scrollTop() + 100)
+          }
+        })
     });
     </script>
 </head>
@@ -66,9 +77,9 @@
 
   <div class="wrapper">
     <header>
-      <h1>Kid Bookmarks</h1>
+      <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
 
-      <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p>
+      <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
 
     </header>
 
