@@ -1,0 +1,23 @@
+## GOVERNANCE
+
+/opt/IBM/WebSphere/AppServer/profiles/bv-prd-dmgr/bin/wsadmin.sh -port 8879 –lang jython
+
+AdminTask.createCluster('[-clusterConfig [-clusterName clus-governance -preferLocal true]]')
+AdminTask.createClusterMember('[-clusterName clus-governance -memberConfig [-memberNode bv-prd-node01 -memberName governance-srv01 -memberWeight 2 -genUniquePorts true -replicatorEntry false] -firstMember [-templateName default -nodeGroup DefaultNodeGroup -coreGroup DefaultCoreGroup -resourcesScope cluster]]')
+AdminConfig.save()
+AdminTask.createClusterMember('[-clusterName clus-governance -memberConfig [-memberNode bv-prd-node02 -memberName governance-srv02 -memberWeight 2 -genUniquePorts true -replicatorEntry false]]')
+
+quit
+
+## RUNTIME
+
+/opt/IBM/WebSphere/AppServer/profiles/bv-prd-dmgr/bin/wsadmin.sh -port 8879 –lang jython
+
+AdminTask.createCluster('[-clusterConfig [-clusterName clus-runtime -preferLocal true]]')
+AdminTask.createClusterMember('[-clusterName clus-runtime -memberConfig [-memberNode bv-prd-node01 -memberName runtime-srv01 -memberWeight 2 -genUniquePorts true -replicatorEntry false] -firstMember [-templateName default -nodeGroup DefaultNodeGroup -coreGroup DefaultCoreGroup -resourcesScope cluster]]')
+AdminConfig.save()
+AdminTask.createClusterMember('[-clusterName clus-runtime -memberConfig [-memberNode bv-prd-node02 -memberName runtime-srv02 -memberWeight 2 -genUniquePorts true -replicatorEntry false]]')
+
+quit
+
+
