@@ -1,23 +1,2 @@
-## GOVERNANCE
-
-/opt/IBM/WebSphere/ServiceRegistry/profiles/bv-prd-dmgr/bin/wsadmin.sh -port 8879 –lang jython
-
-AdminTask.createCluster('[-clusterConfig [-clusterName clus-governance -preferLocal true]]')
-AdminTask.createClusterMember('[-clusterName clus-governance -memberConfig [-memberNode bv-prd-node01 -memberName governance-srv01 -memberWeight 2 -genUniquePorts true -replicatorEntry false] -firstMember [-templateName default -nodeGroup DefaultNodeGroup -coreGroup DefaultCoreGroup -resourcesScope cluster]]')
-AdminConfig.save()
-AdminTask.createClusterMember('[-clusterName clus-governance -memberConfig [-memberNode bv-prd-node02 -memberName governance-srv02 -memberWeight 2 -genUniquePorts true -replicatorEntry false]]')
-
-quit
-
-## RUNTIME
-
-/opt/IBM/WebSphere/ServiceRegistry/profiles/bv-prd-dmgr/bin/wsadmin.sh -port 8879 –lang jython
-
-AdminTask.createCluster('[-clusterConfig [-clusterName clus-runtime -preferLocal true]]')
-AdminTask.createClusterMember('[-clusterName clus-runtime -memberConfig [-memberNode bv-prd-node01 -memberName runtime-srv01 -memberWeight 2 -genUniquePorts true -replicatorEntry false] -firstMember [-templateName default -nodeGroup DefaultNodeGroup -coreGroup DefaultCoreGroup -resourcesScope cluster]]')
-AdminConfig.save()
-AdminTask.createClusterMember('[-clusterName clus-runtime -memberConfig [-memberNode bv-prd-node02 -memberName runtime-srv02 -memberWeight 2 -genUniquePorts true -replicatorEntry false]]')
-
-quit
-
+yum install compat-libstdc++-296 compat-libstdc++-33 compat-db ksh-* gtk2-engines gtk2 libXp libXmu libXtst pam elfutils elfutils-libs libXft libstdc++ glibc.i686 compat-libstdc++-33.i686 compat-db.i686 libstdc++.i686 libXp.i686 libXmu.i686 libXtst.i686 pam.i686 libXft.i686 libstdc++.i686 gtk2.i686 gtk2-engines.i686
 
