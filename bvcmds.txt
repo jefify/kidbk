@@ -1,2 +1,7 @@
+su - wasadmin
+/opt/IBM/WebSphere/ServiceRegistry/profiles/bv-AMB-dmgr/bin/wsadmin.sh -port 8879 -lang jython
+AdminTask.createUnmanagedNode('[-nodeName HOSTNODE_ihs -hostName 127.0.0.2 -nodeOperatingSystem linux]')
+AdminTask.createWebServer(' HOSTNODE _ihs', '[-name bv-AMB-webserver01 -templateName IHS -serverConfig [-webPort 80 -serviceName -webInstallRoot /opt/IBM/HTTPServer -webProtocol HTTP -configurationFile  -errorLogfile  -accessLogfile  -pluginInstallRoot /opt/IBM/WebSphere/Plugins -webAppMapping ALL] -remoteServerConfig [-adminPort 8008 -adminUserID ihsadmin -adminPasswd "********" -adminProtocol HTTP]]')
+AdminConfig.save()
+quit
 
-http://intra.scalait.com/download-5335e6ef59cdef7bc9a550f43a919d08/upload/bv/IHS8553.zip
