@@ -53,7 +53,7 @@ sub generateHtmlStrBkDir {
             if ($j == 0) {
                 $r .= $tab . "<tr>\n";
             }
-            $r .= $tab x 2 . '<td><a href="'. $item->{'url'} .'"><div style="height:100%;width:100%">' . $str . '</div></a></td>' . "\n";
+            $r .= $tab x 2 . '<td width="' . (100/$n_columns) . '%"><a href="'. $item->{'url'} .'"><div style="height:100%;width:100%">' . $str . '</div></a></td>' . "\n";
             $j++;
             if ($j == $n_columns) {
                 $r .= $tab . "</tr>\n";
