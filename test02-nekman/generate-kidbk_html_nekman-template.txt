@@ -72,14 +72,38 @@
           }
         })
     });
+
+    // time
+    (function () {
+        function checkTime(i) {
+            return (i < 10) ? "0" + i : i;
+        }
+    
+        function startTime() {
+            var today = new Date(),
+                h = checkTime(today.getHours()),
+                m = checkTime(today.getMinutes()),
+                s = checkTime(today.getSeconds());
+            document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+            t = setTimeout(function () {
+                startTime()
+            }, 500);
+        }
+        startTime();
+    })();
     </script>
 </head>
 <body>
 
   <div class="wrapper">
     <header>
-      <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
-
+      <table border=0 width="100%">
+        <tr>
+           <td width="20%"></td>
+           <td><h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2></td>
+           <td width="20%"><div id="time"></div></td>
+	</tr>
+      </table>
       <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
 
     </header>
