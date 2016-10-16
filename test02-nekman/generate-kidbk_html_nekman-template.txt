@@ -97,17 +97,10 @@
 
   <div class="wrapper">
     <header>
-      <table border=0 width="100%">
-        <tr>
-           <td width="20%"></td>
-           <td><h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2></td>
-           <td width="20%"><div id="time"></div></td>
-	</tr>
-      </table>
+      <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
       <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
-
     </header>
-
+    <div id="time">
     <hr/>
 
 <table class="table bk" id="example5">
