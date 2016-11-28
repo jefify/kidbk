@@ -52,7 +52,8 @@ sub generateHtmlStrBkDir {
         if($item->{'type'} eq "url"){
 ##             # fullscreen youtube
 ##             if ($item->{'url'} =~ /^(.*\.youtube\..*\/)watch\?(.*\&)?v=(\w+)(\&.+)?$/) {
-##                 $item->{'url'} = "$1v/$3?";
+##                 $item->{'url'} = "$1";
+##                 $item->{'url'} .= "embed/$3?";
 ##                 $item->{'url'} .= "$2" if $2;
 ##                 $item->{'url'} .= "&$4" if $4;
 ##                 $item->{'url'} .= "&rel=0&autoplay=1";
