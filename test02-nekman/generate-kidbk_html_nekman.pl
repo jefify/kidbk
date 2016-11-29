@@ -50,16 +50,16 @@ sub generateHtmlStrBkDir {
         next if (defined($item->{'url'}) && $item->{'url'} =~ /^javascript:/);
         my $str = encode('utf-8', $item->{'name'});
         if($item->{'type'} eq "url"){
-             # fullscreen youtube
-             if ($item->{'url'} =~ /^(.*\.youtube\..*\/)watch\?(.*\&)?v=(\w+)(\&.+)?$/) {
-                 $item->{'url'} = "$1";
-                 $item->{'url'} .= "embed/$3?";
-                 $item->{'url'} .= "$2" if $2;
-                 $item->{'url'} .= "&$4" if $4;
-                 $item->{'url'} .= "&rel=1&autoplay=1";
- 		$item->{'url'} =~ s/\?&/?/g;
- 		$item->{'url'} =~ s/&&/&/g;
-             }
+##            # fullscreen youtube
+##            if ($item->{'url'} =~ /^(.*\.youtube\..*\/)watch\?(.*\&)?v=(\w+)(\&.+)?$/) {
+##                $item->{'url'} = "$1";
+##                $item->{'url'} .= "embed/$3?";
+##                $item->{'url'} .= "$2" if $2;
+##                $item->{'url'} .= "&$4" if $4;
+##                $item->{'url'} .= "&rel=1&autoplay=1";
+##                $item->{'url'} =~ s/\?&/?/g;
+##                $item->{'url'} =~ s/&&/&/g;
+##            }
             if ($j == 0) {
                 $r .= $tab . "<tr>\n";
             }
