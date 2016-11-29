@@ -56,7 +56,7 @@ sub generateHtmlStrBkDir {
                  $item->{'url'} .= "embed/$3?";
                  $item->{'url'} .= "$2" if $2;
                  $item->{'url'} .= "&$4" if $4;
-                 $item->{'url'} .= "&rel=0&autoplay=1";
+                 $item->{'url'} .= "&rel=1&autoplay=1";
  		$item->{'url'} =~ s/\?&/?/g;
  		$item->{'url'} =~ s/&&/&/g;
              }
