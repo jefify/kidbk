@@ -38,13 +38,13 @@
       }
     </style>    
 
-    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
     <script>
     require(['keynavigator-min'], function($) {          
-    /* Example 5 */
+    //* Example 5 */
         $('table')
             .find('td')
             .keynavigator() // all cells
@@ -104,20 +104,35 @@
     <div id="time">
     <hr/>
 
-<table class="table bk" id="example5">
-<tbody>
-  <!-- <tr>
-    <td width="20%">a</td>
-    <td width="20%">b</td>
-    <td width="20%">c</td>
-    <td width="20%">d</td>
-    <td width="20%">e</td>
-  </tr> -->
-<!-- #####INSERIR-AQUI##### -->
-</tbody>
-</table>
+<div id="bks">Loading ...</div>
 
 </div> <!-- main div end -->
+
+<script type="text/javascript">//<![CDATA[
+(function () {
+  var t = '<table class="table bk" id="example5">';
+  t += '<tbody>';
+  t += '<tr><td>bbbb</td><td>ccc</td></tr>';
+  t += '<tr><td>';
+$.get(
+    "http://devapi.saved.io/bookmarks",
+    {key: 'hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n',
+     devkey: 'QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz'},
+    function(data, status) {
+       alert(status);
+       t += data;
+    }, "json"
+);
+  t += '</td></tr>';
+  t += '</tbody>';
+  t += '</table>';
+  document.getElementById("bks").innerHTML = t;
+})();
+window.addEventListener('load', function() {
+  console.log('All assets are loaded')
+})
+//]]>
+</script>
 
 </body>
 </html>
