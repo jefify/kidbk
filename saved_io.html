@@ -105,20 +105,23 @@
     url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?devkey=QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz&key=hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n"') + '&format=json&callback=?'
   })
     .done( function(resp) {
+      console.log("AJAX success");
       $.each(resp.query.results.json.json, function(i, obj){
-        t += obj.bk_title + " " + obj.bk_url;
+        t += obj.bk_title + " " + obj.bk_url + "<br>";
       });
-  document.getElementById("bks").innerHTML = t;
     })
-   .fail(function() {
-     t += "遠端書籤擷取錯誤！！";
-   })
-   .always(function() {
-     // always pass here
-     t += '</td><td>2nd cell</td></tr>';
-     t += '</tbody>';
-     t += '</table>';
-   });
+    .fail(function() {
+      console.log("AJAX error");
+      t += "遠端書籤擷取錯誤！！";
+    })
+    .always(function() {
+      console.log("AJAX always pass here!");
+      // always pass here
+      t += '</td><td>2nd cell</td></tr>';
+      t += '</tbody>';
+      t += '</table>';
+      document.getElementById("bks").innerHTML = t;
+    });
 })();
 window.addEventListener('load', function() {
   console.log('All assets are loaded')
