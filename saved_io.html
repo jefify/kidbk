@@ -40,37 +40,6 @@
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">//<![CDATA[
-  //* Ex5 of Nekman Keynavigator */
-  require(['keynavigator-min'], function($) {          
-    $('table')
-      .find('td')
-      .keynavigator() // all cells
-      .eq(0) // start from 0
-      .addClass('active')
-      .parent() //tbody
-      .focus();
-    $('table#example5 > tbody td').keynavigator({
-      keys: {
-        enter: function($el) {
-          console.log('clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
-          window.location.href = $el.children()[0].href;
-        }
-      },
-      parentFocusOn: 'ready',
-      cycle: false,
-      activateOn: 'mouseover'})
-      .on('up', function(e) {
-        if ($(this).offset().top - 100 < $(window).scrollTop()){
-          $(document).scrollTop($(window).scrollTop() - 100)
-        }
-      })
-      .on('down', function(e) {
-        if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
-          $(document).scrollTop($(window).scrollTop() + 100)
-        }
-      })
-  });
-
   (function () {
     var t = '<table class="table bk" id="example5">';
     t += '<tbody>';
@@ -101,22 +70,60 @@
         document.getElementById("bks").innerHTML = t;
       });
   })();
+
+
+  // no final
   window.addEventListener('load', function() {
-    console.log('All assets are loaded')
 
     // time
-    function checkTime(i) {
+    function twoDigitTime(i) {
       return (i < 10) ? "0" + i : i;
     }
 
     function startTime() {
       var today = new Date(),
-        h = checkTime(today.getHours()),
-        m = checkTime(today.getMinutes()),
-        s = checkTime(today.getSeconds());
-        document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
-        t = setTimeout(function () { startTime() }, 500); }
-        startTime();
+      h = twoDigitTime(today.getHours()),
+      m = twoDigitTime(today.getMinutes()),
+      s = twoDigitTime(today.getSeconds());
+      document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+      t = setTimeout(function () { startTime() }, 500);
+    }
+    startTime();
+
+    //* Ex5 of Nekman Keynavigator */
+    require(['keynavigator-min'], function($) {          
+  
+      $('table')
+        .find('td')
+        .keynavigator() // all cells
+        .eq(0) // start from 0
+        .addClass('active')
+        .parent() //tbody
+        .focus();
+  
+      $('table#example5 > tbody td').keynavigator({
+        keys: {
+          enter: function($el) {
+            console.log('clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
+            window.location.href = $el.children()[0].href;
+          }
+        },
+        parentFocusOn: 'ready',
+        cycle: false,
+        activateOn: 'mouseover'})
+        .on('up', function(e) {
+          if ($(this).offset().top - 100 < $(window).scrollTop()){
+            $(document).scrollTop($(window).scrollTop() - 100)
+          }
+        })
+        .on('down', function(e) {
+          if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
+            $(document).scrollTop($(window).scrollTop() + 100)
+          }
+        })
+    });
+
+    console.log('All assets are loaded')
   })
 //]]></script>
 
