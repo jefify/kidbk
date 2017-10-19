@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico?">
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico?">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,8 +74,55 @@
         })
     });
 
+    </script>
+</head>
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
+      <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
+      <center><div id="time">HH:MM:SS</div></center>
+    </header>
+
+<div id="bks">Loading ...</div>
+
+</div> <!-- main div end -->
+
+<script type="text/javascript">//<![CDATA[
+(function () {
+  var t = '<table class="table bk" id="example5">';
+  t += '<tbody>';
+  t += '<tr><td>bbbb</td><td>ccc</td></tr>';
+  t += '<tr><td>';
+  function f(json) {
+    console.log(json);
+  }
+  $.ajax({
+    type: "GET",
+    dataType: "jsonp",
+    url: 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?devkey=QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz&key=hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n"') + '&format=json&callback=?'
+  })
+    .done( function(resp) {
+      $.each(resp.query.results.json.json, function(i, obj){
+        t += obj.bk_title + " " + obj.bk_url;
+      });
+  t += '</td><td>2nd cell</td></tr>';
+  t += '</tbody>';
+  t += '</table>';
+  document.getElementById("bks").innerHTML = t;
+    })
+   .fail(function() {
+     t += "遠端書籤擷取錯誤！！";
+   })
+   .always(function() {
+     alert( d );
+   });
+})();
+window.addEventListener('load', function() {
+  console.log('All assets are loaded')
+
     // time
-    (function () {
         function checkTime(i) {
             return (i < 10) ? "0" + i : i;
         }
@@ -91,45 +138,6 @@
             }, 500);
         }
         startTime();
-    })();
-    </script>
-</head>
-<body>
-
-  <div class="wrapper">
-    <header>
-      <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
-      <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
-    </header>
-    <div id="time">
-    <hr/>
-
-<div id="bks">Loading ...</div>
-
-</div> <!-- main div end -->
-
-<script type="text/javascript">//<![CDATA[
-(function () {
-  var t = '<table class="table bk" id="example5">';
-  t += '<tbody>';
-  t += '<tr><td>bbbb</td><td>ccc</td></tr>';
-  t += '<tr><td>';
-$.get(
-    "http://devapi.saved.io/bookmarks",
-    {key: 'hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n',
-     devkey: 'QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz'},
-    function(data, status) {
-       alert(status);
-       t += data;
-    }, "json"
-);
-  t += '</td></tr>';
-  t += '</tbody>';
-  t += '</table>';
-  document.getElementById("bks").innerHTML = t;
-})();
-window.addEventListener('load', function() {
-  console.log('All assets are loaded')
 })
 //]]>
 </script>

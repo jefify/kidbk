@@ -1,0 +1,23 @@
+## Cross Domain JSON call:
+https://ithelp.ithome.com.tw/m/articles/10094915
+http://design2u.me/example/remoteAjaxCall/
+
+1) CORS: the server has to add headers
+  https://www.html5rocks.com/en/tutorials/cors/
+
+1.1) CORS proxy
+
+2) jasonp (p=padding): the server should wrap the json or use a proxy
+  https://pt.stackoverflow.com/a/3199
+  https://www.sitepoint.com/jsonp-examples/
+
+2.1) use yql (yahooapis) as proxy
+  https://code.tutsplus.com/tutorials/quick-tip-cross-domain-ajax-request-with-yql-and-jquery--net-10225
+  https://developer.yahoo.com/yql/guide/response.html
+curl "http://query.yahooapis.com/v1/public/yql?q=$(urlencode.bash <<<'select * from json where url="http://devapi.saved.io/bookmarks?devkey=QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz&key=hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n"')&format=json&callback=callbackFunc"
+url: 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?devkey=QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz&key=hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n"') + '&format=json&callback=?'
+
+2.2) use some other JSONP proxy
+
+3) use jquery plugin http://www.ajax-cross-origin.com/
+  file: ref-ext/jquery.ajax-cross-origin.min.js
