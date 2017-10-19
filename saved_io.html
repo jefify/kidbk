@@ -106,7 +106,7 @@
   })
     .done( function(resp) {
       $.each(resp.query.results.json.json, function(i, obj){
-        //t += obj.bk_title + " " + obj.bk_url;
+        t += obj.bk_title + " " + obj.bk_url;
       });
   document.getElementById("bks").innerHTML = t;
     })
