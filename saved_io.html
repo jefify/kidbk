@@ -98,10 +98,10 @@
   function f(json) {
     console.log(json);
   }
+  var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
   $.ajax({
     type: "GET",
     dataType: "jsonp",
-    var protocol = window.location.href.split(":")[0]=="https"?"https":"http";
     url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?devkey=QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz&key=hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n"') + '&format=json&callback=?'
   })
     .done( function(resp) {
