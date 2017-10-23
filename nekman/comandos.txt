@@ -1,0 +1,1 @@
+cat kidbk.html | sed -n '/^.*th colspan=.>\([^<]*\)<.*$/{s//#\1/; p}; / *<td .*href="\([^"]*\).*>\(.*\)<\/div.*/{s//\2 \1/; p}' > current-bookmarks.txt
