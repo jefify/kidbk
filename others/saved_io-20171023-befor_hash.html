@@ -42,69 +42,41 @@
 <script type="text/javascript">//<![CDATA[
   var mykey = "cdTegvbP9nlNFc2v4zXnAs0fEdwGUszb";
   var mydevkey = "3YPwjgYffEJGFyit6aPCEImz3ldffiTq";
-  var hashbks = {};
-  var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
-
-  function retrieve_list (list, refresh) {
-    if (typeof refresh === 'undefined') { refresh = 'no'; }
-    if ( hashbks[list] && refresh == 'no' ) { return; }
-    // no encontrei cache
-    hashbks[list] = {};
+  (function () {
+    var t = '<table class="table bk" id="example5">';
+    t += '<tbody>';
+    t += '<tr><td>';
     var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
     $.ajax({
       type: "GET",
       dataType: "jsonp",
-      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + "level0" + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
+      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
     })
       .done( function(resp) {
         console.log("AJAX success");
-        d.resolve(resp);
         if ( resp.query.results.json.json == null ) {
           var obj = resp.query.results.json; // if single object
-          hashbks[list][obj.bk_title] = obj.bk_url;
-          console.log("passo x: " + obj.bk_title);
+            t += obj.bk_title + " " + obj.bk_url + "<br>";
         } else {
           $.each(resp.query.results.json.json, function(i, obj){ // if object array
-            hashbks[list][obj.bk_title] = obj.bk_url;
-            console.log("passo x: " + obj.bk_title);
+            t += obj.bk_title + " " + obj.bk_url + "<br>";
           });
         }
       })
       .fail(function() {
         console.log("AJAX error");
+        t += "遠端書籤擷取錯誤！！";
       })
       .always(function() {
         console.log("AJAX always pass here!");
+        // always pass here
+        t += '</td><td>2nd cell</td></tr>';
+        t += '</tbody>';
+        t += '</table>';
+        document.getElementById("bks").innerHTML = t;
       });
-    return d;
-  }
+  })();
 
-  function write_bookmark_table(list) {
-    console.log("passo 1");
-    retrieve_list(list).done(function() {
-      // 0 === $.active
-      var t = '<table class="table bk" id="example5">';
-      t += '<tbody>';
-      t += '<tr><td>';
-      console.log("passo 2");
-      if (hashbks[list]) {
-        Object.keys(hashbks[list]).sort().forEach(function (title) {  // https://stackoverflow.com/a/11273782
-          var url = hashbks[list][title];
-          t += title + url + "<br>";
-          console.log("passo 3: " + title + url);
-        })
-      } else {
-        t += "遠端書籤擷取錯誤！！";
-      }
-      console.log("passo 4");
-      t += '</td></tr>';
-      t += '</tbody>';
-      t += '</table>';
-      document.getElementById("bks").innerHTML = t;
-    });
-  }
-  
-  write_bookmark_table("level0");
 
   // no final
   window.addEventListener('load', function() {
