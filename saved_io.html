@@ -40,22 +40,28 @@
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">//<![CDATA[
+  var mykey = "cdTegvbP9nlNFc2v4zXnAs0fEdwGUszb";
+  var mydevkey = "3YPwjgYffEJGFyit6aPCEImz3ldffiTq";
   (function () {
     var t = '<table class="table bk" id="example5">';
     t += '<tbody>';
-    t += '<tr><td>bbbb</td><td>ccc</td></tr>';
     t += '<tr><td>';
     var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
     $.ajax({
       type: "GET",
       dataType: "jsonp",
-      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?devkey=QkNyJdBUOJOVRxRiPZfIpuIuNJj9ABbz&key=hxyQdLfX1DAcNohg6kvzczJbumTSFQ5n"') + '&format=json&callback=?'
+      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
     })
       .done( function(resp) {
         console.log("AJAX success");
-        $.each(resp.query.results.json.json, function(i, obj){
-          t += obj.bk_title + " " + obj.bk_url + "<br>";
-        });
+        if ( resp.query.results.json.json == null ) {
+          var obj = resp.query.results.json; // if single object
+            t += obj.bk_title + " " + obj.bk_url + "<br>";
+        } else {
+          $.each(resp.query.results.json.json, function(i, obj){ // if object array
+            t += obj.bk_title + " " + obj.bk_url + "<br>";
+          });
+        }
       })
       .fail(function() {
         console.log("AJAX error");
@@ -143,4 +149,5 @@
 
 </body>
 </html>
+
 
