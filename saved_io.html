@@ -43,11 +43,70 @@
   var mykey = "cdTegvbP9nlNFc2v4zXnAs0fEdwGUszb";
   var mydevkey = "3YPwjgYffEJGFyit6aPCEImz3ldffiTq";
   var hashbks = {};
+  var cols_per_row = 4;
+
+  // https://davidwalsh.name/javascript-debounce-function
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this, args = arguments;
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+
+  function refreshkeynav() {
+    require(['keynavigator-min'], function($) {
+      $('table')
+        .find('td')
+        .keynavigator() // all cells
+        .eq(0) // start from 0
+        .addClass('active')
+        .parent() //tbody
+        .focus();
+
+      var $rows = $('table#example5 > tbody td').keynavigator({
+        useCache: false,
+        keys: {
+          enter: function($el) {
+            console.log('Keynavigator: clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
+            window.location.href = $el.children()[0].href;
+          }
+        },
+        activateOn: 'click',
+        parentFocusOn: 'mouseover',
+        cycle: false
+      })
+        .on('up', function(e) {
+          if ($(this).offset().top - 100 < $(window).scrollTop()){
+            $(document).scrollTop($(window).scrollTop() - 100)
+          }
+        })
+        .on('down', function(e) {
+          if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
+            $(document).scrollTop($(window).scrollTop() + 100)
+          }
+        })
+
+      $rows.keynavigator.reBuild();
+    });
+  }
 
   function retrieve_list (list, refresh) {
+    // https://www.sitepoint.com/introduction-jquery-deferred-objects/
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
     if (typeof refresh === 'undefined') { refresh = 'no'; }
-    if ( hashbks[list] && refresh == 'no' ) { return d; }
+    if ( hashbks[list] && refresh == 'no' ) {
+      console.log(list + " encontrado jah no cache!");
+      d.resolve();
+      return d.promise();
+    }
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
@@ -58,7 +117,6 @@
     })
       .done( function(resp) {
         console.log("AJAX success");
-        d.resolve(resp);
         if ( resp.query.results.json.json == null ) {
           var obj = resp.query.results.json; // if single object
           hashbks[list][obj.bk_title] = obj.bk_url;
@@ -69,6 +127,7 @@
           });
         }
         console.log("AJAX: " + list + " iterated!");
+        d.resolve();
       })
       .fail(function() {
         hashbks[list]["遠端書籤擷取錯誤！！"] = window.location.href;
@@ -77,24 +136,38 @@
       .always(function() {
         console.log("AJAX always pass here!");
       });
-    return d;
+    return d.promise();
   }
 
-  function write_bookmark_table(list) {
+  var write_bookmark_table = debounce( function (list) {
     console.log("passo 1");
+    var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
+      if ($('#bks').length) {
+        console.log("#bks now exists!");
+        clearInterval(checkExist);
+      }
+    }, 100); // check every 100ms
     $("#bks").html("讀取 " + list + " 中 ..."); // aqui nao pega ainda o div?
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
-      t += '<tr><td>';
       console.log("passo 2");
       if (hashbks[list]) {
+        if ( list != "level0" ) {
+          t += '<tr><th>list</th><tr>\n';
+        }
+        var i = 1;
+        t += '<tr>\n';
         Object.keys(hashbks[list]).sort().forEach(function (title) {  // https://stackoverflow.com/a/11273782
           var url = hashbks[list][title];
-          t += title + url + "<br>";
-          console.log("passo 3: " + title + url);
+          t += '<td><a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a></td>';
+          if ( i++ % 4 == 0 ) {
+            t += '</tr>\n<tr>';
+          }
         })
+        t += '</tr>\n';
+        console.log("passo 3: a lista \"" + list + "\" lida do hasbks[]!");
       } else {
         t += "遠端書籤擷取錯誤！！";
       }
@@ -103,8 +176,10 @@
       t += '</tbody>';
       t += '</table>';
       $("#bks").html(t);
+      //Rebuild
+      refreshkeynav();
     });
-  }
+  }, 250);
   
   write_bookmark_table("level0");
 
@@ -127,37 +202,6 @@
     startTime();
 
     //* Ex5 of Nekman Keynavigator */
-    require(['keynavigator-min'], function($) {          
-  
-      $('table')
-        .find('td')
-        .keynavigator() // all cells
-        .eq(0) // start from 0
-        .addClass('active')
-        .parent() //tbody
-        .focus();
-  
-      $('table#example5 > tbody td').keynavigator({
-        keys: {
-          enter: function($el) {
-            console.log('clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
-            window.location.href = $el.children()[0].href;
-          }
-        },
-        parentFocusOn: 'ready',
-        cycle: false,
-        activateOn: 'mouseover'})
-        .on('up', function(e) {
-          if ($(this).offset().top - 100 < $(window).scrollTop()){
-            $(document).scrollTop($(window).scrollTop() - 100)
-          }
-        })
-        .on('down', function(e) {
-          if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
-            $(document).scrollTop($(window).scrollTop() + 100)
-          }
-        })
-    });
 
     console.log('All assets are loaded')
   })
