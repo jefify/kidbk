@@ -43,13 +43,13 @@
   var mykey = "cdTegvbP9nlNFc2v4zXnAs0fEdwGUszb";
   var mydevkey = "3YPwjgYffEJGFyit6aPCEImz3ldffiTq";
   var hashbks = {};
-  var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
 
   function retrieve_list (list, refresh) {
+    var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
     if (typeof refresh === 'undefined') { refresh = 'no'; }
-    if ( hashbks[list] && refresh == 'no' ) { return; }
+    if ( hashbks[list] && refresh == 'no' ) { return d; }
     // no encontrei cache
-    hashbks[list] = {};
+    hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
     $.ajax({
       type: "GET",
@@ -66,11 +66,12 @@
         } else {
           $.each(resp.query.results.json.json, function(i, obj){ // if object array
             hashbks[list][obj.bk_title] = obj.bk_url;
-            console.log("passo x: " + obj.bk_title);
           });
         }
+        console.log("AJAX: " + list + " iterated!");
       })
       .fail(function() {
+        hashbks[list]["遠端書籤擷取錯誤！！"] = window.location.href;
         console.log("AJAX error");
       })
       .always(function() {
@@ -81,6 +82,7 @@
 
   function write_bookmark_table(list) {
     console.log("passo 1");
+    $("#bks").html("讀取 " + list + " 中 ..."); // aqui nao pega ainda o div?
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
@@ -100,7 +102,7 @@
       t += '</td></tr>';
       t += '</tbody>';
       t += '</table>';
-      document.getElementById("bks").innerHTML = t;
+      $("#bks").html(t);
     });
   }
   
@@ -119,7 +121,7 @@
       h = twoDigitTime(today.getHours()),
       m = twoDigitTime(today.getMinutes()),
       s = twoDigitTime(today.getSeconds());
-      document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+      $('#time').html(h + ":" + m + ":" + s);
       t = setTimeout(function () { startTime() }, 500);
     }
     startTime();
@@ -171,7 +173,7 @@
       <h4><tt><center><div id="time">HH:MM:SS</div></center></tt></h4>
     </header>
 
-<div id="bks">Loading ...</div>
+<div id="bks">初始化中 ...</div>
 
 </div> <!-- main div end -->
 
