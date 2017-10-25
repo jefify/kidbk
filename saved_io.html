@@ -61,8 +61,9 @@
     };
   };
 
-  function refreshkeynav() {
+  (function() {
     require(['keynavigator-min'], function($) {
+
       $('table')
         .find('td')
         .keynavigator() // all cells
@@ -72,18 +73,17 @@
         .focus();
 
       var $rows = $('table#example5 > tbody td').keynavigator({
-        useCache: false,
         keys: {
           enter: function($el) {
             console.log('Keynavigator: clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
             window.location.href = $el.children()[0].href;
           }
         },
-        activateOn: 'click',
-        parentFocusOn: 'mouseover',
+        activateOn: 'mouseover',
+        parentFocusOn: 'ready',
         cycle: false
       })
-        .on('up', function(e) {
+        .on('up', function(e) { // https://github.com/nekman/keynavigator/issues/7
           if ($(this).offset().top - 100 < $(window).scrollTop()){
             $(document).scrollTop($(window).scrollTop() - 100)
           }
@@ -92,11 +92,10 @@
           if ($(this).offset().top + $(this).height() + 100 > $(window).scrollTop() + $(window).height()) {
             $(document).scrollTop($(window).scrollTop() + 100)
           }
-        })
+        });
 
-      $rows.keynavigator.reBuild();
     });
-  }
+  })();
 
   function retrieve_list (list, refresh) {
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
@@ -177,11 +176,11 @@
       t += '</table>';
       $("#bks").html(t);
       //Rebuild
-      refreshkeynav();
+      //$rows.keynavigator.reBuild();
     });
   }, 250);
   
-  write_bookmark_table("level0");
+  // write_bookmark_table("level0");
 
   // no final
   window.addEventListener('load', function() {
@@ -217,7 +216,25 @@
       <h4><tt><center><div id="time">HH:MM:SS</div></center></tt></h4>
     </header>
 
-<div id="bks">初始化中 ...</div>
+<div id="bks">
+  <table id='example5' width='100%' class='table bk'>
+    <tbody>
+      <tr>
+        <th colspan=4>初始化中 ...</th>
+      </tr>
+        <td width="25%"><a href="http://www.maplestage.com/episode?type=show&region=tw"><div style="height:100%;width:100%">楓林網 - 台灣綜藝</div></a></td>
+        <td width="25%"><a href="http://www.lovetvshow.com/"><div style="height:100%;width:100%">Love TV Show 首頁</div></a></td>
+        <td width="25%"><a href="http://www.taiwanus.net/index.php"><div style="height:100%;width:100%">台灣海外網</div></a></td>
+        <td width="25%"><a href="https://www.youtube.com/watch?v=XxJKnDLYZz4&list=PLgrrYJI4sXsJ-DTYOyIKi2bLYcdfMx06u"><div style="height:100%;width:100%">台灣電視直播</div></a></td>
+      <tr>
+        <td width='25%'><a href="http://jefify.github.io/"><div style="height:100%;width:100%">Jefify's GitHub Frontpage</div></a></td>
+        <td width='25%'><a href="https://github.io/jefify/"><div style="height:100%;width:100%">Jefify's GitHub Projects</div></a></td>
+        <td width='25%'><a href="http://jefify.github.io/kidbk/saved_io.html"><div style="height:100%;width:100%">Kidbk2 (new,ajax)</div></a></td>
+        <td width='25%'><a href="http://jefify.github.io/kidbk/nekman/kidbk.html"><div style="height:100%;width:100%">Kidbk (static,nekman)</div></a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 </div> <!-- main div end -->
 
