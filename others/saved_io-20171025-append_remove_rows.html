@@ -44,6 +44,7 @@
   var mydevkey = "3YPwjgYffEJGFyit6aPCEImz3ldffiTq";
   var hashbks = {};
   var cols_per_row = 4;
+  var $rows;
 
   // https://davidwalsh.name/javascript-debounce-function
   function debounce(func, wait, immediate) {
@@ -61,17 +62,27 @@
     };
   };
 
-  function refresh_keynavgator_table() {
+//  (function() {
     require(['keynavigator-min'], function($) {
-      var $rows = $('table#example5 > tbody td').keynavigator({
+
+      $('table')
+        .find('td')
+        .keynavigator() // all cells
+        .eq(0) // start from 0
+        .addClass('active')
+        .parent() //tbody
+        .focus();
+
+      $rows = $('table#example5 > tbody td').keynavigator({
         keys: {
           enter: function($el) {
             console.log('Keynavigator: clicked on "' + $el.text() + '", url = "' + $el.children()[0].href + '"');
             window.location.href = $el.children()[0].href;
           }
         },
-        activateOn: 'click',
-        parentFocusOn: '',
+        useCache: false,
+        activateOn: 'mouseover',
+        parentFocusOn: 'ready',
         cycle: false
       })
         .on('up', function(e) { // https://github.com/nekman/keynavigator/issues/7
@@ -85,16 +96,8 @@
           }
         });
 
-      $('table')
-        .find('td')
-        .keynavigator() // all cells
-        .eq(0) // start from 0
-        .addClass('active')
-        .parent() //tbody
-        .focus();
-
     });
-  }
+//  })();
 
   function retrieve_list (list, refresh) {
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
@@ -111,13 +114,14 @@
     $.ajax({
       type: "GET",
       dataType: "jsonp",
-      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
+      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + "level0" + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
     })
       .done( function(resp) {
         console.log("AJAX success");
         if ( resp.query.results.json.json == null ) {
           var obj = resp.query.results.json; // if single object
           hashbks[list][obj.bk_title] = obj.bk_url;
+          console.log("passo x: " + obj.bk_title);
         } else {
           $.each(resp.query.results.json.json, function(i, obj){ // if object array
             hashbks[list][obj.bk_title] = obj.bk_url;
@@ -136,74 +140,53 @@
     return d.promise();
   }
 
-  var write_bookmark_table = debounce( function (list, title) {
+  function table_reload_rows(t) {
+    var rowCount = document.getElementById('example5').rows.length;
+    $rows.parent().parent().append(t);
+    $('#example5 > tbody').find("tr:lt(" + rowCount + ")").remove();
+    $rows.keynavigator.reBuild();
+    //$rows.keynavigator.setActive($('table').find('td').keynavigator().eq(0));
+    //$('table').find('td').keynavigator().eq(0).parent().focus();
+  }
+
+  var write_bookmark_table = debounce( function (list) {
     console.log("passo 1");
-    var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
-      if ($('#bks').length) {
-        console.log("#bks now exists!");
-        clearInterval(checkExist);
-      }
-    }, 100); // check every 100ms
-    $("#bks").html("讀取 " + list + " 中 ..."); // aqui nao pega ainda o div?
+    // not used: wait for instance https://stackoverflow.com/a/16149679
+
+    //table_reload_rows('<tr tabindex="-1" style="outline: none;"><td>bbbb</td><td>bbbb</td><td>bbbb</td><td>bbbb</td></tr>');
+
+    table_reload_rows("<tr><th>讀取 " + list + " 中 ...</th></tr>");
+
     retrieve_list(list).done(function() {
       // 0 === $.active
-      var t = '<table class="table bk" id="example5">';
-      t += '<tbody>';
+      var t = "";
       console.log("passo 2");
       if (hashbks[list]) {
         if ( list != "level0" ) {
-          t += '<tr><th colspan=' + cols_per_row + '>' + title + '</th></tr>\n';
+          t += '<tr><th>list</th><tr>\n';
         }
-        var i = 0;
+        var i = 1;
         t += '<tr>\n';
-        var menu_count = 0; var menu_html = "<tr><th colspan=4>分類</th></tr><tr>\n"; //menus
         Object.keys(hashbks[list]).sort().forEach(function (title) {  // https://stackoverflow.com/a/11273782
-          // https://javascript.info/regexp-methods
           var url = hashbks[list][title];
-          if (/saved\.io/i.test(url)) { // menu item
-            url = url.replace(/^(.*)\.saved\.io$/i, "javascript:write_bookmark_table('$1', '" + title + "')");
-            menu_html += '<td width="' + (100 / cols_per_row) + '%">';
-            menu_html += '<a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a>';
-            menu_html += '</td>';
-            if ( ++menu_count % cols_per_row == 0 ) {
-              menu_html += '</tr>\n<tr>';
-            }
-          } else { // normal url
-            t += '<td width="' + (100 / cols_per_row) + '%">';
-            t += '<a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a>';
-            t += '</td>';
-            if ( ++i % cols_per_row == 0 ) {
-              t += '</tr>\n<tr>';
-            }
+          t += '<td><a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a></td>';
+          if ( i++ % 4 == 0 ) {
+            t += '</tr>\n<tr>';
           }
         })
-
-        for (i = i % cols_per_row; i<cols_per_row; i++) {
-          t += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
-        }
         t += '</tr>\n';
-
-        if (menu_count >= 1) {
-          for (menu_count = menu_count % cols_per_row; menu_count<cols_per_row; menu_count++) {
-            menu_html += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
-          }
-          t += menu_html + '</tr>\n';
-        }
-
-        console.log("passo 3: a lista \"" + list + "\" lida do hasbks[]!");
+        console.log("passo 3: a lista \"" + list + "\" lida do hashbks{}!");
       } else {
         t += "遠端書籤擷取錯誤！！";
       }
       console.log("passo 4");
       t += '</td></tr>';
-      t += '</tbody>';
-      t += '</table>';
-      $("#bks").html(t);
-
-      refresh_keynavgator_table();
+      // reload soh funfou no primeiro carregamento
+      table_reload_rows(t);
     });
   }, 250);
   
+
   // no final
   window.addEventListener('load', function() {
 
@@ -239,7 +222,25 @@
       <h4><tt><center><div id="time">HH:MM:SS</div></center></tt></h4>
     </header>
 
-<div id="bks">初始化中 ...</div>
+<div id="bks">
+  <table id='example5' width='100%' class='table bk'>
+    <tbody>
+      <tr>
+        <th colspan=4>初始化中 ...</th>
+      </tr>
+        <td width="25%"><a href="http://www.maplestage.com/episode?type=show&region=tw"><div style="height:100%;width:100%">楓林網 - 台灣綜藝</div></a></td>
+        <td width="25%"><a href="http://www.lovetvshow.com/"><div style="height:100%;width:100%">Love TV Show 首頁</div></a></td>
+        <td width="25%"><a href="http://www.taiwanus.net/index.php"><div style="height:100%;width:100%">台灣海外網</div></a></td>
+        <td width="25%"><a href="https://www.youtube.com/watch?v=XxJKnDLYZz4&list=PLgrrYJI4sXsJ-DTYOyIKi2bLYcdfMx06u"><div style="height:100%;width:100%">台灣電視直播</div></a></td>
+      <tr>
+        <td width='25%'><a href="http://jefify.github.io/"><div style="height:100%;width:100%">Jefify's GitHub Frontpage</div></a></td>
+        <td width='25%'><a href="https://github.io/jefify/"><div style="height:100%;width:100%">Jefify's GitHub Projects</div></a></td>
+        <td width='25%'><a href="http://jefify.github.io/kidbk/saved_io.html"><div style="height:100%;width:100%">Kidbk2 (new,ajax)</div></a></td>
+        <td width='25%'><a href="http://jefify.github.io/kidbk/nekman/kidbk.html"><div style="height:100%;width:100%">Kidbk (static,nekman)</div></a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 </div> <!-- main div end -->
 
