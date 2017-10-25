@@ -123,6 +123,9 @@
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }
+        if ( list != "level0" ) {
+            hashbks[list]["回主頁"] = "level0.saved.io";
+        }
         console.log("AJAX: " + list + " iterated!");
         d.resolve();
       })
@@ -178,13 +181,13 @@
           }
         })
 
-        for (i = i % cols_per_row; i<cols_per_row; i++) {
+        for (i = i % cols_per_row; i>0 & i<cols_per_row; i++) {
           t += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
         }
         t += '</tr>\n';
 
         if (menu_count >= 1) {
-          for (menu_count = menu_count % cols_per_row; menu_count<cols_per_row; menu_count++) {
+          for (menu_count = menu_count % cols_per_row; menu_count>0 & menu_count<cols_per_row; menu_count++) {
             menu_html += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
           }
           t += menu_html + '</tr>\n';
