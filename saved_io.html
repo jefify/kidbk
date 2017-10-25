@@ -123,7 +123,7 @@
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }
-        if ( list != "level0" ) {
+        if ( list != "level0" ) { // peseudo link
             hashbks[list]["回主頁"] = "level0.saved.io";
         }
         console.log("AJAX: " + list + " iterated!");
