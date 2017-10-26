@@ -43,7 +43,14 @@
   var mykey = "cdTegvbP9nlNFc2v4zXnAs0fEdwGUszb";
   var mydevkey = "3YPwjgYffEJGFyit6aPCEImz3ldffiTq";
   var hashbks = {};
-  var cols_per_row = 4;
+  var hashlist = { level0: "主頁" };
+  var lastlist = null;
+  var max_cols_per_row = 4;
+
+  window.onpopstate =  function(event) {
+    var currentState = history.state;
+    write_bookmark_table(currentState.list);
+  }
 
   // https://davidwalsh.name/javascript-debounce-function
   function debounce(func, wait, immediate) {
@@ -109,10 +116,10 @@
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
     $.ajax({
-      timeout: 2000,
+      timeout: 3500,
       type: "GET",
       dataType: "jsonp",
-      url: protocol + '://111query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
+      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
     })
       .done( function(resp) {
         console.log("AJAX success");
@@ -124,14 +131,11 @@
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }
-        if ( list != "level0" ) { // peseudo link
-            hashbks[list]["回主頁"] = "level0.saved.io";
-        }
         console.log("AJAX: " + list + " iterated!");
         d.resolve();
       })
-      .fail(function() {
-        hashbks[list]["遠端書籤擷取錯誤！！"] = window.location.href;
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        hashbks[list]["遠端書籤擷取錯誤 (" + textStatus + ")！ 按此再試一次 ..."] = window.location.href;
         console.log("AJAX error");
         d.resolve();
       })
@@ -141,7 +145,7 @@
     return d.promise();
   }
 
-  var write_bookmark_table = debounce( function (list, title) {
+  var write_bookmark_table = debounce( function (list) {
     console.log("passo 1");
     var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
       if ($('#bks').length) {
@@ -149,16 +153,22 @@
         clearInterval(checkExist);
       }
     }, 100); // check every 100ms
-    $("#bks").html("讀取 " + list + " 中 ..."); // aqui nao pega ainda o div?
+    $("#bks").html("讀取 " + list + " 中 ...");
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
       console.log("passo 2");
       if (hashbks[list]) {
-        if ( list != "level0" ) {
-          t += '<tr><th colspan=' + cols_per_row + '>' + title + '</th></tr>\n';
+        var cols_per_row = Object.keys(hashbks[list]).length;
+        if (cols_per_row > max_cols_per_row) {
+          cols_per_row = max_cols_per_row;
         }
+
+        if ( list != "level0" ) {
+          t += '<tr><th colspan=' + cols_per_row + '>' + hashlist[list] + '</th></tr>\n';
+        }
+
         var i = 0;
         t += '<tr>\n';
         var menu_count = 0; var menu_html = "<tr><th colspan=4>分類</th></tr><tr>\n"; //menus
@@ -166,7 +176,9 @@
           // https://javascript.info/regexp-methods
           var url = hashbks[list][title];
           if (/saved\.io/i.test(url)) { // menu item
-            url = url.replace(/^(.*)\.saved\.io$/i, "javascript:write_bookmark_table('$1', '" + title + "')");
+            var menu_item = url.replace(/^(.*)\.saved\.io$/i, "$1");
+            hashlist[menu_item] = title;
+            url = "javascript:write_bookmark_table('" + menu_item + "')";
             menu_html += '<td width="' + (100 / cols_per_row) + '%">';
             menu_html += '<a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a>';
             menu_html += '</td>';
@@ -203,8 +215,16 @@
       t += '</td></tr>';
       t += '</tbody>';
       t += '</table>';
+      // history control https://stackoverflow.com/a/22819000
+      //window.history.pushState({state:'new'},'', $(this).attr('href'));
+      if ( lastlist == null ) {
+        window.history.replaceState({"list": list},'', $(this).attr('href'));
+      } else {
+        window.history.pushState({"list": list},'', window.location.href.replace(/\?.*$/, "") + (list=="level0"?"":"?list=" + list));
+        document.title = hashlist[list];
+      }
       $("#bks").html(t);
-
+      lastlist = list;
       refresh_keynavgator_table();
     });
   }, 250);
