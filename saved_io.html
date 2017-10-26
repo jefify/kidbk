@@ -109,9 +109,10 @@
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
     $.ajax({
+      timeout: 2000,
       type: "GET",
       dataType: "jsonp",
-      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
+      url: protocol + '://111query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
     })
       .done( function(resp) {
         console.log("AJAX success");
@@ -132,6 +133,7 @@
       .fail(function() {
         hashbks[list]["遠端書籤擷取錯誤！！"] = window.location.href;
         console.log("AJAX error");
+        d.resolve();
       })
       .always(function() {
         console.log("AJAX always pass here!");
