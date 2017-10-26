@@ -43,8 +43,9 @@
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">//<![CDATA[
-  var mykey = "cdTegvbP9nlNFc2v4zXnAs0fEdwGUszb";
-  var mydevkey = "3YPwjgYffEJGFyit6aPCEImz3ldffiTq";
+  var url = new URL(window.location.href);
+  var mykey = url.searchParams.get("mykey");
+  var mydevkey = url.searchParams.get("mydevkey");
   var hashbks = {};
   var hashlist = { level0: "主頁" };
   var lastlist = null;
@@ -112,14 +113,16 @@
     if (typeof refresh === 'undefined') { refresh = 'no'; }
     if ( hashbks[list] && refresh == 'no' ) {
       console.log(list + " encontrado jah no cache!");
+      $("#bks").append("有快取，直接用！");
       d.resolve();
       return d.promise();
     }
+    $("#bks").append("從遠端存取中 …");
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
     $.ajax({
-      timeout: 3500,
+      timeout: 4000,
       type: "GET",
       dataType: "jsonp",
       url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
@@ -156,7 +159,7 @@
         clearInterval(checkExist);
       }
     }, 100); // check every 100ms
-    $("#bks").html("讀取 " + list + " 中 ...");
+    $("#bks").html("讀取" + hashlist[list] + " (" + list + ") ");
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
