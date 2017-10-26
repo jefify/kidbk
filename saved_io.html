@@ -32,6 +32,9 @@
       text-decoration: none;
       border-radius: 4px;
     }
+    .listitem {
+      background: #cdb;
+    }
   </style>    
 
   <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
@@ -48,8 +51,8 @@
   var max_cols_per_row = 4;
 
   window.onpopstate =  function(event) {
-    var currentState = history.state;
-    write_bookmark_table(currentState.list);
+    lastlist = history.state.list;
+    write_bookmark_table(lastlist==null?"level0":lastlist);
   }
 
   // https://davidwalsh.name/javascript-debounce-function
@@ -179,7 +182,7 @@
             var menu_item = url.replace(/^(.*)\.saved\.io$/i, "$1");
             hashlist[menu_item] = title;
             url = "javascript:write_bookmark_table('" + menu_item + "')";
-            menu_html += '<td width="' + (100 / cols_per_row) + '%">';
+            menu_html += '<td class="listitem" width="' + (100 / cols_per_row) + '%">';
             menu_html += '<a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a>';
             menu_html += '</td>';
             if ( ++menu_count % cols_per_row == 0 ) {
@@ -218,7 +221,7 @@
       // history control https://stackoverflow.com/a/22819000
       //window.history.pushState({state:'new'},'', $(this).attr('href'));
       if ( lastlist == null ) {
-        window.history.replaceState({"list": list},'', $(this).attr('href'));
+        window.history.replaceState({"list": null},'', $(this).attr('href'));
       } else {
         window.history.pushState({"list": list},'', window.location.href.replace(/\?.*$/, "") + (list=="level0"?"":"?list=" + list));
         document.title = hashlist[list];
