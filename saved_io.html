@@ -173,7 +173,7 @@
             }
           } else { // normal url
             t += '<td width="' + (100 / cols_per_row) + '%">';
-            t += '<a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a>';
+            t += '<a href="' + url + '"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + url.replace(/^([a-z]+:\/\/[^\/]+).*$/, "$1") + '"> ' + title + '</div></a>';
             t += '</td>';
             if ( ++i % cols_per_row == 0 ) {
               t += '</tr>\n<tr>';
@@ -181,13 +181,13 @@
           }
         })
 
-        for (i = i % cols_per_row; i>0 & i<cols_per_row; i++) {
+        for (i = i % cols_per_row; i>0 && i<cols_per_row; i++) {
           t += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
         }
         t += '</tr>\n';
 
         if (menu_count >= 1) {
-          for (menu_count = menu_count % cols_per_row; menu_count>0 & menu_count<cols_per_row; menu_count++) {
+          for (menu_count = menu_count % cols_per_row; menu_count>0 && menu_count<cols_per_row; menu_count++) {
             menu_html += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
           }
           t += menu_html + '</tr>\n';

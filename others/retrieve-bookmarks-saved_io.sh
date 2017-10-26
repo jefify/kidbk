@@ -25,6 +25,7 @@ do
   fi
 done
 
+set -x
 for l in "${_lists[@]}"
 do
   echo "#$l ?????"
