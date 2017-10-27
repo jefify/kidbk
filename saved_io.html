@@ -24,7 +24,7 @@
     }
     th {
       font-size: 23px;
-      background-color: #c5d2b3;
+      background-color: #ceddba;
     }
     .active {
       background: #69f;
@@ -195,7 +195,7 @@
             hashlist[menu_item] = title;
             url = "javascript:write_bookmark_table('" + menu_item + "')";
             menu_html += '<td width="' + (100 / cols_per_row) + '%">';
-            menu_html += '<a href="' + url + '"><div style="height:100%;width:100%;text-align:center;">[' + title + ']</div></a>';
+            menu_html += '<a href="' + url + '"><div style="height:100%;width:100%;text-align:center;">' + title + '</div></a>';
             menu_html += '</td>';
             if ( menu_count % cols_per_row == 0 ) {
               menu_html += '</tr>\n';
