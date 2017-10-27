@@ -43,9 +43,8 @@
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">//<![CDATA[
-  var url = new URL(window.location.href);
-  var mykey = url.searchParams.get("mykey");
-  var mydevkey = url.searchParams.get("mydevkey");
+  var mykey = window.location.href.replace(/^.*[&?]mykey=([^&]+).*/, "$1");
+  var mydevkey = window.location.href.replace(/^.*[&?]mydevkey=([^&]+).*/, "$1");
   var hashbks = {};
   var hashlist = { level0: "主頁" };
   var lastlist = null;
@@ -129,7 +128,11 @@
     })
       .done( function(resp) {
         console.log("AJAX success");
-        if ( resp.query.results.json.json == null ) {
+        if ( resp.query.results == null ) {
+          hashbks[list]["找不到書籤 (key, devkey)?"] = window.location.href;
+          d.resolve();
+          return d.promise();
+        } else if ( resp.query.results.json.json == null ) {
           var obj = resp.query.results.json; // if single object
           hashbks[list][obj.bk_title] = obj.bk_url;
         } else {
@@ -141,7 +144,8 @@
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        hashbks[list]["遠端書籤擷取錯誤 (" + textStatus + ")！ 按此再試一次 ..."] = window.location.href;
+        hashbks[list]["(" + textStatus + ") 讀不到遠端書籤 按此再試一次 ..."] = window.location.href;
+        hashbks[list]["或試看看舊版"] = "https://jefify.github.io/kidbk/nekman/kidbk.html";
         console.log("AJAX error");
         d.resolve();
       })
@@ -176,27 +180,32 @@
         }
 
         var i = 0;
-        t += '<tr>\n';
-        var menu_count = 0; var menu_html = "<tr><th colspan=4>分類</th></tr><tr>\n"; //menus
+        var menu_count = 0; var menu_html = "<tr><th colspan=4>分類</th></tr>\n"; //menus
         Object.keys(hashbks[list]).sort().forEach(function (title) {  // https://stackoverflow.com/a/11273782
           // https://javascript.info/regexp-methods
           var url = hashbks[list][title];
           if (/saved\.io/i.test(url)) { // menu item
+            if ( ++menu_count % cols_per_row == 1 ) {
+              menu_html += '<tr>\n';
+            }
             var menu_item = url.replace(/^(.*)\.saved\.io$/i, "$1");
             hashlist[menu_item] = title;
             url = "javascript:write_bookmark_table('" + menu_item + "')";
             menu_html += '<td class="listitem" width="' + (100 / cols_per_row) + '%">';
             menu_html += '<a href="' + url + '"><div style="height:100%;width:100%">' + title + '</div></a>';
             menu_html += '</td>';
-            if ( ++menu_count % cols_per_row == 0 ) {
-              menu_html += '</tr>\n<tr>';
+            if ( menu_count % cols_per_row == 0 ) {
+              menu_html += '</tr>\n';
             }
           } else { // normal url
+            if ( ++i % cols_per_row == 1 ) {
+              t += '<tr>\n';
+            }
             t += '<td width="' + (100 / cols_per_row) + '%">';
-            t += '<a href="' + url + '"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + url.replace(/^([a-z]+:\/\/[^\/]+).*$/, "$1") + '"> ' + title + '</div></a>';
+            t += '<a href="' + url + '"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + url.replace(/^([a-z]+:\/\/[^\/]+).*$/, "$1") + '" width="16" height="16"> ' + title + '</div></a>';
             t += '</td>';
-            if ( ++i % cols_per_row == 0 ) {
-              t += '</tr>\n<tr>';
+            if ( i % cols_per_row == 0 ) {
+              t += '</tr>\n';
             }
           }
         })
@@ -224,9 +233,9 @@
       // history control https://stackoverflow.com/a/22819000
       //window.history.pushState({state:'new'},'', $(this).attr('href'));
       if ( lastlist == null ) {
-        window.history.replaceState({"list": null},'', $(this).attr('href'));
+        window.history.replaceState({"list": null},'', window.location.href);
       } else {
-        window.history.pushState({"list": list},'', window.location.href.replace(/\?.*$/, "") + (list=="level0"?"":"?list=" + list));
+        window.history.pushState({"list": list},'', window.location.href);
         document.title = hashlist[list];
       }
       $("#bks").html(t);
