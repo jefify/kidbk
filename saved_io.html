@@ -113,6 +113,8 @@
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
     if (typeof refresh === 'undefined') { refresh = 'no'; }
+
+    $("#bks").html("讀取" + hashlist[list] + " (" + list + ") ");
     if ( hashbks[list] && refresh == 'no' ) {
       console.log(list + " encontrado jah no cache!");
       $("#bks").append("有快取，直接用！");
@@ -166,7 +168,6 @@
         clearInterval(checkExist);
       }
     }, 100); // check every 100ms
-    $("#bks").html("讀取" + hashlist[list] + " (" + list + ") ");
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
@@ -179,7 +180,12 @@
         }
 
         if ( list != "level0" ) {
-          t += '<tr><th colspan=' + cols_per_row + '>' + hashlist[list] + '</th></tr>\n';
+          if ( hashlist[list] == undefined ) {
+            t += '<tr><th colspan=' + cols_per_row + '>' + list + '</th></tr>\n';
+            t += '<tr><td colspan=' + cols_per_row + '><a href="javascript: alert();">重新讀取</a></td></tr>\n';
+          } else {
+            t += '<tr><th colspan=' + cols_per_row + '>' + hashlist[list] + '</th></tr>\n';
+          }
         }
 
         var i = 0;
