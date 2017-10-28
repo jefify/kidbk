@@ -182,7 +182,7 @@
         if ( list != "level0" ) {
           if ( hashlist[list] == undefined ) {
             t += '<tr><th colspan=' + cols_per_row + '>' + list + '</th></tr>\n';
-            t += '<tr><td colspan=' + cols_per_row + '><a href="javascript: alert();">重新讀取</a></td></tr>\n';
+            t += '<tr><td colspan=' + cols_per_row + '><div style="height:100%;width:100%"><a href="javascript: window.history.go(-1); return false;">前一頁</a></div></td></tr>\n';
           } else {
             t += '<tr><th colspan=' + cols_per_row + '>' + hashlist[list] + '</th></tr>\n';
           }
