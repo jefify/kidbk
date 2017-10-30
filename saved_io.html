@@ -49,13 +49,29 @@
   var mykey = window.location.href.replace(/^.*[&?]mykey=([^&]+).*/, "$1");
   var mydevkey = window.location.href.replace(/^.*[&?]mydevkey=([^&]+).*/, "$1");
   var hashbks = {};
-  var hashlist = { level0: "主頁" };
-  var lastlist = null;
+  var hashlist = { level0: "☆網路電視書籤☆" };
+  var currentlist = null;
+  var myhistorylist = [];
   var max_cols_per_row = 4;
 
   window.onpopstate =  function(event) {
-    lastlist = history.state.list;
-    write_bookmark_table(lastlist==null?"level0":lastlist);
+    // history control https://stackoverflow.com/a/29227026 , https://stackoverflow.com/a/22819000
+    // sempre manter um seugndo iten na pilha history
+    console.log("POP State\nhistory length = " + history.length + "\nhistory state = " + JSON.stringify(history.state, null, 4));
+
+    currentlist = null;
+    if ( myhistorylist.length == 0 ) {
+      // esta no fundo
+      alert( "bye :_(");
+      window.history.back();
+    } else {
+      var lastlist = myhistorylist.pop();
+      window.history.pushState(myhistorylist,'', window.location.href);
+      write_bookmark_table(lastlist);
+    }
+
+    //lastlist = history.state.list;
+    //write_bookmark_table(lastlist==null?"level0":lastlist);
   }
 
   // https://davidwalsh.name/javascript-debounce-function
@@ -75,6 +91,7 @@
   };
 
   function refresh_keynavgator_table() {
+    //* Ex5 of Nekman Keynavigator */
     require(['keynavigator-min'], function($) {
       var $rows = $('table#example5 > tbody td').keynavigator({
         keys: {
@@ -181,8 +198,7 @@
 
         if ( list != "level0" ) {
           if ( hashlist[list] == undefined ) {
-            t += '<tr><th colspan=' + cols_per_row + '>' + list + '</th></tr>\n';
-            t += '<tr><td colspan=' + cols_per_row + '><div style="height:100%;width:100%"><a href="javascript: window.history.go(-1); return false;">前一頁</a></div></td></tr>\n';
+            t += '<tr><th colspan=' + cols_per_row + '>' + list + '??? :(</th></tr>\n';
           } else {
             t += '<tr><th colspan=' + cols_per_row + '>' + hashlist[list] + '</th></tr>\n';
           }
@@ -199,7 +215,7 @@
             }
             var menu_item = url.replace(/^(.*)\.saved\.io$/i, "$1");
             hashlist[menu_item] = title;
-            url = "javascript:write_bookmark_table('" + menu_item + "')";
+            url = "javascript:write_bookmark_table('" + menu_item + "');";
             menu_html += '<td width="' + (100 / cols_per_row) + '%">';
             menu_html += '<a href="' + url + '"><div style="height:100%;width:100%;text-align:center;">' + title + '</div></a>';
             menu_html += '</td>';
@@ -211,7 +227,7 @@
               t += '<tr>\n';
             }
             t += '<td width="' + (100 / cols_per_row) + '%">';
-            t += '<a href="' + url + '"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + url.replace(/^([a-z]+:\/\/[^\/]+).*$/, "$1") + '" width="16" height="16"> ' + title + '</div></a>';
+            t += '<a href="javascript:gotoUrl(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + url.replace(/^([a-z]+:\/\/[^\/]+).*$/, "$1") + '" width="16" height="16"> ' + title + '</div></a>';
             t += '</td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
@@ -239,42 +255,63 @@
       t += '</td></tr>';
       t += '</tbody>';
       t += '</table>';
-      // history control https://stackoverflow.com/a/22819000
-      //window.history.pushState({state:'new'},'', $(this).attr('href'));
-      if ( lastlist == null ) {
-        window.history.replaceState({"list": null},'', window.location.href);
-      } else {
-        window.history.pushState({"list": list},'', window.location.href);
-        document.title = hashlist[list];
-      }
+
+      document.title = hashlist[list];
       $("#bks").html(t);
-      lastlist = list;
+
+      if (currentlist != null) {
+        myhistorylist.push(currentlist);
+      }
+      window.history.replaceState(myhistorylist,'', window.location.href);
+
+      console.log ("myhistorylist = " + myhistorylist.join() );
+      currentlist = list;
+
+
       refresh_keynavgator_table();
     });
   }, 250);
+
+  function gotoUrl (u) {
+    myhistorylist.push(currentlist);
+    window.history.replaceState(myhistorylist,'', window.location.href);
+    console.log ("gotoUrl: myhistorylist = " + myhistorylist.join());
+    window.location.href = u;
+  }
+
+  // time
+  function twoDigitTime(i) {
+    return (i < 10) ? "0" + i : i;
+  }
+
+  function startTime() {
+    var today = new Date(),
+    h = twoDigitTime(today.getHours()),
+    m = twoDigitTime(today.getMinutes()),
+    s = twoDigitTime(today.getSeconds());
+    $('#time').html(h + ":" + m + ":" + s);
+    t = setTimeout(function () { startTime() }, 500);
+  }
   
   // no final
   window.addEventListener('load', function() {
 
-    // time
-    function twoDigitTime(i) {
-      return (i < 10) ? "0" + i : i;
-    }
-
-    function startTime() {
-      var today = new Date(),
-      h = twoDigitTime(today.getHours()),
-      m = twoDigitTime(today.getMinutes()),
-      s = twoDigitTime(today.getSeconds());
-      $('#time').html(h + ":" + m + ":" + s);
-      t = setTimeout(function () { startTime() }, 500);
-    }
     startTime();
 
-    //* Ex5 of Nekman Keynavigator */
+    var inilist = "level0";
+    if (history.state != null) {
+      // was in another url
+      //alert("history state = " + JSON.stringify(history.state, null, 4));
+      //window.history.back();
+      myhistorylist = history.state;
+      inilist = myhistorylist.pop();
+    } else {
+      // my history control
+      window.history.pushState(myhistorylist, '', window.location.href);
+   }
 
     console.log('All assets are loaded')
-    write_bookmark_table("level0");
+    write_bookmark_table(inilist);
   })
 //]]></script>
 
