@@ -28,4 +28,4 @@ git rebase origin/master
 # aplicar modificacao ao master
 git checkout master
 git merge h
-git checkou h
+git checkout h
