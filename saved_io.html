@@ -46,13 +46,24 @@
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">//<![CDATA[
-  var mykey = window.location.href.replace(/^.*[&?]mykey=([^&]+).*/, "$1");
-  var mydevkey = window.location.href.replace(/^.*[&?]mydevkey=([^&]+).*/, "$1");
   var hashbks = {};
   var hashlist = { level0: "☆網路電視書籤☆" };
   var currentlist = null;
   var myhistorylist = [];
   var max_cols_per_row = 4;
+
+  function getUrlParm(name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null){
+       return null;
+    }
+    else{
+       return decodeURI(results[1]) || 0;
+    }
+  }
+
+  var mykey = getUrlParm("mykey");
+  var mydevkey = getUrlParm("mydevkey");
 
   window.onpopstate =  function(event) {
     mylog ("pop state");
@@ -153,7 +164,7 @@
     $.ajax({
       timeout: 5000,
       type: "GET",
-      dataType: "jsonp",
+      dataType: "json",
       url: protocol + '://cors.io/?http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
     })
       .done( function(resp) {
@@ -183,7 +194,7 @@
   }
 
   var write_bookmark_table = debounce( function (list) {
-    mylog("passo 1");
+    mylog("passo 1: list=" + list);
     var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
       if ($('#bks').length) {
         mylog("#bks now exists!");
@@ -194,7 +205,7 @@
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
-      mylog("passo 2");
+      mylog("passo 2: entering retrieve_list("+list+")");
       if (hashbks[list]) {
         var cols_per_row = Object.keys(hashbks[list]).length;
         if (cols_per_row > max_cols_per_row) {
