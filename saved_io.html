@@ -160,7 +160,7 @@
     $("#bks").append("從遠端存取中 …");
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
-    var protocol = (window.location.href.split(":")[0]=="https"?"https":"http");
+    var protocol = (window.location.href.split(":")[0]=="http"?"http":"https"); // pref https
     $.ajax({
       timeout: 5000,
       type: "GET",
