@@ -15,5 +15,12 @@ git branch -a # list all
 git checkout h
 
 # h
-[ "$(git rev-parse --abbrev-ref HEAD)" = h ] && git add saved_io.html
+[ "$(git rev-parse --abbrev-ref HEAD)" = h ] &&
+git add --all &&
+git commit -m "Teste $(date +"%Y-%m-%d %H:%M")" &&
+git push
+
+# rebasing to master https://stackoverflow.com/a/7929499
+git fetch origin/master
+git rebase origin/master
 
