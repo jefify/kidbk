@@ -18,6 +18,9 @@
       padding: 3%;
       margin-bottom: 60px;
     }
+    table {
+      table-layout: fixed;
+    }
     td {
       font-size: 20px;
       background-color: #e5e3ff;
@@ -35,6 +38,18 @@
     .listitem {
       background: #cdb;
       text-align: center;
+    }
+    .dbgcol {
+      display: inline-block;
+      vertical-align: top;
+      width: 30%;
+      background-color: red;
+    }
+    .maincol {
+      display: inline-block;
+      vertical-align: top;
+      background-color: yellow;
+      width: 60%;
     }
   </style>    
 
@@ -162,7 +177,7 @@
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     var protocol = (window.location.href.split(":")[0]=="http"?"http":"https"); // pref https
     $.ajax({
-      timeout: 5000,
+      timeout: 20000,
       type: "GET",
       dataType: "json",
       url: protocol + '://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
@@ -205,7 +220,7 @@
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
-      mylog("passo 2: entering retrieve_list("+list+")");
+      mylog("passo 2: retrieve_list("+list+") done");
       if (hashbks[list]) {
         var cols_per_row = Object.keys(hashbks[list]).length;
         if (cols_per_row > max_cols_per_row) {
@@ -232,7 +247,7 @@
             var menu_item = url.replace(/^(.*)\.saved\.io$/i, "$1");
             hashlist[menu_item] = title;
             url = "javascript:write_bookmark_table('" + menu_item + "');";
-            menu_html += '<td width="' + (100 / cols_per_row) + '%">';
+            menu_html += '<td>';
             menu_html += '<a href="' + url + '"><div style="height:100%;width:100%;text-align:center;">' + title + '</div></a>';
             menu_html += '</td>';
             if ( menu_count % cols_per_row == 0 ) {
@@ -242,7 +257,7 @@
             if ( ++i % cols_per_row == 1 ) {
               t += '<tr>\n';
             }
-            t += '<td width="' + (100 / cols_per_row) + '%">';
+            t += '<td>';
             t += '<a href="javascript:gotoUrl(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + url.replace(/^([a-z]+:\/\/[^\/]+).*$/, "$1") + '" width="16" height="16"> ' + title + '</div></a>';
             t += '</td>';
             if ( i % cols_per_row == 0 ) {
@@ -252,13 +267,13 @@
         })
 
         for (i = i % cols_per_row; i>0 && i<cols_per_row; i++) {
-          t += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
+          t += '<td>&nbsp;</td>';
         }
         t += '</tr>\n';
 
         if (menu_count >= 1) {
           for (menu_count = menu_count % cols_per_row; menu_count>0 && menu_count<cols_per_row; menu_count++) {
-            menu_html += '<td width="' + (100 / cols_per_row) + '%">&nbsp;</td>';
+            menu_html += '<td>&nbsp;</td>';
           }
           t += menu_html + '</tr>\n';
         }
@@ -267,11 +282,11 @@
       } else {
         t += "遠端書籤擷取錯誤！！";
       }
-      mylog("passo 4");
       t += '</td></tr>';
       t += '</tbody>';
       t += '</table>';
 
+      mylog("passo 4: string for #bks prepared");
       document.title = hashlist[list];
       $("#bks").html(t);
 
@@ -320,11 +335,12 @@
     startTime();
 
     var inilist = "level0";
-    if (history.state != null) {
+    if (history.state != null && myhistorylist.length != 0) {
       // was in another url
       //alert("history state = " + JSON.stringify(history.state, null, 4));
       //window.history.back();
       myhistorylist = history.state;
+      mylog("History not null, state=" + myhistorylist);
       inilist = myhistorylist.pop();
     } else {
       // my history control
@@ -338,21 +354,15 @@
 
 </head>
 <body style="background-color: #dae0d2;">
-
-  <div class="wrapper">
+  <div class="wrapper maincol"> <!-- main -->
     <header>
       <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
       <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
       <h4><tt><center><div id="time">HH:MM:SS</div></center></tt></h4>
     </header>
-
-
-<div id="bks">初始化中 ...</div>
-
-<div id="debug"></div>
-
-</div> <!-- main div end -->
-
+    <div id="bks">初始化中 ...</div>
+  </div> <!-- main -->
+  <div id="debug" class="dbgcol"></div>
 </body>
 </html>
 
