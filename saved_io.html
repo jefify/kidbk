@@ -177,13 +177,13 @@
         d.resolve();
       })
       .always(function() {
-        //mylog("AJAX always pass here!");
+        mylog("AJAX always pass here!");
       });
     return d.promise();
   }
 
   var write_bookmark_table = debounce( function (list) {
-    //mylog("passo 1");
+    mylog("passo 1");
     var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
       if ($('#bks').length) {
         mylog("#bks now exists!");
@@ -194,7 +194,7 @@
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
-      //mylog("passo 2");
+      mylog("passo 2");
       if (hashbks[list]) {
         var cols_per_row = Object.keys(hashbks[list]).length;
         if (cols_per_row > max_cols_per_row) {
@@ -256,7 +256,7 @@
       } else {
         t += "遠端書籤擷取錯誤！！";
       }
-      //mylog("passo 4");
+      mylog("passo 4");
       t += '</td></tr>';
       t += '</tbody>';
       t += '</table>';
