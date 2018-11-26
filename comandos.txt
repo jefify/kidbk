@@ -21,6 +21,6 @@ git commit -m "Teste $(date +"%Y-%m-%d %H:%M")" &&
 git push
 
 # rebasing to master https://stackoverflow.com/a/7929499
-git fetch origin/master
+git fetch origin
 git rebase origin/master
 
