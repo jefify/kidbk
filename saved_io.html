@@ -154,19 +154,16 @@
       timeout: 5000,
       type: "GET",
       dataType: "jsonp",
-      url: protocol + '://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from json where url="http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey + '"') + '&format=json&callback=?'
+      url: protocol + '://cors.io/?http://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
     })
       .done( function(resp) {
         mylog("AJAX success");
-        if ( resp.query.results == null ) {
+        if ( resp == null ) {
           hashbks[list]["找不到書籤 (key, devkey)?"] = window.location.href;
           d.resolve();
           return d.promise();
-        } else if ( resp.query.results.json.json == null ) {
-          var obj = resp.query.results.json; // if single object
-          hashbks[list][obj.bk_title] = obj.bk_url;
         } else {
-          $.each(resp.query.results.json.json, function(i, obj){ // if object array
+          $.each(resp, function(i, obj){ // if object array
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }

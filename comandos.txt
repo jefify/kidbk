@@ -3,3 +3,17 @@ git add --all .
 git commit -m "Teste $(date +"%Y-%m-%d %H:%M")"
 git commit -m "Teste $(date +"%Y-%m-%d %H:%M") - comentario"
 git push
+
+
+git remote -v
+git config remote.origin.url git@github.com:jefify/kidbk.git
+git config user.email "$USER@`hostname -f`"
+git config user.name "jefify"
+
+# branch
+git branch -a # list all
+git checkout h
+
+# h
+[ "$(git rev-parse --abbrev-ref HEAD)" = h ] && git add saved_io.html
+
