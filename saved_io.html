@@ -5,8 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!--<title>Test02 Nekman</title>-->
-  <title>網路電視書籤2</title>
+  <title>網路電視書籤 Ajax</title>
 
 
   <!--[if lt IE 9]>
@@ -39,19 +38,25 @@
       background: #cdb;
       text-align: center;
     }
-    .dbgcol {
+    #maincontent {
       display: inline-block;
       vertical-align: top;
-      width: 30%;
-      background-color: red;
+      width: 100%;
     }
-    .maincol {
-      display: inline-block;
+    #debug {
+      font-family: monospace;
+      font-size: 10px;
+      word-wrap: break-word;
+      display: none;
       vertical-align: top;
-      background-color: yellow;
-      width: 60%;
+      width: 0%;
+      background-color: #fcc;
     }
-  </style>    
+    #debug p{
+      margin-bottom: .3em;
+      line-height: 100%;
+    }
+    </style>    
 
   <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" media="screen">
 
@@ -66,6 +71,22 @@
   var currentlist = null;
   var myhistorylist = [];
   var max_cols_per_row = 4;
+  var mylog = function (msg) { console.log(msg); };
+
+  function all_elements_loaded(){
+    if (/\/h\//.test(window.location.href)) {
+      hashlist = { level0: "【書籤測試】" };
+      console.log("#debug loaded!");
+      document.getElementById("debug").style.display = "inline-block";
+      document.getElementById("debug").style.width = "30%";
+      document.getElementById("maincontent").style.width = "69%";
+      document.getElementById("maincontent").style.backgroundColor = "#ef2";
+      mylog = function (msg) {
+        $("#debug").prepend("<p><b>" + getTimeHMS() + "</b> " + msg + "</p>\n");
+        console.log(msg);
+      }
+    } 
+  };
 
   function getUrlParm(name) {
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -76,6 +97,17 @@
        return decodeURI(results[1]) || 0;
     }
   }
+
+  function getUrlDomain(url) {
+    var results = new RegExp('://([^/]*)/').exec(url);
+    if (results==null){
+       return null;
+    }
+    else{
+       return results[1];
+    }
+  }
+
 
   var mykey = getUrlParm("mykey");
   var mydevkey = getUrlParm("mydevkey");
@@ -101,12 +133,6 @@
     //write_bookmark_table(lastlist==null?"level0":lastlist);
   }
 
-  function mylog(msg) {
-    if (/\/h\//.test(window.location.href) || /^file/i.test(window.location.href)) {
-      $("#debug").prepend(getTimeHMS() + " " + msg + "<br>\n");
-    }
-    console.log(msg);
-  }
 
   // https://davidwalsh.name/javascript-debounce-function
   function debounce(func, wait, immediate) {
@@ -183,7 +209,6 @@
       url: protocol + '://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
     })
       .done( function(resp) {
-        mylog("AJAX success");
         if ( resp == null ) {
           hashbks[list]["找不到書籤 (key, devkey)?"] = window.location.href;
           d.resolve();
@@ -193,29 +218,29 @@
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }
-        mylog("AJAX: (" + list + ") iterated!");
+        mylog("retrieve_list: AJAX: (" + list + ") iterated!");
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
         hashbks[list]["(" + textStatus + ") 讀不到遠端書籤 按此再試一次 ..."] = window.location.href;
         hashbks[list]["或試看看舊版"] = "https://jefify.github.io/kidbk/nekman/kidbk.html";
-        mylog("AJAX error");
+        mylog("retrieve_list: AJAX error");
         d.resolve();
       })
       .always(function() {
-        mylog("AJAX always pass here!");
+        mylog("retrieve_list: AJAX always pass here!");
       });
     return d.promise();
   }
 
   var write_bookmark_table = debounce( function (list) {
     mylog("passo 1: list=" + list);
-    var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
+    /*var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
       if ($('#bks').length) {
         mylog("#bks now exists!");
         clearInterval(checkExist);
       }
-    }, 100); // check every 100ms
+    }, 100); // check every 100ms */
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
@@ -258,7 +283,7 @@
               t += '<tr>\n';
             }
             t += '<td>';
-            t += '<a href="javascript:gotoUrl(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + url.replace(/^([a-z]+:\/\/[^\/]+).*$/, "$1") + '" width="16" height="16"> ' + title + '</div></a>';
+            t += '<a href="javascript:gotoUrl(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '" width="16" height="16"> ' + title + '</div></a>';
             t += '</td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
@@ -354,15 +379,16 @@
 
 </head>
 <body style="background-color: #dae0d2;">
-  <div class="wrapper maincol"> <!-- main -->
+  <div id="maincontent" class="wrapper"> <!-- INI: main div -->
     <header>
       <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
       <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
       <h4><tt><center><div id="time">HH:MM:SS</div></center></tt></h4>
     </header>
     <div id="bks">初始化中 ...</div>
-  </div> <!-- main -->
-  <div id="debug" class="dbgcol"></div>
+  </div> <!-- END: main div -->
+  <div id="debug">&nbsp;</div>
+  <script>all_elements_loaded();</script>
 </body>
 </html>
 

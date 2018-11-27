@@ -31,3 +31,8 @@ git merge h &&
 git commit -m "applied h" &&
 git push &&
 git checkout h
+
+
+# local test to have /h/ path
+ln -s ~/VCS/GitHub/kidbk/ /tmp/h
+
