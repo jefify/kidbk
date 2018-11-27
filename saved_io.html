@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>網路電視書籤 Ajax</title>
+  <title>{Ajax} 書籤</title>
 
 
   <!--[if lt IE 9]>
@@ -75,11 +75,11 @@
 
   function all_elements_loaded(){
     if (/\/h\//.test(window.location.href)) {
-      hashlist = { level0: "【書籤測試】" };
+      hashlist = { level0: "{測試} 書籤" };
       console.log("#debug loaded!");
       document.getElementById("debug").style.display = "inline-block";
       document.getElementById("debug").style.width = "30%";
-      document.getElementById("maincontent").style.width = "69%";
+      document.getElementById("maincontent").style.width = "68%";
       document.getElementById("maincontent").style.backgroundColor = "#ef2";
       mylog = function (msg) {
         $("#debug").prepend("<p><b>" + getTimeHMS() + "</b> " + msg + "</p>\n");
@@ -108,20 +108,18 @@
     }
   }
 
-
   var mykey = getUrlParm("mykey");
   var mydevkey = getUrlParm("mydevkey");
 
-  window.onpopstate =  function(event) {
-    mylog ("pop state");
+  window.onpopstate = function(event) {
     // history control https://stackoverflow.com/a/29227026 , https://stackoverflow.com/a/22819000
     // sempre manter um seugndo iten na pilha history
-    mylog("POP State\nhistory length = " + history.length + "\nhistory state = " + JSON.stringify(history.state, null, 4));
+    mylog ("window.onpopstate(): history.length=" + window.history.length);
 
     currentlist = null;
     if ( myhistorylist.length == 0 ) {
       // esta no fundo
-      alert( "bye :_(");
+      //$("#maincontent").html("<h1>bye ...</h1>").done();
       window.history.back();
     } else {
       var lastlist = myhistorylist.pop();
@@ -133,6 +131,9 @@
     //write_bookmark_table(lastlist==null?"level0":lastlist);
   }
 
+  function history_control_dump (prefix) {
+      mylog ("HISTORY" + (prefix?" "+prefix:"") + ": [" + myhistorylist.join() +"] cur=" + currentlist);
+  }
 
   // https://davidwalsh.name/javascript-debounce-function
   function debounce(func, wait, immediate) {
@@ -191,9 +192,9 @@
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
     if (typeof refresh === 'undefined') { refresh = 'no'; }
 
-    $("#bks").html("讀取" + hashlist[list] + " (" + list + ") ");
+    $("#bks").html("讀取 <b>" + (hashlist[list]?hashlist[list]:"") + "</b> [" + list + "] ");
     if ( hashbks[list] && refresh == 'no' ) {
-      mylog(list + " encontrado jah no cache!");
+      mylog("retrieve_list(" + list + "): using CACHE");
       $("#bks").append("有快取，直接用！");
       d.resolve();
       return d.promise();
@@ -218,23 +219,23 @@
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }
-        mylog("retrieve_list: AJAX: (" + list + ") iterated!");
+        mylog("retrieve_list(" + list + "): hasbks[] filled by json object");
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
         hashbks[list]["(" + textStatus + ") 讀不到遠端書籤 按此再試一次 ..."] = window.location.href;
         hashbks[list]["或試看看舊版"] = "https://jefify.github.io/kidbk/nekman/kidbk.html";
-        mylog("retrieve_list: AJAX error");
+        mylog("retrieve_list(" + list + "): AJAX error");
         d.resolve();
       })
       .always(function() {
-        mylog("retrieve_list: AJAX always pass here!");
+        //mylog("retrieve_list(" + list + "): AJAX always pass here!");
       });
     return d.promise();
   }
 
   var write_bookmark_table = debounce( function (list) {
-    mylog("passo 1: list=" + list);
+    //mylog("write_bookmark_table("+list+") step1: begin");
     /*var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
       if ($('#bks').length) {
         mylog("#bks now exists!");
@@ -245,7 +246,7 @@
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
-      mylog("passo 2: retrieve_list("+list+") done");
+      //mylog("write_bookmark_table("+list+") step2: list retrieved");
       if (hashbks[list]) {
         var cols_per_row = Object.keys(hashbks[list]).length;
         if (cols_per_row > max_cols_per_row) {
@@ -253,8 +254,8 @@
         }
 
         if ( list != "level0" ) {
-          if ( hashlist[list] == undefined ) {
-            t += '<tr><th colspan=' + cols_per_row + '>' + list + '??? :(</th></tr>\n';
+          if ( hashlist[list] === undefined ) {
+            t += '<tr><th colspan=' + cols_per_row + '><b>' + list + '</b></th></tr>\n';
           } else {
             t += '<tr><th colspan=' + cols_per_row + '>' + hashlist[list] + '</th></tr>\n';
           }
@@ -303,7 +304,7 @@
           t += menu_html + '</tr>\n';
         }
 
-        mylog("passo 3: a lista \"" + list + "\" lida do hasbks[]!");
+        //mylog("write_bookmark_table("+list+") step3: hasbks[] iterated");
       } else {
         t += "遠端書籤擷取錯誤！！";
       }
@@ -311,7 +312,7 @@
       t += '</tbody>';
       t += '</table>';
 
-      mylog("passo 4: string for #bks prepared");
+      mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
       document.title = hashlist[list];
       $("#bks").html(t);
 
@@ -320,9 +321,8 @@
       }
       window.history.replaceState(myhistorylist,'', window.location.href);
 
-      mylog ("myhistorylist = " + myhistorylist.join() );
       currentlist = list;
-
+      history_control_dump();
 
       refresh_keynavgator_table();
     });
@@ -331,7 +331,7 @@
   function gotoUrl (u) {
     myhistorylist.push(currentlist);
     window.history.replaceState(myhistorylist,'', window.location.href);
-    mylog ("gotoUrl: myhistorylist = " + myhistorylist.join());
+    history_control_dump("gotoUrl:");
     window.location.href = u;
   }
 
@@ -356,23 +356,23 @@
   // no final
   window.addEventListener('load', function() {
 
-    mylog("Comecando Inicializacao");
+    mylog('All assets are loaded')
     startTime();
 
     var inilist = "level0";
-    if (history.state != null && myhistorylist.length != 0) {
+    if (history.state != null) {
       // was in another url
       //alert("history state = " + JSON.stringify(history.state, null, 4));
       //window.history.back();
       myhistorylist = history.state;
-      mylog("History not null, state=" + myhistorylist);
-      inilist = myhistorylist.pop();
+      history_control_dump("History not null, state:");
+      mylog("History not null, state: [" + myhistorylist.join() +"]");
+      if (myhistorylist.length != 0) inilist = myhistorylist.pop();
     } else {
       // my history control
       window.history.pushState(myhistorylist, '', window.location.href);
    }
 
-    mylog('All assets are loaded')
     write_bookmark_table(inilist);
   })
 //]]></script>
@@ -387,7 +387,7 @@
     </header>
     <div id="bks">初始化中 ...</div>
   </div> <!-- END: main div -->
-  <div id="debug">&nbsp;</div>
+  <div id="debug"></div>
   <script>all_elements_loaded();</script>
 </body>
 </html>
