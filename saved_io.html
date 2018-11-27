@@ -38,6 +38,10 @@
       background: #cdb;
       text-align: center;
     }
+    #time {
+      font-family: monospace;
+      color: #555;
+    }
     #maincontent {
       display: inline-block;
       vertical-align: top;
@@ -81,7 +85,7 @@
       document.getElementById("debug").style.width = "30%";
       document.getElementById("maincontent").style.width = "70%";
       document.getElementById("maincontent").style.backgroundColor = "#ef2";
-      document.body.style.padding = "0%";
+      document.body.style.padding = "0.5%";
       mylog = function (msg) {
         $("#debug").prepend("<p><b>" + getTimeHMS() + "</b> " + msg + "</p>\n");
         console.log(msg);
@@ -243,6 +247,7 @@
         clearInterval(checkExist);
       }
     }, 100); // check every 100ms */
+    var timerBegin = performance.now();
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
@@ -315,6 +320,9 @@
 
       mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
       document.title = hashlist[list];
+      var timerEnd = performance.now();
+      mylog (timerBegin + " " + timerEnd) ;
+      t += '<center>讀取時間： ' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒</center>';
       $("#bks").html(t);
 
       if (currentlist != null) {
@@ -349,8 +357,16 @@
     return (h + ":" + m + ":" + s);
   }
 
+  function getFullTime() {
+    var today = new Date(),
+    y = today.getFullYear();
+    mo = twoDigitTime(today.getMonth());
+    d = twoDigitTime(today.getDate());
+    return (y + "年" + mo + "月" + d + "日 " + getTimeHMS());
+  }
+
   function startTime() {
-    $('#time').html(getTimeHMS());
+    $('#time').html(getFullTime());
     t = setTimeout(function () { startTime() }, 500);
   }
   
@@ -366,8 +382,7 @@
       //alert("history state = " + JSON.stringify(history.state, null, 4));
       //window.history.back();
       myhistorylist = history.state;
-      history_control_dump("History not null, state:");
-      mylog("History not null, state: [" + myhistorylist.join() +"]");
+      history_control_dump("History not null");
       if (myhistorylist.length != 0) inilist = myhistorylist.pop();
     } else {
       // my history control
@@ -384,7 +399,7 @@
     <header>
       <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
       <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
-      <h4><tt><center><div id="time">HH:MM:SS</div></center></tt></h4>
+      <h5><tt><center><div id="time">HH:MM:SS</div></center></tt></h5>
     </header>
     <div id="bks">初始化中 ...</div>
   </div><!-- END: main div --><div id="debug"></div>
