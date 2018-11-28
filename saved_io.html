@@ -41,9 +41,21 @@
       background: #cdb;
       text-align: center;
     }
-    #time {
-      font-family: monospace;
+    #dateinfo {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 80%;
+      font-family: serif;
       color: #555;
+    }
+    #timeinfo {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: monospace;
+      font-size: 120%;
+      font-family: serif;
+      color: #555;
+      padding-left: 1em;
     }
     #maincontent {
       display: inline-block;
@@ -57,10 +69,10 @@
       display: none;
       vertical-align: top;
       width: 0%;
-      background-color: #fcc;
+      background-color: #ffdfdf;
     }
     #debug p{
-      margin-bottom: .3em;
+      margin-bottom: .4em;
       line-height: 100%;
     }
     </style>    
@@ -70,18 +82,19 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script src="scripts/calendar.js"></script>
 
 <script type="text/javascript">//<![CDATA[
   var hashbks = {};
-  var hashlist = { level0: "☆網路電視書籤☆" };
+  var hashlistname = { level0: "☆網路電視書籤☆" };
   var currentlist = null;
-  var myhistorylist = [];
+  var myhistlist = [];
   var max_cols_per_row = 4;
   var mylog = function (msg) { console.log(msg); };
 
   function all_elements_loaded(){
     if (/\/h\//.test(window.location.href)) {
-      hashlist = { level0: "{測試} 書籤" };
+      hashlistname = { level0: "{測試} 書籤" };
       console.log("#debug loaded!");
       document.getElementById("debug").style.display = "inline-block";
       document.getElementById("debug").style.width = "30%";
@@ -89,7 +102,7 @@
       document.getElementById("maincontent").style.backgroundColor = "#ef2";
       document.body.style.padding = "0.5%";
       mylog = function (msg) {
-        $("#debug").prepend("<p><b>" + getTimeHMS() + "</b> " + msg + "</p>\n");
+        $("#debug").prepend("<p><b>" + get_time_HMS() + "</b> " + msg + "</p>\n");
         console.log(msg);
       }
     } 
@@ -124,13 +137,13 @@
     mylog ("window.onpopstate(): history.length=" + window.history.length);
 
     currentlist = null;
-    if ( myhistorylist.length == 0 ) {
+    if ( myhistlist.length == 0 ) {
       // esta no fundo
       //$("#maincontent").html("<h1>bye ...</h1>").done();
       window.history.back();
     } else {
-      var lastlist = myhistorylist.pop();
-      window.history.pushState(myhistorylist,'', window.location.href);
+      var lastlist = myhistlist.pop();
+      window.history.pushState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
       write_bookmark_table(lastlist);
     }
 
@@ -139,7 +152,7 @@
   }
 
   function history_control_dump (prefix) {
-      mylog ("HISTORY" + (prefix?" "+prefix:"") + ": [" + myhistorylist.join() +"] cur=" + currentlist);
+      mylog ("HISTCTRL(" + history.length+ ")" + (prefix?" <b>"+prefix+"</b>":"") + ": [" + myhistlist.join() +"] cur=" + currentlist);
   }
 
   // https://davidwalsh.name/javascript-debounce-function
@@ -160,7 +173,7 @@
 
   function refresh_keynavgator_table() {
     //* Ex5 of Nekman Keynavigator */
-    require(['keynavigator-min'], function($) {
+    require(['scripts/keynavigator-min'], function($) {
       var $rows = $('table#example5 > tbody td').keynavigator({
         keys: {
           enter: function($el) {
@@ -199,7 +212,7 @@
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
     if (typeof refresh === 'undefined') { refresh = 'no'; }
 
-    $("#bks").html("讀取 <b>" + (hashlist[list]?hashlist[list]:"") + "</b> [" + list + "] ");
+    $("#bks").html("讀取 <b>" + (hashlistname[list]?hashlistname[list]:"") + "</b> [" + list + "] ");
     if ( hashbks[list] && refresh == 'no' ) {
       mylog("retrieve_list(" + list + "): using CACHE");
       $("#bks").append("有快取，直接用！");
@@ -261,10 +274,10 @@
         }
 
         if ( list != "level0" ) {
-          if ( hashlist[list] === undefined ) {
+          if ( hashlistname[list] === undefined ) {
             t += '<tr><th colspan=' + cols_per_row + '><b>' + list + '</b></th></tr>\n';
           } else {
-            t += '<tr><th colspan=' + cols_per_row + '>' + hashlist[list] + '</th></tr>\n';
+            t += '<tr><th colspan=' + cols_per_row + '>' + hashlistname[list] + '</th></tr>\n';
           }
         }
 
@@ -278,7 +291,7 @@
               menu_html += '<tr>\n';
             }
             var menu_item = url.replace(/^(.*)\.saved\.io$/i, "$1");
-            hashlist[menu_item] = title;
+            hashlistname[menu_item] = title;
             url = "javascript:write_bookmark_table('" + menu_item + "');";
             menu_html += '<td>';
             menu_html += '<a href="' + url + '"><div style="height:100%;width:100%;text-align:center;">' + title + '</div></a>';
@@ -320,28 +333,26 @@
       t += '</table>';
 
       mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
-      document.title = hashlist[list];
+      document.title = hashlistname[list];
       var timerEnd = performance.now();
       t += '<center><small>讀取時間： ' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒</small></center>';
       $("#bks").html(t);
 
       if (currentlist != null) {
-        myhistorylist.push(currentlist);
+        myhistlist.push(currentlist);
       }
-      window.history.replaceState(myhistorylist,'', window.location.href);
+      window.history.replaceState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
 
       currentlist = list;
       history_control_dump();
-
-      mylog("AQUI: " + JSON.stringify( { myhist: myhistorylist, hashbks: hashbks}, null, 4));
 
       refresh_keynavgator_table();
     });
   }, 250);
 
   function gotoUrl (u) {
-    myhistorylist.push(currentlist);
-    window.history.replaceState(myhistorylist,'', window.location.href);
+    myhistlist.push(currentlist);
+    window.history.replaceState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
     history_control_dump("gotoUrl:");
     window.location.href = u;
   }
@@ -351,33 +362,40 @@
     return (i < 10) ? "0" + i : i;
   }
 
-  function getTimeHMS() {
+  function get_time_HMS() {
     var today = new Date(),
     h = twoDigitTime(today.getHours()),
     m = twoDigitTime(today.getMinutes()),
     s = twoDigitTime(today.getSeconds());
+    if (h+m+s < 3) set_dateinfo;
     return (h + ":" + m + ":" + s);
   }
 
-  function getFullTime() {
+  function get_dateinfo() {
     var today = new Date(),
     y = today.getFullYear();
     mo = twoDigitTime(today.getMonth()+1);
     d = twoDigitTime(today.getDate());
-    w = Array("日","一","二","三","四","五","六")[today.getDay()];
-    return (y + "年" + mo + "月" + d + "日 星期" + w + " " + getTimeHMS());
+    var c = calendar.solar2lunar(y, mo, d);
+    //mylog("<pre>c: " + JSON.stringify( c, null, 4) + "</pre>");
+    return (y + "年" + mo + "月" + d + "日 " + c["gzYear"] + c["Animal"] + "年" + c["IMonthCn"] + c["IDayCn"] + " " + c["ncWeek"] + (c["isTerm"]?" "+c["Term"]:""));
   }
 
-  function startTime() {
-    $('#time').html(getFullTime());
-    t = setTimeout(function () { startTime() }, 500);
+  function start_timeclock() {
+    $('#timeinfo').html(get_time_HMS());
+    t = setTimeout(function () { start_timeclock() }, 500);
   }
-  
+
+  function set_dateinfo() {
+    $('#dateinfo').html(get_dateinfo());
+  }
+ 
   // no final
   window.addEventListener('load', function() {
 
     mylog('All assets are loaded')
-    startTime();
+    start_timeclock();
+    set_dateinfo();
 
     if (/^http:/i.test(window.location.href)) {
        $("#bks").html('<br><br><h2><center>¡¡¡ 請用 <a href="' + window.location.href.replace(/^[^:][^:]*:/i, "https:") + '"><big>HTTPS</big></a> 卡安全 !!!</center></h2>');
@@ -386,15 +404,16 @@
 
     var inilist = "level0";
     if (history.state != null) {
-      // was in another url
-      //alert("history state = " + JSON.stringify(history.state, null, 4));
+      //there is somthing in another url
       //window.history.back();
-      myhistorylist = history.state;
+      myhistlist = history.state['myhistlist'];
+      hashlistname = history.state['hashlistname'];
       history_control_dump("History not null");
-      if (myhistorylist.length != 0) inilist = myhistorylist.pop();
+      mylog("history.state: " + JSON.stringify( history.state, null, 4));
+      if (myhistlist.length != 0) inilist = myhistlist.pop();
     } else {
       // my history control
-      window.history.pushState(myhistorylist, '', window.location.href);
+      window.history.pushState( { myhistlist: myhistlist, hashlistname: hashlistname }, '', window.location.href);
    }
 
     write_bookmark_table(inilist);
@@ -407,7 +426,7 @@
     <header>
       <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
       <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
-      <h5><tt><center><div id="time">HH:MM:SS</div></center></tt></h5>
+      <h5><tt><center><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div></center></tt></h5>
     </header>
     <div id="bks">初始化中 ...</div>
   </div><!-- END: main div --><div id="debug"></div>

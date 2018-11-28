@@ -20,4 +20,4 @@ url: 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select 
 2.2) use some other JSONP proxy
 
 3) use jquery plugin http://www.ajax-cross-origin.com/
-  file: ref-ext/jquery.ajax-cross-origin.min.js
+  file: scripts/jquery.ajax-cross-origin.min.js
