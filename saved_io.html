@@ -225,7 +225,7 @@
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }
-        mylog("retrieve_list(" + list + "): hasbks[] filled by json object");
+        mylog("retrieve_list(" + list + "): hashbks[] filled by json object");
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
@@ -311,7 +311,7 @@
           t += menu_html + '</tr>\n';
         }
 
-        //mylog("write_bookmark_table("+list+") step3: hasbks[] iterated");
+        //mylog("write_bookmark_table("+list+") step3: hashbks[] iterated");
       } else {
         t += "遠端書籤擷取錯誤！！";
       }
@@ -322,7 +322,6 @@
       mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
       document.title = hashlist[list];
       var timerEnd = performance.now();
-      mylog (timerBegin + " " + timerEnd) ;
       t += '<center><small>讀取時間： ' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒</small></center>';
       $("#bks").html(t);
 
@@ -333,6 +332,8 @@
 
       currentlist = list;
       history_control_dump();
+
+      mylog("AQUI: " + JSON.stringify( { myhist: myhistorylist, hashbks: hashbks}, null, 4));
 
       refresh_keynavgator_table();
     });
