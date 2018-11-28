@@ -12,13 +12,16 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
+  <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" media="screen">
+
   <style>
     body {
       padding: 3%;
       margin-bottom: 30px;
     }
-    table {
+    .table {
       table-layout: fixed;
+      margin-bottom: 0.5em;
     }
     td {
       font-size: 20px;
@@ -62,7 +65,6 @@
     }
     </style>    
 
-  <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" media="screen">
 
   <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
@@ -207,12 +209,11 @@
     $("#bks").append("從遠端存取中 …");
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
-    var protocol = (window.location.href.split(":")[0]=="http"?"http":"https"); // pref https
     $.ajax({
       timeout: 20000,
       type: "GET",
       dataType: "json",
-      url: protocol + '://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
+      url: 'https://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
     })
       .done( function(resp) {
         if ( resp == null ) {
@@ -322,7 +323,7 @@
       document.title = hashlist[list];
       var timerEnd = performance.now();
       mylog (timerBegin + " " + timerEnd) ;
-      t += '<center>讀取時間： ' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒</center>';
+      t += '<center><small>讀取時間： ' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒</small></center>';
       $("#bks").html(t);
 
       if (currentlist != null) {
@@ -360,9 +361,10 @@
   function getFullTime() {
     var today = new Date(),
     y = today.getFullYear();
-    mo = twoDigitTime(today.getMonth());
+    mo = twoDigitTime(today.getMonth()+1);
     d = twoDigitTime(today.getDate());
-    return (y + "年" + mo + "月" + d + "日 " + getTimeHMS());
+    w = Array("日","一","二","三","四","五","六")[today.getDay()];
+    return (y + "年" + mo + "月" + d + "日 星期" + w + " " + getTimeHMS());
   }
 
   function startTime() {
@@ -375,6 +377,11 @@
 
     mylog('All assets are loaded')
     startTime();
+
+    if (/^http:/i.test(window.location.href)) {
+       $("#bks").html('<br><br><h2><center>¡¡¡ 請用 <a href="' + window.location.href.replace(/^[^:][^:]*:/i, "https:") + '"><big>HTTPS</big></a> 卡安全 !!!</center></h2>');
+       return;
+    }
 
     var inilist = "level0";
     if (history.state != null) {
