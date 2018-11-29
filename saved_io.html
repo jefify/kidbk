@@ -44,18 +44,26 @@
     #dateinfo {
       display: inline-block;
       vertical-align: middle;
-      font-size: 80%;
+      font-size: 120%;
       font-family: serif;
-      color: #555;
+      color: #666;
+      padding-left: 1em;
     }
     #timeinfo {
       display: inline-block;
       vertical-align: middle;
       font-family: monospace;
-      font-size: 120%;
-      font-family: serif;
+      font-size: 140%;
       color: #555;
       padding-left: 1em;
+    }
+    #moneyinfo {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: monospace;
+      font-size: 120%;
+      font-family: serif;
+      color: #666;
     }
     #maincontent {
       display: inline-block;
@@ -96,7 +104,7 @@
   function all_elements_loaded(){
     if (/\/h\//.test(window.location.href)) {
       hashlistname = { level0: "{測試} 書籤" };
-      console.log("#debug loaded!");
+      mylog("#debug loaded!");
       document.getElementById("debug").style.display = "inline-block";
       document.getElementById("debug").style.width = "30%";
       document.getElementById("maincontent").style.width = "70%";
@@ -368,6 +376,36 @@
     return (i < 10) ? "0" + i : i;
   }
 
+  function write_moneyinfo () {
+    $("#moneyinfo").html("讀取匯率中…");
+    $.ajax({
+      timeout: 10000,
+      type: "GET",
+      dataType: "json",
+      url: 'https://free.currencyconverterapi.com/api/v5/convert?q=USD_BRL,USD_TWD&compact=y'
+    })
+      .done( function(resp) {
+        var t = "";
+        if ( resp == null ) {
+          t = "找不到匯率ㄋㄟ…";
+        } else {
+          mylog("<pre>money_resp: " + JSON.stringify( resp, null, 4) + "</pre>");
+          t  = "黑奧" + resp.USD_BRL.val.toFixed(3) + "  ";
+          t += "台幣" + resp.USD_TWD.val.toFixed(2) + "  ";
+          t += "巴台" + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3);
+        }
+        $("#moneyinfo").html(t);
+        mylog("write_moneyinfo() AJAX done");
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        $("#moneyinfo").html("匯率讀取錯誤…");
+        mylog("write_moneyinfo(): AJAX error");
+      })
+      .always(function() {
+        //mylog("write_moneyinfo(): AJAX always passes here...");
+      });
+  }
+
   function get_time_HMS() {
     var today = new Date(),
     h = twoDigitTime(today.getHours()),
@@ -424,6 +462,7 @@
    }
 
     write_bookmark_table(inilist);
+    write_moneyinfo();
     flagpassouaqui = false;
     history_control_dump("write_bookmark_table(" + inilist+ ") inilist done.")
   })
@@ -432,11 +471,8 @@
 </head>
 <body style="background-color: #dae0d2;">
   <div id="maincontent" class="wrapper"> <!-- INI: main div -->
-    <header>
-      <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
-      <!-- <p class="view"><a href="https://dl.dropboxusercontent.com/s/socgnb0myhlsvdu/passageiro17-chrome-bookmark.html">View the bookmarks on Dropbox <small>(from passageiros17's chrome)</small></a></p> -->
-      <h5><tt><center><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div></center></tt></h5>
-    </header>
+    <h3><center>網 · 路 · 電 · 視 · 書 · 籤</center></h3>
+    <h5><tt><center><div id="moneyinfo">匯率</div><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div></center></tt></h5>
     <div id="bks">初始化中 ...</div>
   </div><!-- END: main div --><div id="debug"></div>
   <script>all_elements_loaded();</script>
