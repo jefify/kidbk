@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer" />
   <title>{Ajax} 書籤</title>
 
 
@@ -45,22 +46,22 @@
       display: flex;
       justify-content: space-between;
     }
+    #dateinfo {
+      font-size: 120%;
+      font-family: serif;
+      color: #6a6;
+    }
+    #timeinfo {
+      font-family: fixed, monospace;
+      font-size: 140%;
+      color: #555;
+    }
     #moneyinfo {
+      text-align: right;
       font-family: monospace;
       font-size: 120%;
       font-family: serif;
       color: #666;
-    }
-    #dateinfo {
-      font-size: 120%;
-      font-family: serif;
-      color: #666;
-    }
-    #timeinfo {
-      text-align: right;
-      font-family: fixed, monospace;
-      font-size: 140%;
-      color: #555;
     }
     #maincontent {
       display: inline-block;
@@ -362,18 +363,6 @@
     });
   }, 250);
 
-  function gotoUrl (u) {
-    myhistlist.push(currentlist);
-    window.history.replaceState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
-    history_control_dump("gotoUrl:");
-    window.location.href = u;
-  }
-
-  // time
-  function twoDigitTime(i) {
-    return (i < 10) ? "0" + i : i;
-  }
-
   function write_moneyinfo () {
     $("#moneyinfo").html("讀取匯率中…");
     $.ajax({
@@ -402,9 +391,21 @@
       .always(function() {
         //mylog("write_moneyinfo(): AJAX always passes here...");
         // adjust headerinfo width
-        $("#timeinfo").width($("#moneyinfo").width());
+        $("#moneyinfo").width($("#dateinfo").width());
       });
  }
+
+  function gotoUrl (u) {
+    myhistlist.push(currentlist);
+    window.history.replaceState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
+    history_control_dump("gotoUrl:");
+    window.location.href = u;
+  }
+
+  // time
+  function twoDigitTime(i) {
+    return (i < 10) ? "0" + i : i;
+  }
 
   function get_time_HMS() {
     var today = new Date(),
@@ -472,7 +473,7 @@
 <body style="background-color: #dae0d2;">
   <div id="maincontent" class="wrapper"> <!-- INI: main div -->
     <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
-    <h4><tt><div id="headerinfo"><div id="moneyinfo">匯率</div><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div></div></tt></h4>
+    <h4><tt><div id="headerinfo"><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div><div id="moneyinfo">匯率</div></div></tt></h4>
     <div id="bks">初始化中 ...</div>
   </div><!-- END: main div --><div id="debug"></div>
   <script>all_elements_loaded();</script>
