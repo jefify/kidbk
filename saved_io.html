@@ -41,29 +41,26 @@
       background: #cdb;
       text-align: center;
     }
-    #dateinfo {
-      display: inline-block;
-      vertical-align: middle;
-      font-size: 120%;
-      font-family: serif;
-      color: #666;
-      padding-left: 1em;
-    }
-    #timeinfo {
-      display: inline-block;
-      vertical-align: middle;
-      font-family: monospace;
-      font-size: 140%;
-      color: #555;
-      padding-left: 1em;
+    #headerinfo {
+      display: flex;
+      justify-content: space-between;
     }
     #moneyinfo {
-      display: inline-block;
-      vertical-align: middle;
       font-family: monospace;
       font-size: 120%;
       font-family: serif;
       color: #666;
+    }
+    #dateinfo {
+      font-size: 120%;
+      font-family: serif;
+      color: #666;
+    }
+    #timeinfo {
+      text-align: right;
+      font-family: fixed, monospace;
+      font-size: 140%;
+      color: #555;
     }
     #maincontent {
       display: inline-block;
@@ -102,6 +99,7 @@
   var flagpassouaqui = false;
 
   function all_elements_loaded(){
+    // debug mode
     if (/\/h\//.test(window.location.href)) {
       hashlistname = { level0: "{測試} 書籤" };
       mylog("#debug loaded!");
@@ -390,9 +388,9 @@
           t = "找不到匯率ㄋㄟ…";
         } else {
           mylog("<pre>money_resp: " + JSON.stringify( resp, null, 4) + "</pre>");
-          t  = "黑奧" + resp.USD_BRL.val.toFixed(3) + "  ";
-          t += "台幣" + resp.USD_TWD.val.toFixed(2) + "  ";
-          t += "巴台" + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3);
+          t  = '<a href="https://br.financas.yahoo.com/quote/USDBRL=X/">黑奧' + resp.USD_BRL.val.toFixed(3) + '</a>  ';
+          t += '<a href="https://tw.money.yahoo.com/currency/USDTWD=X">台幣' + resp.USD_TWD.val.toFixed(2) + '</a>  ';
+          t += '<a href="https://finance.yahoo.com/quote/BRLTWD=X/">巴台' + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3) + '</a>';
         }
         $("#moneyinfo").html(t);
         mylog("write_moneyinfo() AJAX done");
@@ -403,8 +401,10 @@
       })
       .always(function() {
         //mylog("write_moneyinfo(): AJAX always passes here...");
+        // adjust headerinfo width
+        $("#timeinfo").width($("#moneyinfo").width());
       });
-  }
+ }
 
   function get_time_HMS() {
     var today = new Date(),
@@ -471,8 +471,8 @@
 </head>
 <body style="background-color: #dae0d2;">
   <div id="maincontent" class="wrapper"> <!-- INI: main div -->
-    <h3><center>網 · 路 · 電 · 視 · 書 · 籤</center></h3>
-    <h5><tt><center><div id="moneyinfo">匯率</div><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div></center></tt></h5>
+    <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
+    <h4><tt><div id="headerinfo"><div id="moneyinfo">匯率</div><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div></div></tt></h4>
     <div id="bks">初始化中 ...</div>
   </div><!-- END: main div --><div id="debug"></div>
   <script>all_elements_loaded();</script>
