@@ -27,7 +27,7 @@ git rebase origin/master
 
 # aplicar modificacao ao master
 git checkout master &&
-git merge h --summary; echo $?
+git merge h --summary &&
 git push &&
 git checkout h
 
