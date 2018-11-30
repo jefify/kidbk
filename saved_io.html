@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="no-referrer" />
-  <title>{Ajax} 書籤</title>
+  <title>JF 書籤</title>
 
 
   <!--[if lt IE 9]>
@@ -47,7 +47,7 @@
       justify-content: space-between;
     }
     #dateinfo {
-      font-size: 120%;
+      font-size: 110%;
       font-family: serif;
       color: #6a6;
     }
@@ -93,11 +93,9 @@
 <script type="text/javascript">//<![CDATA[
   var hashbks = {};
   var hashlistname = { level0: "☆網路電視書籤☆" };
-  var currentlist = null;
-  var myhistlist = [];
+  var myhiststack = [];
   var max_cols_per_row = 4;
   var mylog = function (msg) { console.log(msg); };
-  var flagpassouaqui = false;
 
   function all_elements_loaded(){
     // debug mode
@@ -142,31 +140,75 @@
   window.onpopstate = function(event) {
     // history control https://stackoverflow.com/a/29227026 , https://stackoverflow.com/a/22819000
     // sempre manter um seugndo iten na pilha history
-    mylog ("window.onpopstate(): history.length=" + window.history.length);
-    if (flagpassouaqui) {
-      history_control_dump("window.onpopstate() setting false to false");
-      flagpassouaqui = false;
-      return;
-    }
+    mylog ("<b><large>window.onpopstate()</large>: triggered!</b>");
 
-    currentlist = null;
-    if ( myhistlist.length == 0 ) {
+    if ( histctrl_is_end() ) {
       // esta no fundo
       //$("#maincontent").html("<h1>bye ...</h1>").done();
       window.history.back();
     } else {
-      var lastlist = myhistlist.pop();
-      window.history.pushState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
-      write_bookmark_table(lastlist);
+      histctrl_init();
+      write_bookmark_table(histctrl_pop());
     }
 
-    //lastlist = history.state.list;
-    //write_bookmark_table(lastlist==null?"level0":lastlist);
   }
 
-  function history_control_dump (prefix) {
-      mylog ("HISTCTRL(" + history.length+ ")" + (prefix?" <b>"+prefix+"</b>":"") + ": [" + myhistlist.join() +"] cur=" + currentlist + " flagpassouaqui=" + flagpassouaqui);
+  /********************************/
+  /***** INI: HISTORY CONTROL *****/
+  /* histctrl_init: returns which list to start */
+  function histctrl_init() {
+    if (history.state !== null && history.state['hashlistname'] !== null) {
+      // the state is my format
+      mylog("histctrl_init(): last history state is my format<pre>" + JSON.stringify( history.state, null, 4) + "</pre>");
+      myhiststack = history.state['myhiststack'];
+      hashlistname = history.state['hashlistname'];
+      return histctrl_gettop();
+    } else if ( ! histctrl_is_end() ) {
+      mylog("histctrl_init(): restoring...");
+      document.title = "{書籤} histctrl restored";
+      window.history.pushState( { myhiststack: myhiststack, hashlistname: hashlistname }, '', window.location.href);
+      return histctrl_gettop();
+    } else {
+      mylog("histctrl_init(): initializing...");
+      // my histctrl list buttom
+      document.title = "{書籤} histctrl init";
+      window.history.pushState( { myhiststack: myhiststack, hashlistname: hashlistname }, '', window.location.href);
+      return histctrl_push("level0");
+    }
   }
+
+  function histctrl_push(l) {
+    myhiststack.push(l);
+    window.history.replaceState( { myhiststack: myhiststack, hashlistname: hashlistname },'', window.location.href);
+    histctrl_dump("histctrl_push(" + l + ") after");
+    return l;
+  }
+
+  function histctrl_gettop () {
+    return myhiststack[myhiststack.length-1];
+  }
+
+  function histctrl_pop () {
+    if (histctrl_is_end()) {
+      mylog("histctrl_pop(): <b>NAO PODE ESTAR AQUI ...</b>");
+      return "";
+    }
+    myhiststack.pop();
+    window.history.replaceState( { myhiststack: myhiststack, hashlistname: hashlistname },'', window.location.href);
+    histctrl_dump("histctrl_pop() after");
+    return histctrl_gettop();
+  }
+
+  function histctrl_is_end () {
+    return myhiststack.length <= 1;
+  }
+
+  function histctrl_dump (prefix) {
+      mylog ("HISTCTRL(l=" + history.length+ ")" + (prefix?" <b>"+prefix+"</b>":"") + ": stack=[" + myhiststack.join() +"]");
+  }
+
+  /***** FIN: HISTORY CONTROL *****/
+  /********************************/
 
   // https://davidwalsh.name/javascript-debounce-function
   function debounce(func, wait, immediate) {
@@ -218,7 +260,7 @@
         .focus();
 
     });
-  }
+  } // end: refresh_keynavgator_table()
 
   function retrieve_list (list, refresh) {
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
@@ -251,7 +293,7 @@
             hashbks[list][obj.bk_title] = obj.bk_url;
           });
         }
-        mylog("retrieve_list(" + list + "): hashbks[] filled by json object");
+        mylog("retrieve_list(" + list + "): bookmark hash filled by json object");
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
@@ -264,7 +306,7 @@
         //mylog("retrieve_list(" + list + "): AJAX always pass here!");
       });
     return d.promise();
-  }
+  } // end: retrieve_list()
 
   var write_bookmark_table = debounce( function (list) {
     //mylog("write_bookmark_table("+list+") step1: begin");
@@ -305,7 +347,7 @@
             }
             var menu_item = url.replace(/^(.*)\.saved\.io$/i, "$1");
             hashlistname[menu_item] = title;
-            url = "javascript:write_bookmark_table('" + menu_item + "');";
+            url = "javascript:goto_list('" + menu_item + "');";
             menu_html += '<td>';
             menu_html += '<a href="' + url + '"><div style="height:100%;width:100%;text-align:center;">' + title + '</div></a>';
             menu_html += '</td>';
@@ -317,7 +359,7 @@
               t += '<tr>\n';
             }
             t += '<td>';
-            t += '<a href="javascript:gotoUrl(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '" width="16" height="16"> ' + title + '</div></a>';
+            t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '" width="16" height="16"> ' + title + '</div></a>';
             t += '</td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
@@ -345,23 +387,16 @@
       t += '</tbody>';
       t += '</table>';
 
-      mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
-      document.title = hashlistname[list];
+      //mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
+      document.title = hashlistname[list]; // change html title
       var timerEnd = performance.now();
       t += '<center><small>讀取時間： ' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒</small></center>';
       $("#bks").html(t);
-
-      if (currentlist != null) {
-        myhistlist.push(currentlist);
-      }
-      window.history.replaceState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
-
-      currentlist = list;
-      history_control_dump();
+      mylog("write_bookmark_table("+list+"): bookmark table written");
 
       refresh_keynavgator_table();
     });
-  }, 250);
+  }, 250); //end: write_bookmark_table()
 
   function write_moneyinfo () {
     $("#moneyinfo").html("讀取匯率中…");
@@ -377,9 +412,9 @@
           t = "找不到匯率ㄋㄟ…";
         } else {
           mylog("<pre>money_resp: " + JSON.stringify( resp, null, 4) + "</pre>");
-          t  = '<a href="https://br.financas.yahoo.com/quote/USDBRL=X/">黑奧' + resp.USD_BRL.val.toFixed(3) + '</a>  ';
-          t += '<a href="https://tw.money.yahoo.com/currency/USDTWD=X">台幣' + resp.USD_TWD.val.toFixed(2) + '</a>  ';
-          t += '<a href="https://finance.yahoo.com/quote/BRLTWD=X/">巴台' + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3) + '</a>';
+          t  = "<a href='javascript:goto_ext_url(\"https://br.financas.yahoo.com/quote/USDBRL=X/\")'>黑奧" + resp.USD_BRL.val.toFixed(3) + "</a>  ";
+          t += "<a href='javascript:goto_ext_url(\"https://tw.money.yahoo.com/currency/USDTWD=X\")'>台幣" + resp.USD_TWD.val.toFixed(2) + "</a>  ";
+          t += "<a href='javascript:goto_ext_url(\"https://finance.yahoo.com/quote/BRLTWD=X/\")'>巴台" + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3) + "</a>";
         }
         $("#moneyinfo").html(t);
         mylog("write_moneyinfo() AJAX done");
@@ -393,13 +428,16 @@
         // adjust headerinfo width
         $("#moneyinfo").width($("#dateinfo").width());
       });
- }
+ } // end: write_moneyinfo()
 
-  function gotoUrl (u) {
-    myhistlist.push(currentlist);
-    window.history.replaceState( { myhistlist: myhistlist, hashlistname: hashlistname },'', window.location.href);
-    history_control_dump("gotoUrl:");
+  function goto_ext_url (u) {
+    mylog ("goto_ext_url: " + u);
     window.location.href = u;
+  }
+
+  function goto_list (l) {
+    write_bookmark_table(l);
+    histctrl_push(l);
   }
 
   // time
@@ -438,7 +476,7 @@
   // no final
   window.addEventListener('load', function() {
 
-    history_control_dump('All assets are loaded')
+    mylog('All assets are loaded')
     start_timeclock();
     set_dateinfo();
 
@@ -447,25 +485,8 @@
        return;
     }
 
-    var inilist = "level0";
-    if (history.state != null) {
-      //there is somthing in another url
-      //window.history.back();
-      myhistlist = history.state['myhistlist'];
-      hashlistname = history.state['hashlistname'];
-      flagpassouaqui = true;
-      history_control_dump("History not null");
-      mylog("history.state: " + JSON.stringify( history.state, null, 4));
-      if (myhistlist.length != 0) inilist = myhistlist.pop();
-    } else {
-      // my history control
-      window.history.pushState( { myhistlist: myhistlist, hashlistname: hashlistname }, '', window.location.href);
-   }
-
-    write_bookmark_table(inilist);
+    write_bookmark_table(histctrl_init());
     write_moneyinfo();
-    flagpassouaqui = false;
-    history_control_dump("write_bookmark_table(" + inilist+ ") inilist done.")
   })
 //]]></script>
 
