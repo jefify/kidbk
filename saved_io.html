@@ -49,19 +49,34 @@
     #dateinfo {
       font-size: 110%;
       font-family: serif;
-      color: #6a6;
+      color: #444;
     }
     #timeinfo {
       font-family: fixed, monospace;
       font-size: 140%;
-      color: #555;
+      color: #666;
     }
     #moneyinfo {
       text-align: right;
+    }
+    #moneyinfo a{
       font-family: monospace;
       font-size: 120%;
       font-family: serif;
-      color: #666;
+      color: #444;
+      text-decoration: none;
+    }
+    #moneyinfo a:hover{
+      background-color: #85e38f;
+    }
+    .flag{
+      width: 22px;
+      height: 22px;
+      padding: 1px;
+    }
+    .favicon{
+      width: 16px;
+      height: 16px;
     }
     #maincontent {
       display: inline-block;
@@ -95,13 +110,19 @@
   var hashlistname = { level0: "☆網路電視書籤☆" };
   var myhiststack = [];
   var max_cols_per_row = 4;
-  var mylog = function (msg) { console.log(msg); };
+  var mylog = function (msg) { console.log(strip_html_tags(msg)); };
+
+  function strip_html_tags (h) { // https://stackoverflow.com/a/5002618
+    var div = document.createElement("div");
+    div.innerHTML = h;
+    return div.textContent || div.innerText || "";
+  }
 
   function all_elements_loaded(){
     // debug mode
     if (/\/h\//.test(window.location.href)) {
       hashlistname = { level0: "{測試} 書籤" };
-      mylog("#debug loaded!");
+      mylog("[DEBUG mode ON]");
       document.getElementById("debug").style.display = "inline-block";
       document.getElementById("debug").style.width = "30%";
       document.getElementById("maincontent").style.width = "70%";
@@ -109,7 +130,7 @@
       document.body.style.padding = "0.5%";
       mylog = function (msg) {
         $("#debug").prepend("<p><b>" + get_time_HMS() + "</b> " + msg + "</p>\n");
-        console.log(msg);
+        console.log(strip_html_tags(msg));
       }
     } 
   };
@@ -359,7 +380,7 @@
               t += '<tr>\n';
             }
             t += '<td>';
-            t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '" width="16" height="16"> ' + title + '</div></a>';
+            t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ' + title + '</div></a>';
             t += '</td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
@@ -412,9 +433,10 @@
           t = "找不到匯率ㄋㄟ…";
         } else {
           mylog("<pre>money_resp: " + JSON.stringify( resp, null, 4) + "</pre>");
-          t  = "<a href='javascript:goto_ext_url(\"https://br.financas.yahoo.com/quote/USDBRL=X/\")'>黑奧" + resp.USD_BRL.val.toFixed(3) + "</a>  ";
-          t += "<a href='javascript:goto_ext_url(\"https://tw.money.yahoo.com/currency/USDTWD=X\")'>台幣" + resp.USD_TWD.val.toFixed(2) + "</a>  ";
-          t += "<a href='javascript:goto_ext_url(\"https://finance.yahoo.com/quote/BRLTWD=X/\")'>巴台" + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3) + "</a>";
+          // images from https://lipis.github.io/flag-icon-css/flags/4x3/
+          t  = "<a href='javascript:goto_ext_url(\"https://br.financas.yahoo.com/quote/USDBRL=X/\")'><img class='flag' src='images/us.svg'>" + resp.USD_BRL.val.toFixed(3) + "<img class='flag' src='images/br.svg'></a>&nbsp;";
+          t += "<a href='javascript:goto_ext_url(\"https://tw.money.yahoo.com/currency/USDTWD=X\")'><img class='flag' src='images/us.svg'>" + resp.USD_TWD.val.toFixed(2) + "<img class='flag' src='images/tw.svg'></a>&nbsp;";
+          t += "<a href='javascript:goto_ext_url(\"https://finance.yahoo.com/quote/BRLTWD=X/\")'><img class='flag' src='images/br.svg'>" + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3) + "<img class='flag' src='images/tw.svg'></a>";
         }
         $("#moneyinfo").html(t);
         mylog("write_moneyinfo() AJAX done");
@@ -460,7 +482,7 @@
     mo = twoDigitTime(today.getMonth()+1);
     d = twoDigitTime(today.getDate());
     var c = calendar.solar2lunar(y, mo, d);
-    //mylog("<pre>c: " + JSON.stringify( c, null, 4) + "</pre>");
+    mylog("<pre>c: " + JSON.stringify( c, null, 4) + "</pre>");
     return (y + "年" + mo + "月" + d + "日 " + c["gzYear"] + c["Animal"] + "年" + c["IMonthCn"] + c["IDayCn"] + " " + c["ncWeek"] + (c["isTerm"]?" "+c["Term"]:""));
   }
 
