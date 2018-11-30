@@ -450,7 +450,11 @@
         // adjust headerinfo width
         $("#moneyinfo").width($("#dateinfo").width());
       });
- } // end: write_moneyinfo()
+  } // end: write_moneyinfo()
+
+  function write_weatherinfo () {
+    $("#weatherinfo").html("<center><a href=\"javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')\"><img src=\"https://www.tempo.com/wimages/foto4904aceac4f03f8ba10db0073528b0e9.png?t=" + (new Date()).getTime() + "\"></a></center>");
+  }
 
   function goto_ext_url (u) {
     mylog ("goto_ext_url: " + u);
@@ -509,6 +513,7 @@
 
     write_bookmark_table(histctrl_init());
     write_moneyinfo();
+    write_weatherinfo();
   })
 //]]></script>
 
@@ -518,7 +523,7 @@
     <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
     <h4><tt><div id="headerinfo"><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div><div id="moneyinfo">匯率</div></div></tt></h4>
     <div id="bks">初始化中 ...</div>
-    <div id="weatherinfo"><center><a href="javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')"><img src="https://www.tempo.com/wimages/foto4904aceac4f03f8ba10db0073528b0e9.png"></center></a></div>
+    <div id="weatherinfo">氣象</div>
   </div><!-- END: main div --><div id="debug"></div>
   <script>all_elements_loaded();</script>
 </body>
