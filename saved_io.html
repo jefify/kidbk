@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="no-referrer" />
-  <title>JF 書籤</title>
+  <title>kidbk</title>
 
 
   <!--[if lt IE 9]>
@@ -82,6 +82,14 @@
       display: inline-block;
       vertical-align: top;
       width: 100%;
+    }
+    #weatherinfo{
+      /*background-image: url(https://www.tempo.com/wimages/foto4904aceac4f03f8ba10db0073528b0e9.png);*/
+      width: 774px;
+      height: 143px;
+      background-position: 0px -22px;
+      display: none;
+      cursor: pointer;
     }
     #debug {
       font-family: monospace;
@@ -337,6 +345,7 @@
         clearInterval(checkExist);
       }
     }, 100); // check every 100ms */
+    document.getElementById("weatherinfo").style.display = "none";
     var timerBegin = performance.now();
     retrieve_list(list).done(function() {
       // 0 === $.active
@@ -416,6 +425,7 @@
       mylog("write_bookmark_table("+list+"): bookmark table written");
 
       refresh_keynavgator_table();
+      document.getElementById("weatherinfo").style.display = "inline-block";
     });
   }, 250); //end: write_bookmark_table()
 
@@ -453,7 +463,8 @@
   } // end: write_moneyinfo()
 
   function write_weatherinfo () {
-    $("#weatherinfo").html("<center><a href=\"javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')\"><img src=\"https://www.tempo.com/wimages/foto4904aceac4f03f8ba10db0073528b0e9.png?t=" + (new Date()).getTime() + "\"></a></center>");
+    $("#weatherinfo").html("");
+    document.getElementById("weatherinfo").style.backgroundImage="url(https://www.tempo.com/wimages/foto4904aceac4f03f8ba10db0073528b0e9.png?t=" + (new Date()).getTime() + ")";
   }
 
   function goto_ext_url (u) {
@@ -523,7 +534,7 @@
     <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
     <h4><tt><div id="headerinfo"><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div><div id="moneyinfo">匯率</div></div></tt></h4>
     <div id="bks">初始化中 ...</div>
-    <div id="weatherinfo">氣象</div>
+    <center><a href="javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')"><div id="weatherinfo">氣象</div></a></center>
   </div><!-- END: main div --><div id="debug"></div>
   <script>all_elements_loaded();</script>
 </body>
