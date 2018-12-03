@@ -126,9 +126,13 @@
     return div.textContent || div.innerText || "";
   }
 
+  function is_debug () {
+    if (/\/h\//.test(window.location.href)) return true;
+    return false;
+  }
   function all_elements_loaded(){
     // debug mode
-    if (/\/h\//.test(window.location.href)) {
+    if (is_debug()) {
       hashlistname = { level0: "{測試} 書籤" };
       mylog("[DEBUG mode ON]");
       document.getElementById("debug").style.display = "inline-block";
@@ -174,6 +178,7 @@
     if ( histctrl_is_end() ) {
       // esta no fundo
       //$("#maincontent").html("<h1>bye ...</h1>").done();
+      if (is_debug()) alert("Debug: bye");
       window.history.back();
     } else {
       histctrl_init();
