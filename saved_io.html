@@ -8,7 +8,6 @@
   <meta name="referrer" content="no-referrer" />
   <title>kidbk</title>
 
-
   <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
@@ -111,6 +110,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
   <script src="scripts/calendar.js"></script>
 
 <script type="text/javascript">//<![CDATA[
@@ -118,7 +118,11 @@
   var hashlistname = { level0: "☆網路電視書籤☆" };
   var myhiststack = [];
   var max_cols_per_row = 4;
+  var mykey = "";
+  var mydevkey = "";
+  var myapikey = "";
   var mylog = function (msg) { console.log(strip_html_tags(msg)); };
+  var encrypted_json_string = "U2FsdGVkX19znxXpb/iO3eUmcHqn394Zoo6uLSNXMK239XurysfOIiogih2bl1XFjc6s3aBQdW5meF6RBSL1DnYcz5Ek5XptIeOvNsO9+YviWk+AmMNs1e0f2W5IXtNzkCIuz2lUXmzMka7vRfeYB0lztnnIrDcSuynOMi4Pbc2qj0/sodZtG7AX7B5aX8GN1mxSWXu2yPievHHL5ArPr+UVBByuUsEx8N2xYTZJnz9WiBp5ADT1XZ2Rqv3RzVDXg9/LoKrsr5McPytRVZLECxDmKv8Up8MX0GVHiw/iTZV6WHXeo6ax2BNbsuKek4V1";
 
   function strip_html_tags (h) { // https://stackoverflow.com/a/5002618
     var div = document.createElement("div");
@@ -130,7 +134,7 @@
     if (/\/h\//.test(window.location.href)) return true;
     return false;
   }
-  function all_elements_loaded(){
+  function set_debug(){
     // debug mode
     if (is_debug()) {
       hashlistname = { level0: "{測試} 書籤" };
@@ -151,8 +155,7 @@
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
     if (results==null){
        return null;
-    }
-    else{
+    } else {
        return decodeURI(results[1]) || 0;
     }
   }
@@ -161,14 +164,10 @@
     var results = new RegExp('://([^/]*)/').exec(url);
     if (results==null){
        return null;
-    }
-    else{
+    } else {
        return results[1];
     }
   }
-
-  var mykey = getUrlParm("mykey");
-  var mydevkey = getUrlParm("mydevkey");
 
   window.onpopstate = function(event) {
     // history control https://stackoverflow.com/a/29227026 , https://stackoverflow.com/a/22819000
@@ -440,7 +439,7 @@
       timeout: 10000,
       type: "GET",
       dataType: "json",
-      url: 'https://free.currencyconverterapi.com/api/v5/convert?q=USD_BRL,USD_TWD&compact=y'
+      url: 'https://free.currencyconverterapi.com/api/v5/convert?q=USD_BRL,USD_TWD&compact=y&apiKey=' + myapikey
     })
       .done( function(resp) {
         var t = "";
@@ -516,21 +515,34 @@
   }
  
   // no final
-  window.addEventListener('load', function() {
+  window.onload = function() {
+    set_debug();
+
+    try {
+      var p = getUrlParm("p");
+      var jsonobj = JSON.parse(CryptoJS.AES.decrypt(encrypted_json_string, p).toString(CryptoJS.enc.Utf8));
+      mykey = jsonobj["savedio"]["key"];
+      mydevkey = jsonobj["savedio"]["devkey"];
+      myapikey = jsonobj["currencyconverterapi"]["apiKey"];
+    } catch (e) {
+      mylog(e.name + ": " + e.message);
+      $("#bks").html('<br><br><h2><center>無法解鎖!!!</center></h2>');
+      return;
+    }
 
     mylog('All assets are loaded')
     start_timeclock();
     set_dateinfo();
 
     if (/^http:/i.test(window.location.href)) {
-       $("#bks").html('<br><br><h2><center>¡¡¡ 請用 <a href="' + window.location.href.replace(/^[^:][^:]*:/i, "https:") + '"><big>HTTPS</big></a> 卡安全 !!!</center></h2>');
-       return;
+      $("#bks").html('<br><br><h2><center>¡¡¡ 請用 <a href="' + window.location.href.replace(/^[^:][^:]*:/i, "https:") + '"><big>HTTPS</big></a> 卡安全 !!!</center></h2>');
+      return;
     }
 
     write_bookmark_table(histctrl_init());
     write_moneyinfo();
     write_weatherinfo();
-  })
+  };
 //]]></script>
 
 </head>
@@ -541,7 +553,6 @@
     <div id="bks">初始化中 ...</div>
     <center><a href="javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')"><div id="weatherinfo">氣象</div></a></center>
   </div><!-- END: main div --><div id="debug"></div>
-  <script>all_elements_loaded();</script>
 </body>
 </html>
 
