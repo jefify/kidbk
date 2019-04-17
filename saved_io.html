@@ -31,6 +31,7 @@
       font-size: 23px;
       background-color: #ceddba;
     }
+    // ini: nekman keynavigator
     .active {
       background: #69f;
       color: #fff;
@@ -40,6 +41,26 @@
     .listitem {
       background: #cdb;
       text-align: center;
+    }
+    // end: nekman keynavigator
+    .exturlcell {
+      height: 100%;
+      width: 100%;
+    }
+    .menucell {
+      height: 100%;
+      width: 100%;
+      text-align: center;
+    }
+    #example5 a{
+      text-decoration: none;
+    }
+    #example5 a:hover{
+      color: #fe1;
+      font-weight: bold;
+    }
+    #example5 td:not(.emptycell):hover{
+      background: #a8e;
     }
     #headerinfo {
       display: flex;
@@ -272,8 +293,10 @@
     };
   };
 
+  // ini: nekman keynavigator
   function refresh_keynavgator_table() {
-    //* Ex5 of Nekman Keynavigator */
+    return; //desabilitar por enquanto por aqui
+    // Ex5 of Nekman Keynavigator
     require(['scripts/keynavigator-min'], function($) {
       var $rows = $('table#example5 > tbody td').keynavigator({
         keys: {
@@ -396,7 +419,7 @@
             hashlistname[menu_item] = title;
             url = "javascript:goto_list('" + menu_item + "');";
             menu_html += '<td>';
-            menu_html += '<a href="' + url + '"><div style="height:100%;width:100%;text-align:center;">' + title + '</div></a>';
+            menu_html += '<a href="' + url + '"><div class="menucell">' + title + '</div></a>';
             menu_html += '</td>';
             if ( menu_count % cols_per_row == 0 ) {
               menu_html += '</tr>\n';
@@ -406,7 +429,7 @@
               t += '<tr>\n';
             }
             t += '<td>';
-            t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div style="height:100%;width:100%"><img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ' + title + '</div></a>';
+            t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div class="exturlcell"><img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ' + title + '</div></a>';
             t += '</td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
@@ -421,7 +444,7 @@
 
         if (menu_count >= 1) {
           for (menu_count = menu_count % cols_per_row; menu_count>0 && menu_count<cols_per_row; menu_count++) {
-            menu_html += '<td>&nbsp;</td>';
+            menu_html += '<td class="emptycell">&nbsp;</td>';
           }
           t += menu_html + '</tr>\n';
         }
