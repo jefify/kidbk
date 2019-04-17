@@ -55,6 +55,14 @@
       font-size: 140%;
       color: #666;
     }
+    #timeinfo a{
+      text-decoration: none;
+      color: #666;
+      cursor: copy;
+    }
+    #timeinfo a:hover{
+      color: red;
+    }
     #moneyinfo {
       text-align: right;
     }
@@ -126,6 +134,7 @@
   var mydevkey = "";
   var myapikey = "";
   var mylog = function (msg) { console.log(strip_html_tags(msg)); };
+  var p;
   var encrypted_json_string = "U2FsdGVkX19znxXpb/iO3eUmcHqn394Zoo6uLSNXMK239XurysfOIiogih2bl1XFjc6s3aBQdW5meF6RBSL1DnYcz5Ek5XptIeOvNsO9+YviWk+AmMNs1e0f2W5IXtNzkCIuz2lUXmzMka7vRfeYB0lztnnIrDcSuynOMi4Pbc2qj0/sodZtG7AX7B5aX8GN1mxSWXu2yPievHHL5ArPr+UVBByuUsEx8N2xYTZJnz9WiBp5ADT1XZ2Rqv3RzVDXg9/LoKrsr5McPytRVZLECxDmKv8Up8MX0GVHiw/iTZV6WHXeo6ax2BNbsuKek4V1";
 
   function strip_html_tags (h) { // https://stackoverflow.com/a/5002618
@@ -480,6 +489,12 @@
     window.location.href = u;
   }
 
+  function goto_myself_p () {
+    if (!p) return;
+    mylog ("goto_myself_p");
+    window.location.href = (window.location.href).replace(/\?.*$/, "") + "?p=" + p;
+  }
+
   function goto_list (l) {
     write_bookmark_table(l);
     histctrl_push(l);
@@ -510,7 +525,7 @@
   }
 
   function start_timeclock() {
-    $('#timeinfo').html(get_time_HMS());
+    $('#timespan').html(get_time_HMS());
     t = setTimeout(function () { start_timeclock() }, 500);
   }
 
@@ -523,7 +538,13 @@
     set_debug();
 
     try {
-      var p = getUrlParm("p");
+      p = getUrlParm("p");
+      if ( ! p) {
+        p = prompt("請輸入解鎖金鑰 p:", "");
+        if ( ! p ) throw new Error('p=' + p);
+        //criar objeto a href para facilitar criação de bookmark
+        $('#timeinfo').html('<a href="javascript:goto_myself_p();"><span id="timespan">HH:MM:SS</span></a>');
+      }
       var jsonobj = JSON.parse(CryptoJS.AES.decrypt(encrypted_json_string, p).toString(CryptoJS.enc.Utf8));
       mykey = jsonobj["savedio"]["key"];
       mydevkey = jsonobj["savedio"]["devkey"];
@@ -531,10 +552,11 @@
     } catch (e) {
       mylog(e.name + ": " + e.message);
       $("#bks").html('<br><br><h2><center>無法解鎖!!!</center></h2>');
+      p = null;
       return;
     }
 
-    mylog('All assets are loaded')
+    mylog('jsonobj decrypted successfully.');
     start_timeclock();
     set_dateinfo();
 
@@ -553,7 +575,7 @@
 <body>
   <div id="maincontent" class="wrapper"> <!-- INI: main div -->
     <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
-    <h4><tt><div id="headerinfo"><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo">HH:MM:SS</div><div id="moneyinfo">匯率</div></div></tt></h4>
+    <h4><tt><div id="headerinfo"><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo"><span id="timespan">hh:mm:ss</span></div><div id="moneyinfo">匯率</div></div></tt></h4>
     <div id="bks">初始化中 ...</div>
     <center><a href="javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')"><div id="weatherinfo">氣象</div></a></center>
   </div><!-- END: main div --><div id="debug"></div>
