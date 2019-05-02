@@ -350,7 +350,8 @@
       url: 'https://uce5d553657d1b79d79d8cb0910c.dl.dropboxusercontent.com/cd/0/inline/AgLqm8LAXCZcGPefH7Em1SyzRsfQ_N5Lag0hvTGE7C20T5pNUyC6E1b3On3n1d098eNHoaFMERQa8qfgFhjVNG4Qpq7hLvTfcRgUC6bg5ARJiQ/file#'
     })
       .done( function(data, textStatus, jqxhr) {
-        console.log(data);
+        hashbks = JSON.parse(CryptoJS.AES.decrypt(data, p).toString(CryptoJS.enc.Utf8));
+        console.log(hashbks);
         mylog("restore_saved_io_backup(): bookmark hash filled by json object");
         d.resolve();
       })
