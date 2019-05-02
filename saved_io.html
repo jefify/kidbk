@@ -337,6 +337,32 @@
     });
   } // end: refresh_keynavgator_table()
 
+  function restore_saved_io_backup () {
+    // https://stackoverflow.com/questions/14521108/dynamically-load-js-inside-js
+    var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
+
+    $("#bks").html("由備份讀取...");
+    $.ajax({
+      timeout: 5000,
+      type: "GET",
+      dataType: "text",
+      url: 'https://www.dropbox.com/s/raw/tq8cpjeaqeo2fim/saved_io_enc_backup.txt'
+    })
+      .done( function(data, textStatus, jqxhr) {
+        console.log(data);
+        mylog("restore_saved_io_backup(): bookmark hash filled by json object");
+        d.resolve();
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        mylog("restore_saved_io_backup(): AJAX error");
+        d.resolve();
+      })
+      .always(function() {
+        //mylog("restore_saved_io_backup(): AJAX always pass here!");
+      });
+    return d.promise();
+  } // end: restore_saved_io_backup()
+
   function retrieve_list (list, refresh) {
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
@@ -344,8 +370,8 @@
 
     $("#bks").html("讀取 <b>" + (hashlistname[list]?hashlistname[list]:"") + "</b> [" + list + "] ");
     if ( hashbks[list] && refresh == 'no' ) {
-      mylog("retrieve_list(" + list + "): using CACHE");
-      $("#bks").append("有快取，直接用！");
+      mylog("retrieve_list(" + list + "): using IN-MEMORY CACHE");
+      $("#bks").append("記憶體中已有快取，直接用！");
       d.resolve();
       return d.promise();
     }
@@ -353,35 +379,58 @@
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     $.ajax({
-      timeout: 20000,
+      timeout: 200,
       type: "GET",
-      dataType: "json",
+      dataType: "text", // o json parse do ajax nao traz array sim objetos numerados
       url: 'https://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
+      //url: 'https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
     })
       .done( function(resp) {
         if ( resp == null ) {
-          hashbks[list]["找不到書籤 (key, devkey)?"] = window.location.href;
+          hashbks[list] = [{
+            "bk_title": "找不到書籤 (key, devkey)?",
+            "bk_url" : window.location.href }];
           d.resolve();
           return d.promise();
         } else {
-          $.each(resp, function(i, obj){ // if object array
-            hashbks[list][obj.bk_title] = obj.bk_url;
-          });
+          // https://stackoverflow.com/a/11273782 sort by hash key Object.keys(hash[]).sort()
+          hashbks[list] = JSON.parse(resp);
         }
         mylog("retrieve_list(" + list + "): bookmark hash filled by json object");
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        hashbks[list]["(" + textStatus + ") 讀不到遠端書籤 按此再試一次 ..."] = window.location.href;
-        hashbks[list]["或試看看舊版"] = "https://jefify.github.io/kidbk/nekman/kidbk.html";
+        hashbks[list] = [
+          {
+            "bk_title": "(" + textStatus + ") 讀不到遠端書籤 按此再試一次 ...",
+            "bk_url" : window.location.href
+          }, {
+            "bk_title": "或試看看舊版",
+            "bk_url" : "https://jefify.github.io/kidbk/nekman/kidbk.html"
+          }
+        ];
+
         mylog("retrieve_list(" + list + "): AJAX error");
-        d.resolve();
+        restore_saved_io_backup().done(function() {
+          d.resolve();
+        });
       })
       .always(function() {
         //mylog("retrieve_list(" + list + "): AJAX always pass here!");
       });
     return d.promise();
   } // end: retrieve_list()
+
+  function predicateBy(prop){ // https://stackoverflow.com/a/11099679
+    return function(a,b){
+      if( a[prop] > b[prop]){
+         return 1;
+      }else if( a[prop] < b[prop] ){
+         return -1;
+      }
+      return 0;
+    }
+  }
 
   var write_bookmark_table = debounce( function (list) {
     //mylog("write_bookmark_table("+list+") step1: begin");
@@ -399,7 +448,7 @@
       t += '<tbody>';
       //mylog("write_bookmark_table("+list+") step2: list retrieved");
       if (hashbks[list]) {
-        var cols_per_row = Object.keys(hashbks[list]).length;
+        var cols_per_row = hashbks[list].length;
         if (cols_per_row > max_cols_per_row) {
           cols_per_row = max_cols_per_row;
         }
@@ -414,9 +463,13 @@
 
         var i = 0;
         var menu_count = 0; var menu_html = "<tr><th colspan=4>分類</th></tr>\n"; //menus
-        Object.keys(hashbks[list]).sort().forEach(function (title) {  // https://stackoverflow.com/a/11273782
+
+        hashbks[list].sort(predicateBy("bk_title"));
+
+        hashbks[list].forEach(function (bk) {  
+          var title = bk["bk_title"];
+          var url = bk["bk_url"];
           // https://javascript.info/regexp-methods
-          var url = hashbks[list][title];
           if (/saved\.io/i.test(url)) { // menu item
             if ( ++menu_count % cols_per_row == 1 ) {
               menu_html += '<tr>\n';
