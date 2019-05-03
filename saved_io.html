@@ -343,20 +343,24 @@
 
     $("#bks").html("由備份讀取...");
     $.ajax({
-      timeout: 5000,
+      timeout: 10000,
       type: "GET",
-      dataType: "text",
+      dataType: "script",
       //url: 'https://www.dropbox.com/s/raw/tq8cpjeaqeo2fim/saved_io_enc_backup.txt'
-      url: 'https://uce5d553657d1b79d79d8cb0910c.dl.dropboxusercontent.com/cd/0/inline/AgLqm8LAXCZcGPefH7Em1SyzRsfQ_N5Lag0hvTGE7C20T5pNUyC6E1b3On3n1d098eNHoaFMERQa8qfgFhjVNG4Qpq7hLvTfcRgUC6bg5ARJiQ/file#'
+      url: 'https://jefify.github.io/data/saved.io/enc_backup.js'
     })
-      .done( function(data, textStatus, jqxhr) {
-        hashbks = JSON.parse(CryptoJS.AES.decrypt(data, p).toString(CryptoJS.enc.Utf8));
-        console.log(hashbks);
-        mylog("restore_saved_io_backup(): bookmark hash filled by json object");
+      .done( function() {
+        try {
+          hashbks = JSON.parse(CryptoJS.AES.decrypt(_data, p).toString(CryptoJS.enc.Utf8));
+          mylog("restore_saved_io_backup(): hashbks[] filled");
+        } catch (e) {
+          mylog(e.name + ": " + e.message);
+          $("#bks").html('<br><br><h2><center>無法從備份讀取!!!</center></h2>');
+        }
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        mylog("restore_saved_io_backup(): AJAX error");
+        mylog('restore_saved_io_backup(): AJAX error "' + textStatus + '"');
         d.resolve();
       })
       .always(function() {
@@ -381,7 +385,7 @@
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     $.ajax({
-      timeout: 200,
+      timeout: 3000,
       type: "GET",
       dataType: "text", // o json parse do ajax nao traz array sim objetos numerados
       url: 'https://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
