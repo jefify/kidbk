@@ -163,6 +163,9 @@
   var mylog = function (msg) { console.log(strip_html_tags(msg)); };
   var p;
   var encrypted_json_string = "U2FsdGVkX19znxXpb/iO3eUmcHqn394Zoo6uLSNXMK239XurysfOIiogih2bl1XFjc6s3aBQdW5meF6RBSL1DnYcz5Ek5XptIeOvNsO9+YviWk+AmMNs1e0f2W5IXtNzkCIuz2lUXmzMka7vRfeYB0lztnnIrDcSuynOMi4Pbc2qj0/sodZtG7AX7B5aX8GN1mxSWXu2yPievHHL5ArPr+UVBByuUsEx8N2xYTZJnz9WiBp5ADT1XZ2Rqv3RzVDXg9/LoKrsr5McPytRVZLECxDmKv8Up8MX0GVHiw/iTZV6WHXeo6ax2BNbsuKek4V1";
+  var t_enc_backup;
+  var t_stor_exp = 15; // in secs
+  var t_wait_fetch = 1000; // in milisecs
 
   function strip_html_tags (h) { // https://stackoverflow.com/a/5002618
     var div = document.createElement("div");
@@ -337,49 +340,78 @@
     });
   } // end: refresh_keynavgator_table()
 
-  function restore_saved_io_backup () {
+  function update_localStorage_from_enc_backup () {
     // https://stackoverflow.com/questions/14521108/dynamically-load-js-inside-js
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
 
-    $("#bks").html("由備份讀取...");
+    if (typeof t_enc_backup !== 'undefined') {
+      mylog("Backup had been reterieved, ignoring ...");
+      d.resolve();
+      return d.promise();
+    } else {
+      t_enc_backup = -1;
+    }
     $.ajax({
       timeout: 10000,
       type: "GET",
       dataType: "script",
-      //url: 'https://www.dropbox.com/s/raw/tq8cpjeaqeo2fim/saved_io_enc_backup.txt'
       url: 'https://jefify.github.io/data/saved.io/enc_backup.js'
     })
       .done( function() {
         try {
-          hashbks = JSON.parse(CryptoJS.AES.decrypt(_data, p).toString(CryptoJS.enc.Utf8));
-          mylog("restore_saved_io_backup(): hashbks[] filled");
+          t_enc_backup = _data_t;
+          h = JSON.parse(CryptoJS.AES.decrypt(_data, p).toString(CryptoJS.enc.Utf8));
+          for (const [_l, _array_bks] of Object.entries(h)) {
+            if (localStorage.hasOwnProperty("t_"+_l) &&
+                parseInt(localStorage.getItem("t_"+_l)) <= t_enc_backup) {
+              //mylog ("localStorage " + _l + " no need to update.")
+              //hashbks[_l] = JSON.parse(localStorage.getItem("l_"+_l)); // seta no retrieve_list
+              continue;
+            }
+            localStorage.setItem("t_"+_l, _data_t);
+            localStorage.setItem("l_"+_l, JSON.stringify(_array_bks));
+            //hashbks[_l] = _array_bks; // seta no retrieve_list
+            mylog ("localStorage " + _l + " updated")
+          };
+          console.log(hashbks);
+          mylog("update_localStorage_from_enc_backup(): localStorage updated");
         } catch (e) {
-          mylog(e.name + ": " + e.message);
+          mylog("update_localStorage_from_enc_backup() " + e.name + ": " + e.message);
+          t_enc_backup = undefined;
           $("#bks").html('<br><br><h2><center>無法從備份讀取!!!</center></h2>');
         }
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        mylog('restore_saved_io_backup(): AJAX error "' + textStatus + '"');
+        mylog('update_localStorage_from_enc_backup(): AJAX error "' + textStatus + '"');
         d.resolve();
       })
       .always(function() {
-        //mylog("restore_saved_io_backup(): AJAX always pass here!");
+        //mylog("update_localStorage_from_enc_backup(): AJAX always pass here!");
       });
     return d.promise();
-  } // end: restore_saved_io_backup()
+  } // end: update_localStorage_from_enc_backup()
 
-  function retrieve_list (list, refresh) {
+  function current_unix_timestamp() {
+    return Math.round(new Date().getTime()/1000);
+  }
+
+  function retrieve_list (list) {
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
-    if (typeof refresh === 'undefined') { refresh = 'no'; }
 
     $("#bks").html("讀取 <b>" + (hashlistname[list]?hashlistname[list]:"") + "</b> [" + list + "] ");
-    if ( hashbks[list] && refresh == 'no' ) {
-      mylog("retrieve_list(" + list + "): using IN-MEMORY CACHE");
-      $("#bks").append("記憶體中已有快取，直接用！");
-      d.resolve();
-      return d.promise();
+    if (localStorage.hasOwnProperty("t_"+list)) {
+      var _age = current_unix_timestamp() - parseInt(localStorage.getItem("t_"+list));
+      if (_age < t_stor_exp) {
+        hashbks[_l] = JSON.parse(localStorage.getItem("l_"+_l));
+        mylog("retrieve_list(" + list + "): using localStorage (age=" + _age + "s)");
+        $("#bks").append("Web Storage 還很新，可以用！");
+        d.resolve();
+        return d.promise();
+      } else {
+        mylog("retrieve_list(" + list + "): localStorage too old (age=" + _age + "s) ...");
+      }
     }
     $("#bks").append("從遠端存取中 …");
     // no encontrei cache
@@ -417,9 +449,7 @@
         ];
 
         mylog("retrieve_list(" + list + "): AJAX error");
-        restore_saved_io_backup().done(function() {
-          d.resolve();
-        });
+        d.resolve();
       })
       .always(function() {
         //mylog("retrieve_list(" + list + "): AJAX always pass here!");
@@ -449,6 +479,7 @@
     document.getElementById("weatherinfo").style.display = "none";
     var timerBegin = performance.now();
     retrieve_list(list).done(function() {
+          console.log(hashbks);
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
@@ -653,9 +684,12 @@
       return;
     }
 
-    write_bookmark_table(histctrl_init());
     write_moneyinfo();
     write_weatherinfo();
+    update_localStorage_from_enc_backup()
+      .done(function() {
+        write_bookmark_table(histctrl_init());
+      });
   };
 //]]></script>
 
