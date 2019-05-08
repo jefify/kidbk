@@ -361,7 +361,9 @@
         try {
           t_enc_backup = _data_t;
           h = JSON.parse(CryptoJS.AES.decrypt(_data, p).toString(CryptoJS.enc.Utf8));
-          for (const [_l, _array_bks] of Object.entries(h)) {
+          //for (const [_l, _array_bks] of Object.entries(h)) {
+          Object.keys(h).forEach(function(_l) {
+            _array_bks = h[_l];
             if (localStorage.hasOwnProperty("t_"+_l) &&
                 parseInt(localStorage.getItem("t_"+_l)) <= t_enc_backup) {
               //mylog ("localStorage " + _l + " no need to update.")
@@ -372,7 +374,7 @@
             localStorage.setItem("l_"+_l, JSON.stringify(_array_bks));
             //hashbks[_l] = _array_bks; // seta no retrieve_list
             mylog ("localStorage " + _l + " updated")
-          };
+          });
           console.log(hashbks);
           mylog("update_localStorage_from_enc_backup(): localStorage updated");
         } catch (e) {
