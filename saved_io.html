@@ -368,7 +368,7 @@
                 parseInt(localStorage.getItem("t_"+_l)) <= t_enc_backup) {
               //mylog ("localStorage " + _l + " no need to update.")
               //hashbks[_l] = JSON.parse(localStorage.getItem("l_"+_l)); // seta no retrieve_list
-              continue;
+              return; // for forEach function, instead of "continue" for iteration
             }
             localStorage.setItem("t_"+_l, _data_t);
             localStorage.setItem("l_"+_l, JSON.stringify(_array_bks));
@@ -419,7 +419,7 @@
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     $.ajax({
-      timeout: 3000,
+      timeout: 5000,
       type: "GET",
       dataType: "text", // o json parse do ajax nao traz array sim objetos numerados
       url: 'https://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
@@ -436,7 +436,7 @@
           // https://stackoverflow.com/a/11273782 sort by hash key Object.keys(hash[]).sort()
           hashbks[list] = JSON.parse(resp);
         }
-        mylog("retrieve_list(" + list + "): bookmark hash filled by json object");
+        mylog("retrieve_list: hashbks[" + list + "] filled by direct_fetch");
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
