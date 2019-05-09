@@ -413,7 +413,7 @@
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
     $.ajax({
-      timeout: 5000,
+      timeout: 15000,
       type: "GET",
       dataType: "text", // o json parse do ajax nao traz array sim objetos numerados
       url: 'https://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
