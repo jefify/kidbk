@@ -14,6 +14,14 @@
 
   <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" media="screen">
 
+  <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
+  <script src="scripts/timeago.min.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+  <script src="scripts/calendar.js"></script>
+
   <style>
     body {
       padding: 3%;
@@ -144,14 +152,6 @@
     }
     </style>    
 
-
-  <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.5/require.min.js"></script>
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-  <script src="scripts/calendar.js"></script>
-
 <script type="text/javascript">//<![CDATA[
   var hashbks = {};
   var hashlistname = { level0: "☆網路電視書籤☆" };
@@ -164,8 +164,9 @@
   var p;
   var encrypted_json_string = "U2FsdGVkX19znxXpb/iO3eUmcHqn394Zoo6uLSNXMK239XurysfOIiogih2bl1XFjc6s3aBQdW5meF6RBSL1DnYcz5Ek5XptIeOvNsO9+YviWk+AmMNs1e0f2W5IXtNzkCIuz2lUXmzMka7vRfeYB0lztnnIrDcSuynOMi4Pbc2qj0/sodZtG7AX7B5aX8GN1mxSWXu2yPievHHL5ArPr+UVBByuUsEx8N2xYTZJnz9WiBp5ADT1XZ2Rqv3RzVDXg9/LoKrsr5McPytRVZLECxDmKv8Up8MX0GVHiw/iTZV6WHXeo6ax2BNbsuKek4V1";
   var t_enc_backup;
-  var t_stor_exp = 15; // in secs
-  var t_wait_fetch = 1000; // in milisecs
+  var t_stor_exp = 1800000;
+  var t_wait_fetch = 1000;
+  var hash_flag_table_written = [];
 
   function strip_html_tags (h) { // https://stackoverflow.com/a/5002618
     var div = document.createElement("div");
@@ -359,24 +360,21 @@
     })
       .done( function() {
         try {
-          t_enc_backup = _data_t;
+          t_enc_backup = _data_t * 1000;
           h = JSON.parse(CryptoJS.AES.decrypt(_data, p).toString(CryptoJS.enc.Utf8));
-          //for (const [_l, _array_bks] of Object.entries(h)) {
           Object.keys(h).forEach(function(_l) {
-            _array_bks = h[_l];
             if (localStorage.hasOwnProperty("t_"+_l) &&
-                parseInt(localStorage.getItem("t_"+_l)) <= t_enc_backup) {
+                parseInt(localStorage.getItem("t_"+_l)) >= t_enc_backup) {
               //mylog ("localStorage " + _l + " no need to update.")
               //hashbks[_l] = JSON.parse(localStorage.getItem("l_"+_l)); // seta no retrieve_list
               return; // for forEach function, instead of "continue" for iteration
             }
-            localStorage.setItem("t_"+_l, _data_t);
-            localStorage.setItem("l_"+_l, JSON.stringify(_array_bks));
-            //hashbks[_l] = _array_bks; // seta no retrieve_list
+            localStorage.setItem("t_"+_l, t_enc_backup);
+            localStorage.setItem("l_"+_l, JSON.stringify(h[_l]));
+            //hashbks[_l] = h[_l]; // seta no retrieve_list
             mylog ("localStorage " + _l + " updated")
           });
-          console.log(hashbks);
-          mylog("update_localStorage_from_enc_backup(): localStorage updated");
+          mylog("update_localStorage_from_enc_backup(): lists iterated");
         } catch (e) {
           mylog("update_localStorage_from_enc_backup() " + e.name + ": " + e.message);
           t_enc_backup = undefined;
@@ -394,25 +392,21 @@
     return d.promise();
   } // end: update_localStorage_from_enc_backup()
 
-  function current_unix_timestamp() {
-    return Math.round(new Date().getTime()/1000);
-  }
-
   function retrieve_list (list) {
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
 
     $("#bks").html("讀取 <b>" + (hashlistname[list]?hashlistname[list]:"") + "</b> [" + list + "] ");
     if (localStorage.hasOwnProperty("t_"+list)) {
-      var _age = current_unix_timestamp() - parseInt(localStorage.getItem("t_"+list));
-      if (_age < t_stor_exp) {
-        hashbks[_l] = JSON.parse(localStorage.getItem("l_"+_l));
-        mylog("retrieve_list(" + list + "): using localStorage (age=" + _age + "s)");
+      var _t_list = parseInt(localStorage.getItem("t_"+list));
+      if ((new Date()).getTime() - _t_list < t_stor_exp) {
+        hashbks[list] = JSON.parse(localStorage.getItem("l_"+list));
+        mylog("retrieve_list(" + list + "): localStorage still fresh (" + timeago.format(_t_list) + ")");
         $("#bks").append("Web Storage 還很新，可以用！");
         d.resolve();
         return d.promise();
       } else {
-        mylog("retrieve_list(" + list + "): localStorage too old (age=" + _age + "s) ...");
+        mylog("retrieve_list(" + list + "): localStorage too old (" + timeago.format(_t_list) + "), refreshing by direct_fetch");
       }
     }
     $("#bks").append("從遠端存取中 …");
@@ -435,8 +429,10 @@
         } else {
           // https://stackoverflow.com/a/11273782 sort by hash key Object.keys(hash[]).sort()
           hashbks[list] = JSON.parse(resp);
+          localStorage.setItem("l_"+list, resp);
+          localStorage.setItem("t_"+list, (new Date()).getTime());
         }
-        mylog("retrieve_list: hashbks[" + list + "] filled by direct_fetch");
+        mylog("retrieve_list(" + list + "): localStorage refreshed by direct_fetch");
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
@@ -450,7 +446,7 @@
           }
         ];
 
-        mylog("retrieve_list(" + list + "): AJAX error");
+        mylog("retrieve_list(" + list + "): AJAX error=" + textStatus);
         d.resolve();
       })
       .always(function() {
@@ -481,7 +477,6 @@
     document.getElementById("weatherinfo").style.display = "none";
     var timerBegin = performance.now();
     retrieve_list(list).done(function() {
-          console.log(hashbks);
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
