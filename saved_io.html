@@ -164,9 +164,8 @@
   var p;
   var encrypted_json_string = "U2FsdGVkX19znxXpb/iO3eUmcHqn394Zoo6uLSNXMK239XurysfOIiogih2bl1XFjc6s3aBQdW5meF6RBSL1DnYcz5Ek5XptIeOvNsO9+YviWk+AmMNs1e0f2W5IXtNzkCIuz2lUXmzMka7vRfeYB0lztnnIrDcSuynOMi4Pbc2qj0/sodZtG7AX7B5aX8GN1mxSWXu2yPievHHL5ArPr+UVBByuUsEx8N2xYTZJnz9WiBp5ADT1XZ2Rqv3RzVDXg9/LoKrsr5McPytRVZLECxDmKv8Up8MX0GVHiw/iTZV6WHXeo6ax2BNbsuKek4V1";
   var t_enc_backup;
-  var t_stor_exp = 1800000;
-  var t_wait_fetch = 1000;
-  var hash_flag_table_written = [];
+  var t_stor_exp = 1800000; // 30min
+  var t_wait_fetch = 1500; // 1.5sec
 
   function strip_html_tags (h) { // https://stackoverflow.com/a/5002618
     var div = document.createElement("div");
@@ -412,14 +411,26 @@
     $("#bks").append("從遠端存取中 …");
     // no encontrei cache
     hashbks[list] = {}; // https://stackoverflow.com/a/4329199
+
+    var timer = setTimeout( function() {
+      mylog("Timer (" + timer + ") count out!");
+      timer = undefined;
+      hashbks[list] = JSON.parse(localStorage.getItem("l_"+list));
+      mylog("retrieve_list(" + list + "): t_wait_fetch reached, keep retriving but using localStorage");
+      d.resolve();
+      return d.promise(); // ainda preciso ver se realmente o "d" pode ser passado assim ...
+    }, t_wait_fetch);
+    mylog("Timer (" + timer + ") triggered.");
+     
     $.ajax({
-      timeout: 15000,
+      timeout: 30000,
       type: "GET",
       dataType: "text", // o json parse do ajax nao traz array sim objetos numerados
       url: 'https://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
       //url: 'https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
     })
       .done( function(resp) {
+        if ( timer !== undefined ) { mylog("Timer (" + timer + ") cleared."); clearTimeout(timer); }
         if ( resp == null ) {
           hashbks[list] = [{
             "bk_title": "找不到書籤 (key, devkey)?",
@@ -482,6 +493,7 @@
       t += '<tbody>';
       //mylog("write_bookmark_table("+list+") step2: list retrieved");
       if (hashbks[list]) {
+        console.log("aqui2")
         var cols_per_row = hashbks[list].length;
         if (cols_per_row > max_cols_per_row) {
           cols_per_row = max_cols_per_row;
