@@ -153,7 +153,9 @@
     </style>    
 
 <script type="text/javascript">//<![CDATA[
-  var hashbks = {};
+  //var hashbks = {}; // depois do uso do localStorage guardo somente lista atual, multi-dimension hash https://stackoverflow.com/a/4329199
+  var hashcurrentlistbks;
+  var timestampcurrentlist
   var hashlistname = { level0: "☆網路電視書籤☆" };
   var myhiststack = [];
   var max_cols_per_row = 4;
@@ -164,8 +166,27 @@
   var p;
   var encrypted_json_string = "U2FsdGVkX19znxXpb/iO3eUmcHqn394Zoo6uLSNXMK239XurysfOIiogih2bl1XFjc6s3aBQdW5meF6RBSL1DnYcz5Ek5XptIeOvNsO9+YviWk+AmMNs1e0f2W5IXtNzkCIuz2lUXmzMka7vRfeYB0lztnnIrDcSuynOMi4Pbc2qj0/sodZtG7AX7B5aX8GN1mxSWXu2yPievHHL5ArPr+UVBByuUsEx8N2xYTZJnz9WiBp5ADT1XZ2Rqv3RzVDXg9/LoKrsr5McPytRVZLECxDmKv8Up8MX0GVHiw/iTZV6WHXeo6ax2BNbsuKek4V1";
   var t_enc_backup;
-  var t_stor_exp = 1800000; // 30min
+  var t_stor_exp = 1800000; // 30min = 1800000
   var t_wait_fetch = 1500; // 1.5sec
+
+  timeago.register('zh_TW', function(number, index, total_sec) {
+    return [
+      ['剛剛', '片刻後'],
+      ['%s 秒前', '%s 秒後'],
+      ['1 分鐘前', '1 分鐘後'],
+      ['%s 分鐘前', '%s 分鐘後'],
+      ['1 小時前', '1 小時後'],
+      ['%s 小時前', '%s 小時後'],
+      ['1 天前', '1 天後'],
+      ['%s 天前', '%s 天後'],
+      ['1 週前', '1 週後'],
+      ['%s 週前', '%s 週後'],
+      ['1 個月前', '1 個月後'],
+      ['%s 個月前', '%s 個月後'],
+      ['1 年前', '1 年後'],
+      ['%s 年前', '%s 年後']
+    ][index];
+  });
 
   function strip_html_tags (h) { // https://stackoverflow.com/a/5002618
     var div = document.createElement("div");
@@ -344,12 +365,14 @@
     // https://stackoverflow.com/questions/14521108/dynamically-load-js-inside-js
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
 
+    //localStorage.clear(); d.resolve(); return d.promise(); // debug to test without localstorage
+
     if (typeof t_enc_backup !== 'undefined') {
       mylog("Backup had been reterieved, ignoring ...");
       d.resolve();
       return d.promise();
     } else {
-      t_enc_backup = -1;
+      t_enc_backup = -1; // define qq coisa
     }
     $.ajax({
       timeout: 10000,
@@ -365,12 +388,10 @@
             if (localStorage.hasOwnProperty("t_"+_l) &&
                 parseInt(localStorage.getItem("t_"+_l)) >= t_enc_backup) {
               //mylog ("localStorage " + _l + " no need to update.")
-              //hashbks[_l] = JSON.parse(localStorage.getItem("l_"+_l)); // seta no retrieve_list
               return; // for forEach function, instead of "continue" for iteration
             }
             localStorage.setItem("t_"+_l, t_enc_backup);
             localStorage.setItem("l_"+_l, JSON.stringify(h[_l]));
-            //hashbks[_l] = h[_l]; // seta no retrieve_list
             mylog ("localStorage " + _l + " updated")
           });
           mylog("update_localStorage_from_enc_backup(): lists iterated");
@@ -392,36 +413,41 @@
   } // end: update_localStorage_from_enc_backup()
 
   function retrieve_list (list) {
+    hashcurrentlistbks = undefined;
+
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
+    var timer;
 
     $("#bks").html("讀取 <b>" + (hashlistname[list]?hashlistname[list]:"") + "</b> [" + list + "] ");
     if (localStorage.hasOwnProperty("t_"+list)) {
-      var _t_list = parseInt(localStorage.getItem("t_"+list));
-      if ((new Date()).getTime() - _t_list < t_stor_exp) {
-        hashbks[list] = JSON.parse(localStorage.getItem("l_"+list));
-        mylog("retrieve_list(" + list + "): localStorage still fresh (" + timeago.format(_t_list) + ")");
-        $("#bks").append("Web Storage 還很新，可以用！");
+      timestampcurrentlist = parseInt(localStorage.getItem("t_"+list));
+      hashcurrentlistbks = JSON.parse(localStorage.getItem("l_"+list));
+
+      if ((new Date()).getTime() - timestampcurrentlist < t_stor_exp) {
+        hashcurrentlistbks = JSON.parse(localStorage.getItem("l_"+list));
+        mylog("retrieve_list(" + list + "): localStorage still fresh (" + timeago.format(timestampcurrentlist) + ")");
+        //$("#bks").append("Web Storage 還很新，可以用！");
         d.resolve();
         return d.promise();
       } else {
-        mylog("retrieve_list(" + list + "): localStorage too old (" + timeago.format(_t_list) + "), refreshing by direct_fetch");
+        mylog("retrieve_list(" + list + "): localStorage too old (" + timeago.format(timestampcurrentlist) + "), refreshing by direct_fetch");
+        timer = setTimeout( function() {
+          mylog("Timer (" + timer + ") count out!");
+          timer = undefined;
+          hashcurrentlistbks = JSON.parse(localStorage.getItem("l_"+list));
+          mylog("retrieve_list(" + list + "): t_wait_fetch reached, keep retriving but using localStorage");
+          d.resolve();
+          return d.promise(); // ainda preciso ver se realmente o "d" pode ser passado assim ...
+        }, t_wait_fetch);
+        mylog("Timer (" + timer + ") triggered.");
       }
+    } else {
+      mylog("retrieve_list(" + list + "): no localStorage ...");
     }
     $("#bks").append("從遠端存取中 …");
     // no encontrei cache
-    hashbks[list] = {}; // https://stackoverflow.com/a/4329199
 
-    var timer = setTimeout( function() {
-      mylog("Timer (" + timer + ") count out!");
-      timer = undefined;
-      hashbks[list] = JSON.parse(localStorage.getItem("l_"+list));
-      mylog("retrieve_list(" + list + "): t_wait_fetch reached, keep retriving but using localStorage");
-      d.resolve();
-      return d.promise(); // ainda preciso ver se realmente o "d" pode ser passado assim ...
-    }, t_wait_fetch);
-    mylog("Timer (" + timer + ") triggered.");
-     
     $.ajax({
       timeout: 30000,
       type: "GET",
@@ -432,14 +458,14 @@
       .done( function(resp) {
         if ( timer !== undefined ) { mylog("Timer (" + timer + ") cleared."); clearTimeout(timer); }
         if ( resp == null ) {
-          hashbks[list] = [{
+          hashcurrentlistbks = [{
             "bk_title": "找不到書籤 (key, devkey)?",
             "bk_url" : window.location.href }];
           d.resolve();
           return d.promise();
         } else {
           // https://stackoverflow.com/a/11273782 sort by hash key Object.keys(hash[]).sort()
-          hashbks[list] = JSON.parse(resp);
+          hashcurrentlistbks = JSON.parse(resp);
           localStorage.setItem("l_"+list, resp);
           localStorage.setItem("t_"+list, (new Date()).getTime());
         }
@@ -447,15 +473,16 @@
         d.resolve();
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        hashbks[list] = [
-          {
-            "bk_title": "(" + textStatus + ") 讀不到遠端書籤 按此再試一次 ...",
-            "bk_url" : window.location.href
-          }, {
-            "bk_title": "或試看看舊版",
-            "bk_url" : "https://jefify.github.io/kidbk/nekman/kidbk.html"
-          }
-        ];
+        if (!hashcurrentlistbks)
+          hashcurrentlistbks = [
+            {
+              "bk_title": "(" + textStatus + ") 讀不到遠端書籤 按此再試一次 ...",
+              "bk_url" : window.location.href
+            }, {
+              "bk_title": "或試看看舊版",
+              "bk_url" : "https://jefify.github.io/kidbk/nekman/kidbk.html"
+            }
+          ];
 
         mylog("retrieve_list(" + list + "): AJAX error=" + textStatus);
         d.resolve();
@@ -492,9 +519,8 @@
       var t = '<table class="table bk" id="example5">';
       t += '<tbody>';
       //mylog("write_bookmark_table("+list+") step2: list retrieved");
-      if (hashbks[list]) {
-        console.log("aqui2")
-        var cols_per_row = hashbks[list].length;
+      if (hashcurrentlistbks) {
+        var cols_per_row = hashcurrentlistbks.length;
         if (cols_per_row > max_cols_per_row) {
           cols_per_row = max_cols_per_row;
         }
@@ -510,9 +536,9 @@
         var i = 0;
         var menu_count = 0; var menu_html = "<tr><th colspan=4>分類</th></tr>\n"; //menus
 
-        hashbks[list].sort(predicateBy("bk_title"));
+        hashcurrentlistbks.sort(predicateBy("bk_title"));
 
-        hashbks[list].forEach(function (bk) {  
+        hashcurrentlistbks.forEach(function (bk) {  
           var title = bk["bk_title"];
           var url = bk["bk_url"];
           // https://javascript.info/regexp-methods
@@ -554,7 +580,7 @@
           t += menu_html + '</tr>\n';
         }
 
-        //mylog("write_bookmark_table("+list+") step3: hashbks[] iterated");
+        //mylog("write_bookmark_table("+list+") step3: hashcurrentlistbks iterated");
       } else {
         t += "遠端書籤擷取錯誤！！";
       }
@@ -565,7 +591,7 @@
       //mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
       document.title = hashlistname[list]; // change html title
       var timerEnd = performance.now();
-      t += '<center><small>讀取時間： ' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒</small></center>';
+      t += '<center><small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒 / 資料是' + timeago.format(timestampcurrentlist, 'zh_TW') + '存的</small></center>';
       $("#bks").html(t);
       mylog("write_bookmark_table("+list+"): bookmark table written");
 
