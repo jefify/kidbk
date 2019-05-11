@@ -169,7 +169,8 @@
   var t_stor_exp = 1000 * 60 * 30; // 30mins
   var t_interval_reload_enc_backup = 1000 * 60 * 60 * 12; //12 hrs
   var t_wait_fetch = 1500; // 1.5sec
-  var timestamp_last_histctrl_init = 0;
+  var timestamp_last_histctrl_init = 0; // LG WebOS trigger windows.pop soon after reload of pageback, need to control
+
 
   timeago.register('zh_TW', function(number, index, total_sec) {
     return [
@@ -258,7 +259,10 @@
   /* histctrl_init: returns which list to start */
   function histctrl_init() {
     var _now = (new Date()).getTime();
-    mylog ("<b><large>histctrl_init()</large>: triggered!</b>, time diff=" + (_now - timestamp_last_histctrl_init));
+    if (_now - timestamp_last_histctrl_init < 50) {
+      mylog ("<b><large>histctrl_init()</large>: triggered again in too shor time (" + (_now - timestamp_last_histctrl_init) + "ms), should be WebOS... putting twice the top of histctrl...");
+      histctrl_push(histctrl_gettop());
+    }
     timestamp_last_histctrl_init = _now
 
     if (history.state !== null && history.state['hashlistname'] !== null) {
