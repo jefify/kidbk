@@ -155,7 +155,7 @@
 <script type="text/javascript">//<![CDATA[
   //var hashbks = {}; // depois do uso do localStorage guardo somente lista atual, multi-dimension hash https://stackoverflow.com/a/4329199
   var hashcurrentlistbks;
-  var timestampcurrentlist
+  var timestampcurrentlist;
   var hashlistname = { level0: "☆網路電視書籤☆" };
   var myhiststack = [];
   var max_cols_per_row = 4;
@@ -166,8 +166,10 @@
   var p;
   var encrypted_json_string = "U2FsdGVkX19znxXpb/iO3eUmcHqn394Zoo6uLSNXMK239XurysfOIiogih2bl1XFjc6s3aBQdW5meF6RBSL1DnYcz5Ek5XptIeOvNsO9+YviWk+AmMNs1e0f2W5IXtNzkCIuz2lUXmzMka7vRfeYB0lztnnIrDcSuynOMi4Pbc2qj0/sodZtG7AX7B5aX8GN1mxSWXu2yPievHHL5ArPr+UVBByuUsEx8N2xYTZJnz9WiBp5ADT1XZ2Rqv3RzVDXg9/LoKrsr5McPytRVZLECxDmKv8Up8MX0GVHiw/iTZV6WHXeo6ax2BNbsuKek4V1";
   var t_enc_backup;
-  var t_stor_exp = 1800000; // 30min = 1800000
+  var t_stor_exp = 1000 * 60 * 30; // 30mins
+  var t_interval_reload_enc_backup = 1000 * 60 * 60 * 12; //12 hrs
   var t_wait_fetch = 1500; // 1.5sec
+  var timestamp_window_popstate = 0;
 
   timeago.register('zh_TW', function(number, index, total_sec) {
     return [
@@ -234,9 +236,12 @@
   }
 
   window.onpopstate = function(event) {
+    var _now = (new Date()).getTime();
+    
     // history control https://stackoverflow.com/a/29227026 , https://stackoverflow.com/a/22819000
     // sempre manter um seugndo iten na pilha history
-    mylog ("<b><large>window.onpopstate()</large>: triggered!</b>");
+    mylog ("<b><large>window.onpopstate()</large>: triggered!</b>, time diff=" + (_now - timestamp_window_popstate));
+    timestamp_window_popstate = _now
 
     if ( histctrl_is_end() ) {
       // esta no fundo
@@ -367,6 +372,13 @@
 
     //localStorage.clear(); d.resolve(); return d.promise(); // debug to test without localstorage
 
+    if (localStorage.hasOwnProperty("t_load_enc_backup") &&
+        (new Date()).getTime() - parseInt(localStorage.getItem("t_load_enc_backup")) <= t_interval_reload_enc_backup) {
+      mylog("update_localStorage_from_enc_backup(): skip, last load was " + timeago.format(parseInt(localStorage.getItem("t_load_enc_backup"))));
+      d.resolve();
+      return d.promise();
+    }
+
     if (typeof t_enc_backup !== 'undefined') {
       mylog("Backup had been reterieved, ignoring ...");
       d.resolve();
@@ -395,6 +407,7 @@
             mylog ("localStorage " + _l + " updated")
           });
           mylog("update_localStorage_from_enc_backup(): lists iterated");
+          localStorage.setItem("t_load_enc_backup", (new Date()).getTime());
         } catch (e) {
           mylog("update_localStorage_from_enc_backup() " + e.name + ": " + e.message);
           t_enc_backup = undefined;
@@ -466,6 +479,7 @@
         } else {
           // https://stackoverflow.com/a/11273782 sort by hash key Object.keys(hash[]).sort()
           hashcurrentlistbks = JSON.parse(resp);
+          //timestampcurrentlist = (new Date()).getTime();
           localStorage.setItem("l_"+list, resp);
           localStorage.setItem("t_"+list, (new Date()).getTime());
         }
