@@ -485,7 +485,7 @@
         } else {
           // https://stackoverflow.com/a/11273782 sort by hash key Object.keys(hash[]).sort()
           hashcurrentlistbks = JSON.parse(resp);
-          //timestampcurrentlist = (new Date()).getTime();
+          timestampcurrentlist = (new Date()).getTime();
           localStorage.setItem("l_"+list, resp);
           localStorage.setItem("t_"+list, (new Date()).getTime());
         }
