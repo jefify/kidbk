@@ -260,7 +260,7 @@
   function histctrl_init() {
     var _now = (new Date()).getTime();
     if (_now - timestamp_last_histctrl_init < 50) {
-      mylog ("<b><large>histctrl_init()</large>: triggered again in too shor time (" + (_now - timestamp_last_histctrl_init) + "ms), should be WebOS... putting twice the top of histctrl...");
+      mylog ("<b><large>histctrl_init()</large><b>: <red>triggered again in too short time (" + (_now - timestamp_last_histctrl_init) + "ms), should be WebOS... putting double top of histctrl as workaround...</red>");
       histctrl_push(histctrl_gettop());
     }
     timestamp_last_histctrl_init = _now
