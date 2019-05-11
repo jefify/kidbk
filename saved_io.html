@@ -605,7 +605,7 @@
       //mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
       document.title = hashlistname[list]; // change html title
       var timerEnd = performance.now();
-      t += '<center><small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒 / 資料是' + timeago.format(timestampcurrentlist, 'zh_TW') + '存的</small></center>';
+      t += '<center><small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒 / ' + timeago.format(timestampcurrentlist, 'zh_TW') + '更新的資料</small></center>';
       $("#bks").html(t);
       mylog("write_bookmark_table("+list+"): bookmark table written");
 
