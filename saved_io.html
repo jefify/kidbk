@@ -170,6 +170,8 @@
   var t_interval_reload_enc_backup = 1000 * 60 * 60 * 12; //12 hrs
   var t_wait_fetch = 1500; // 1.5sec
   var timestamp_last_histctrl_init = 0; // LG WebOS trigger windows.pop soon after reload of pageback, need to control
+  var t_ajax_list = 30000;
+  var t_ajax_enc_backup = 10000;
 
 
   timeago.register('zh_TW', function(number, index, total_sec) {
@@ -393,7 +395,7 @@
       t_enc_backup = -1; // define qq coisa
     }
     $.ajax({
-      timeout: 10000,
+      timeout: t_ajax_enc_backup,
       type: "GET",
       dataType: "script",
       url: 'https://jefify.github.io/data/saved.io/enc_backup.js'
@@ -432,11 +434,12 @@
   } // end: update_localStorage_from_enc_backup()
 
   function retrieve_list (list) {
-    hashcurrentlistbks = undefined;
 
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
     var timer;
+
+    hashcurrentlistbks = undefined;
 
     $("#bks").html("讀取 <b>" + (hashlistname[list]?hashlistname[list]:"") + "</b> [" + list + "] ");
     if (localStorage.hasOwnProperty("t_"+list)) {
@@ -468,7 +471,7 @@
     // no encontrei cache
 
     $.ajax({
-      timeout: 30000,
+      timeout: t_ajax_list,
       type: "GET",
       dataType: "text", // o json parse do ajax nao traz array sim objetos numerados
       url: 'https://cors.io/?https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
@@ -524,7 +527,7 @@
     }
   }
 
-  var write_bookmark_table = debounce( function (list) {
+  var write_bookmark_table = debounce( function (list, refresh) {
     //mylog("write_bookmark_table("+list+") step1: begin");
     /*var checkExist = setInterval(function() { // https://stackoverflow.com/a/16149679
       if ($('#bks').length) {
@@ -532,8 +535,22 @@
         clearInterval(checkExist);
       }
     }, 100); // check every 100ms */
-    document.getElementById("weatherinfo").style.display = "none";
+
     var timerBegin = performance.now();
+
+    // refresh control
+    var __bkp_t_stor_exp = t_stor_exp;
+    var __bkp_t_wait_fetch = t_wait_fetch;
+    var __bkp_t_ajax_list = t_ajax_list;
+
+    if (typeof refresh !== 'undefined' && refresh == true) {
+      t_stor_exp = -1;
+      t_wait_fetch = 30000;
+      t_ajax_list = 30000;
+    }
+
+    document.getElementById("weatherinfo").style.display = "none";
+
     retrieve_list(list).done(function() {
       // 0 === $.active
       var t = '<table class="table bk" id="example5">';
@@ -611,9 +628,13 @@
       //mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
       document.title = hashlistname[list]; // change html title
       var timerEnd = performance.now();
-      t += '<center><small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒 / ' + timeago.format(timestampcurrentlist, 'zh_TW') + '更新的資料</small></center>';
+      t += '<center><small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒 / ' + timeago.format(timestampcurrentlist, 'zh_TW') + "更新的資料</small><b><a href='javascript:refresh_list(\""+list+"\")'>⟳</a></center></b>";
       $("#bks").html(t);
       mylog("write_bookmark_table("+list+"): bookmark table written");
+
+      t_stor_exp = __bkp_t_stor_exp;
+      t_wait_fetch = __bkp_t_wait_fetch;
+      t_ajax_list = __bkp_t_ajax_list;
 
       refresh_keynavgator_table();
       document.getElementById("weatherinfo").style.display = "inline-block";
@@ -672,6 +693,10 @@
   function goto_list (l) {
     write_bookmark_table(l);
     histctrl_push(l);
+  }
+
+  function refresh_list (l) {
+    write_bookmark_table(l, true);
   }
 
   // time
