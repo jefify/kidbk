@@ -478,7 +478,6 @@
       //url: 'https://devapi.saved.io/bookmarks?list=' + list + '&devkey=' + mydevkey + '&key=' + mykey
     })
       .done( function(resp) {
-        if ( timer !== undefined ) { mylog("Timer (" + timer + ") cleared."); clearTimeout(timer); }
         if ( resp == null ) {
           hashcurrentlistbks = [{
             "bk_title": "找不到書籤 (key, devkey)?",
@@ -511,7 +510,11 @@
         d.resolve();
       })
       .always(function() {
-        //mylog("retrieve_list(" + list + "): AJAX always pass here!");
+        if ( timer !== undefined ) {
+          mylog("Timer (" + timer + ") cleared.");
+          clearTimeout(timer);
+          timer = undefined;
+        }
       });
     return d.promise();
   } // end: retrieve_list()
@@ -544,9 +547,11 @@
     var __bkp_t_ajax_list = t_ajax_list;
 
     if (typeof refresh !== 'undefined' && refresh == true) {
-      t_stor_exp = -1;
-      t_wait_fetch = 30000;
-      t_ajax_list = 30000;
+      t_stor_exp = -1; // ignores localStorage
+      t_ajax_list = 10 * 1000; // 10 secs
+      t_wait_fetch = t_ajax_list + 1000; // is to wait ajax ...
+    } else {
+      refresh = false;
     }
 
     document.getElementById("weatherinfo").style.display = "none";
@@ -628,7 +633,16 @@
       //mylog("write_bookmark_table("+list+") step4: string for #bks prepared");
       document.title = hashlistname[list]; // change html title
       var timerEnd = performance.now();
-      t += '<center><small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒 / ' + timeago.format(timestampcurrentlist, 'zh_TW') + "更新的資料</small><b><a href='javascript:refresh_list(\""+list+"\")'>⟳</a></center></b>";
+      t += '<center>';
+      t += '<small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒';
+      t += ' / ';
+      if (refresh) {
+        t += '更新' + (((new Date()).getTime()-timestampcurrentlist < 300)? "成功":"失敗");
+      } else {
+        t += timeago.format(timestampcurrentlist, 'zh_TW') + '更新的資料</small>';
+      }
+      t += "<b><a href='javascript:refresh_list(\""+list+"\")'>⟳</a></b>";
+      t += '</center>';
       $("#bks").html(t);
       mylog("write_bookmark_table("+list+"): bookmark table written");
 
