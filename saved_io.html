@@ -260,6 +260,7 @@
   /***** INI: HISTORY CONTROL *****/
   /* histctrl_init: returns which list to start */
   function histctrl_init() {
+    // LG WebOS bug ...
     var _now = (new Date()).getTime();
     if (_now - timestamp_last_histctrl_init < 30) {
       mylog ("<b><large>histctrl_init()</large></b>: <red>triggered again in too short time (" + (_now - timestamp_last_histctrl_init) + "ms), should be WebOS... putting double top of histctrl as workaround...</red>");
@@ -576,7 +577,10 @@
         }
 
         var i = 0;
-        var menu_count = 0; var menu_html = "<tr><th colspan=4>分類</th></tr>\n"; //menus
+        var menu_count = 0;
+        var menu_html = "<tr><th colspan=" + max_cols_per_row + ">分類"
+        if (list=="level0") menu_html += "&nbsp;<a href='javascript:reset_localStorage();'><img title='清理本地資料' src='images/broom.png' width=22 height=22 /></a>";
+        menu_html += "</th></tr>\n"; //menus
 
         hashcurrentlistbks.sort(predicateBy("bk_title"));
 
@@ -712,6 +716,15 @@
   function refresh_list (l) {
     write_bookmark_table(l, true);
   }
+
+  function reset_localStorage () {
+    t_enc_backup = undefined;
+    localStorage.clear();
+    update_localStorage_from_enc_backup()
+      .done(function() {
+        write_bookmark_table(histctrl_init());
+      });
+}
 
   // time
   function twoDigitTime(i) {
