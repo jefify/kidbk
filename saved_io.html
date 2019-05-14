@@ -171,8 +171,10 @@
   var t_wait_fetch = 1500; // 1.5sec
   var timestamp_last_histctrl_init = 0; // LG WebOS trigger windows.pop soon after reload of pageback, need to control
   var t_ajax_list = 30000;
+  var jqXHR_ajax_list;
   var t_ajax_enc_backup = 10000;
 
+  // https://icons8.com.br/ #613E0F
 
   timeago.register('zh_TW', function(number, index, total_sec) {
     return [
@@ -468,10 +470,10 @@
     } else {
       mylog("retrieve_list(" + list + "): no localStorage ...");
     }
-    $("#bks").append("從遠端存取中 …");
+    $("#bks").append("從遠端存取中 <a href='javascript:jqXHR_ajax_list.abort();'><img title='取消更新' src='images/abort.png' height=16 width=16 /></a>…");
     // no encontrei cache
 
-    $.ajax({
+    jqXHR_ajax_list = $.ajax({
       timeout: t_ajax_list,
       type: "GET",
       dataType: "text", // o json parse do ajax nao traz array sim objetos numerados
@@ -641,11 +643,15 @@
       t += '<small>處理秏時' + ((timerEnd-timerBegin)/1000).toFixed(2) + '秒';
       t += ' / ';
       if (refresh) {
-        t += '更新' + (((new Date()).getTime()-timestampcurrentlist < 300)? "成功":"失敗");
+        if ( (new Date()).getTime() - timestampcurrentlist < 300 ) {
+          t += "更新成功";
+        } else {
+          t += "更新失敗，" + timeago.format(timestampcurrentlist, 'zh_TW') + '的資料';
+        }
       } else {
-        t += timeago.format(timestampcurrentlist, 'zh_TW') + '更新的資料</small>';
+        t += timeago.format(timestampcurrentlist, 'zh_TW') + '更新的資料';
       }
-      t += "<b><a href='javascript:refresh_list(\""+list+"\")'>⟳</a></b>";
+      t += "</small>&nbsp;<a href='javascript:refresh_list(\""+list+"\")'><img title='直接更新' src='images/refresh.png' width=16 height=16 /></a>";
       t += '</center>';
       $("#bks").html(t);
       mylog("write_bookmark_table("+list+"): bookmark table written");
