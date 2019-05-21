@@ -707,7 +707,7 @@
 
   function goto_ext_url (u) {
     mylog ("goto_ext_url: " + u);
-    window.location.href = u;
+    window.location.href = (/:\/\//.test(u)?"":"http://") + u;
   }
 
   function goto_myself_p () {
