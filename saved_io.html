@@ -379,7 +379,7 @@
 
   function update_localStorage_from_enc_backup () {
     // https://stackoverflow.com/questions/14521108/dynamically-load-js-inside-js
-    var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
+    var d = new $.Deferred();
 
     //localStorage.clear(); d.resolve(); return d.promise(); // debug to test without localstorage
 
@@ -439,6 +439,7 @@
   function retrieve_list (list) {
 
     // https://www.sitepoint.com/introduction-jquery-deferred-objects/
+    // https://stackoverflow.com/a/17308358
     var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
     var timer;
 
@@ -463,7 +464,7 @@
           hashcurrentlistbks = JSON.parse(localStorage.getItem("l_"+list));
           mylog("retrieve_list(" + list + "): t_wait_fetch reached, keep retriving but using localStorage");
           d.resolve();
-          return d.promise(); // ainda preciso ver se realmente o "d" pode ser passado assim ...
+          // return d.promise(); // return n/a no callback()
         }, t_wait_fetch);
         mylog("Timer (" + timer + ") triggered.");
       }
@@ -486,7 +487,8 @@
             "bk_title": "找不到書籤 (key, devkey)?",
             "bk_url" : window.location.href }];
           d.resolve();
-          return d.promise();
+          //return d.promise(); // return n/a no callback()
+          return; // sair do callback()
         } else {
           // https://stackoverflow.com/a/11273782 sort by hash key Object.keys(hash[]).sort()
           hashcurrentlistbks = JSON.parse(resp);
