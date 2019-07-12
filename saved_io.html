@@ -664,13 +664,6 @@
       t += "</small>&nbsp;<a href='javascript:refresh_list(\""+list+"\")'><img title='直接更新' src='images/refresh.png' width=16 height=16 /></a>";
       t += '</center>';
 
-//JF
-// https://stackoverflow.com/a/17359959
-var ratio = window.devicePixelRatio || 1;
-var w = window.innerWidth * ratio;
-var h = window.innerHeight * ratio;
-t+="<center>w: "+w+", h: "+h+", ratio: "+ratio+"</center>";
-
       $("#bks").html(t);
       mylog("write_bookmark_table("+list+"): bookmark table written");
 
@@ -814,6 +807,13 @@ t+="<center>w: "+w+", h: "+h+", ratio: "+ratio+"</center>";
       $("#bks").html('<br><br><h2><center>¡¡¡ 請用 <a href="' + window.location.href.replace(/^[^:][^:]*:/i, "https:") + '"><big>HTTPS</big></a> 卡安全 !!!</center></h2>');
       return;
     }
+
+    //max_cols_per_row https://stackoverflow.com/a/17359959
+    var ratio = window.devicePixelRatio || 1;
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    mylog("w: "+w+", h: "+h+", ratio: "+ratio+"");
+    max_cols_per_row=parseInt(w/200)>max_cols_per_row?max_cols_per_row:parseInt(w/280);
 
     write_moneyinfo();
     write_weatherinfo();
