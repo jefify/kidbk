@@ -222,8 +222,9 @@
     } 
   };
 
-  function getUrlParm(name) {
-    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+  function getUrlParm(name, url) {
+    if (typeof url == 'undefined') url = window.location.href;
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
     if (results==null){
        return null;
     } else {
@@ -612,6 +613,12 @@
             }
             t += '<td>';
             t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div class="exturlcell"><img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ' + title + '</div></a>';
+            /*
+            //JF
+            if (/youtube.com\/watch/.test(url)) {
+              t += "<br><img src='http://img.youtube.com/vi/" + getUrlParm("v", url) + "/default.jpg'>";
+            }
+            */
             t += '</td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
@@ -656,6 +663,14 @@
       }
       t += "</small>&nbsp;<a href='javascript:refresh_list(\""+list+"\")'><img title='直接更新' src='images/refresh.png' width=16 height=16 /></a>";
       t += '</center>';
+
+//JF
+// https://stackoverflow.com/a/17359959
+var ratio = window.devicePixelRatio || 1;
+var w = window.innerWidth * ratio;
+var h = window.innerHeight * ratio;
+t+="<center>w: "+w+", h: "+h+", ratio: "+ratio+"</center>";
+
       $("#bks").html(t);
       mylog("write_bookmark_table("+list+"): bookmark table written");
 
