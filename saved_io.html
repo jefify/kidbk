@@ -541,7 +541,7 @@
     if (/youtube.com\/watch/.test(url)) {
       return 'http://img.youtube.com/vi/' + getUrlParm("v", url) + '/default.jpg';
     }
-    return 'https://jefify.github.io/data/saved.io/img/default-url.png';
+    return 'https://jefify.github.io/data/saved.io/default-url.png';
   }
 
   var write_bookmark_table = debounce( function (list, refresh) {
@@ -611,7 +611,7 @@
             url = "javascript:goto_list('" + menu_item + "');";
             menu_html += '<td>';
             // images failback https://stackoverflow.com/a/13118956
-            menu_html += "<center><img src='https://jefify.github.io/data/saved.io/" + menu_item + ".png' onerror='this.src=\"https://jefify.github.io/data/saved.io/img/default-menu.png\"' width=80 height=80></center><br>";
+            menu_html += "<center><img src='https://jefify.github.io/data/saved.io/img/" + menu_item + ".png' onerror='this.src=\"https://jefify.github.io/data/saved.io/default-menu.png\"' width=80 height=80></center><br>";
             menu_html += '<a href="' + url + '"><div class="menucell">' + title + '</div></a>';
             menu_html += '</td>';
             if ( menu_count % cols_per_row == 0 ) {
