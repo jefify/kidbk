@@ -52,35 +52,43 @@
     }
     /* end: nekman keynavigator*/
     .sitecell {
+      border-radius: 5px;
       height: 100%;
       width: 100%;
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
+      line-height: 110%;
+      position: relative;
     }
     .menucell {
+      border-radius: 15px;
       height: 100%;
       width: 100%;
       text-align: center;
-    }
-    .sitecell:hover, .menucell:hover{
-      background: #b292f2;
-      overflow: visible;
+      line-height: 16px;
     }
     #example5 a{
       text-decoration: none;
+      color: #123456;
     }
-    #example5 a:hover{
-      color: #fe1;
-      /*font-weight: bold;*/
-      text-shadow: 2px 2px #000;
-    }
+    /* ini: td hover */
     #example5 td:not(.emptycell):hover{
-      background: #b9f;
+      transition: all 250ms ease-in;
+      background: #b292f2;
       /*border-top: 2px solid #97d;
       border-left: 2px solid #97d;*/
     }
+    #example5 td:hover .sitecell, #example5 td:hover .menucell{
+      background: #e0d3f0;
+      /*overflow: visible;*/
+      -webkit-line-clamp: unset;
+    }
+    #example5 td:hover img{
+      opacity: 1;
+    }
+    /* fin: td hover */
     #headerinfo {
       display: flex;
       justify-content: space-between;
@@ -154,10 +162,31 @@
       font-size: 8px;
       line-height: 9px;
     }
+    .siteimg {
+      width:128px;
+      height:96px;
+    }
+    .menuimg {
+      width:128px;
+      height:128px;
+    }
     .siteimg, .menuimg {
-      width:80px;
-      height:60px;
       object-fit: contain;
+      opacity: 0.75;
+    }
+/*
+  https://stackoverflow.com/questions/3901643/how-to-reposition-css-hover-popups-to-stay-within-a-fixed-frame
+  https://stackoverflow.com/questions/2941189/how-to-overlay-one-div-over-another-div
+*/
+    .bigtitle {
+  background: white;
+  position:absolute;
+  top: 0;
+  left: 0;
+  width:auto;
+  height:auto;
+  min-width:100%;
+  min-height:100%;  
     }
     </style>    
 
@@ -233,6 +262,7 @@
   };
 
   function getUrlParm(name, url) {
+    // https://javascript.info/regexp-methods
     if (typeof url == 'undefined') url = window.location.href;
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
     if (results==null){
@@ -547,9 +577,13 @@
     }
   }
 
-  function failbackImage( url ){
+  function failbackImageSrc( url ){
+    var results;
     if (/youtube.com\/watch/.test(url)) {
-      return 'http://img.youtube.com/vi/' + getUrlParm("v", url) + '/default.jpg';
+      return 'http://img.youtube.com/vi/' + getUrlParm("v", url) + '/mqdefault.jpg';
+    } else if (results = /youtu.be\/([^\/]*)/.exec(url)) {
+      // https://stackoverflow.com/a/27753327 regex.exec X regex.match
+      return 'http://img.youtube.com/vi/' + results[1] + '/mqdefault.jpg';
     }
     return 'https://jefify.github.io/data/saved.io/default-site.png';
   }
@@ -621,8 +655,9 @@
             url = "javascript:goto_list('" + menu_item + "');";
             menu_html += '<td>';
             // images failback https://stackoverflow.com/a/13118956
-            menu_html += "<center><img src='https://jefify.github.io/data/saved.io/" + menu_item + ".png' onerror='this.src=\"https://jefify.github.io/data/saved.io/default-menu.png\"' class='siteimg'></center><br>";
-            menu_html += '<a href="' + url + '"><div class="menucell">' + title + '</div></a>';
+            menu_html += '<a href="' + url + '"><div class="menucell">';
+            menu_html += "<center><img src='https://jefify.github.io/data/saved.io/" + menu_item + ".png' onerror='this.src=\"https://jefify.github.io/data/saved.io/default-menu.png\"' class='menuimg'></center><br>";
+            menu_html += title + '</div></a>';
             menu_html += '</td>';
             if ( menu_count % cols_per_row == 0 ) {
               menu_html += '</tr>\n';
@@ -632,13 +667,12 @@
               t += '<tr>\n';
             }
             t += '<td>';
-            t += "<center><img src='https://jefify.github.io/data/saved.io/site/" + id + ".jpg' onerror='this.src=failbackImage(\"" + url + "\")' class='menuimg' title=" + id + "></center><br>";
             t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div class="sitecell">';
+            t += "<center><img src='https://jefify.github.io/data/saved.io/site/" + id + ".jpg' onerror='this.src=failbackImageSrc(\"" + url + "\")' class='siteimg' title=" + id + "></center><br>";
             //t += '<img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ';
-            t += title + '</div></a>';
-            if (/youtube.com\/watch/.test(url)) {
-            }
-            t += '</td>';
+            t += title + '</div>';
+            //t += '<div class="bigtitle">' + title + '</div>';
+            t +='</a></td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
             }
