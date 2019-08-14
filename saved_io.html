@@ -60,7 +60,6 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
       line-height: 110%;
-      position: relative;
     }
     .menucell {
       border-radius: 15px;
@@ -75,18 +74,42 @@
     }
     /* ini: td hover */
     #example5 td:not(.emptycell):hover{
+      border-radius: 15px;
       transition: all 250ms ease-in;
-      background: #b292f2;
+      /*background: #b292f2;*/
+      background: #e0d3f0;
+      transform: scale(1.25) !important;
+      z-index: 2;
+      box-shadow: 0 2px 4px 0 #b292f2;
       /*border-top: 2px solid #97d;
       border-left: 2px solid #97d;*/
     }
     #example5 td:hover .sitecell, #example5 td:hover .menucell{
-      background: #e0d3f0;
+      /*background: #e0d3f0;*/
       /*overflow: visible;*/
-      -webkit-line-clamp: unset;
     }
-    #example5 td:hover img{
-      opacity: 1;
+    #example5 td:hover .ellipsis {
+      color:transparent;
+    }
+    /*https://codepen.io/natalitique/pen/gRdmre*/
+    #example5 td:hover .ellipsis:after {
+      transition: all 250ms ease-in;
+      content: attr(data-text);
+      overflow: visible;
+      text-overflow: inherit;
+      background: #ebddf4;
+      position: absolute;
+      left: 0;
+      top: 128px;
+      width: auto%;
+      max-width: 20rem;
+      padding: 0.3rem 0.5rem;
+      box-shadow: 2px 4px 8px 2px #b292f2;
+      display: block;
+      color: #123456;
+      margin-top: -1rem;
+      border-radius: 5px;
+      transform: scale(0.95) !important;
     }
     /* fin: td hover */
     #headerinfo {
@@ -139,9 +162,6 @@
       width: 100%;
     }
     #weatherinfo{
-      width: 774px;
-      height: 143px;
-      background-position: 0px -22px;
       display: none;
       cursor: pointer;
     }
@@ -172,21 +192,6 @@
     }
     .siteimg, .menuimg {
       object-fit: contain;
-      opacity: 0.75;
-    }
-/*
-  https://stackoverflow.com/questions/3901643/how-to-reposition-css-hover-popups-to-stay-within-a-fixed-frame
-  https://stackoverflow.com/questions/2941189/how-to-overlay-one-div-over-another-div
-*/
-    .bigtitle {
-  background: white;
-  position:absolute;
-  top: 0;
-  left: 0;
-  width:auto;
-  height:auto;
-  min-width:100%;
-  min-height:100%;  
     }
     </style>    
 
@@ -670,8 +675,7 @@
             t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div class="sitecell">';
             t += "<center><img src='https://jefify.github.io/data/saved.io/site/" + id + ".jpg' onerror='this.src=failbackImageSrc(\"" + url + "\")' class='siteimg' title=" + id + "></center><br>";
             //t += '<img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ';
-            t += title + '</div>';
-            //t += '<div class="bigtitle">' + title + '</div>';
+            t += '<p class="ellipsis" data-text="' + title + '">' + title + '</p></div>';
             t +='</a></td>';
             if ( i % cols_per_row == 0 ) {
               t += '</tr>\n';
@@ -765,6 +769,14 @@
 
   function write_weatherinfo () {
     $("#weatherinfo").html("");
+    // image at background: I want to crop upper part, size778x196 canvas774x143 crop=-22upper
+    var padding = window.getComputedStyle(document.body, null).getPropertyValue('padding-left').replace(/px$/, "");
+    var w = window.innerWidth - padding * 2 ;
+    document.getElementById("weatherinfo").style.width = (w>774?774:w) + "px";
+    document.getElementById("weatherinfo").style.height = (w>774?143:w/774*143) + "px";
+    document.getElementById("weatherinfo").style.backgroundPositionX = "0px";
+    document.getElementById("weatherinfo").style.backgroundSize = (w>774?778:w/774*778) + "px " + (w>774?196:w/774*196) + "px";
+    document.getElementById("weatherinfo").style.backgroundPositionY = "-" + (w>774?22:w/774*22) + "px";
     document.getElementById("weatherinfo").style.backgroundImage="url(https://www.tempo.com/wimages/foto4904aceac4f03f8ba10db0073528b0e9.png?t=" + (new Date()).getTime() + ")";
   }
 
@@ -867,7 +879,8 @@
     var w = window.innerWidth;
     var h = window.innerHeight;
     mylog("w: "+w+", h: "+h+", ratio: "+ratio+"");
-    max_cols_per_row=parseInt(w/min_col_width)>max_cols_per_row?max_cols_per_row:parseInt(w/min_col_width);
+    max_cols_per_row = parseInt(w/min_col_width)>max_cols_per_row ?
+      max_cols_per_row : parseInt(w/min_col_width);
 
     write_moneyinfo();
     write_weatherinfo();
