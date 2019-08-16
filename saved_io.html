@@ -102,7 +102,7 @@
       left: 0;
       top: 128px;
       width: auto%;
-      max-width: 20rem;
+      /*max-width: 20rem;*/
       padding: 0.3rem 0.5rem;
       box-shadow: 2px 4px 8px 2px #b292f2;
       display: block;
@@ -182,6 +182,15 @@
       font-size: 8px;
       line-height: 9px;
     }
+    #debugctrl {
+      font-family: monospace;
+      font-size: 10px;
+      display: none;
+      background-color: #ffdfdf;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
     .siteimg {
       width:128px;
       height:96px;
@@ -245,25 +254,43 @@
     return div.textContent || div.innerText || "";
   }
 
-  function is_debug () {
-    if (/\/h\//.test(window.location.href)) return true;
-    return false;
+  function toggle_hidedebug () {
+    if (localStorage.hasOwnProperty("hidedebug"))
+      localStorage.removeItem("hidedebug");
+    else
+      localStorage.setItem("hidedebug", 1);
+    location.reload();
   }
+
+  function is_debug () {
+    return /\/h\//.test(window.location.href);
+  }
+
+  function is_hidedebug () {
+    return localStorage.hasOwnProperty("hidedebug");
+  }
+
   function set_debug(){
     // debug mode
     if (is_debug()) {
       hashlistname = { level0: "{測試} 書籤" };
       mylog("[DEBUG mode ON]");
-      document.getElementById("debug").style.display = "inline-block";
-      document.getElementById("debug").style.width = "30%";
-      document.getElementById("maincontent").style.width = "70%";
-      document.getElementById("maincontent").style.backgroundColor = "#ef2";
-      document.body.style.padding = "0.5%";
-      mylog = function (msg) {
-        $("#debug").prepend("<p><b>" + get_time_HMS() + "</b> " + msg + "</p>\n");
-        console.log(strip_html_tags(msg));
-      }
-    } 
+      document.getElementById("debugctrl").style.display = "block";
+      if (! is_hidedebug()) {
+        mylog = function (msg) {
+          $("#debug").prepend("<p><b>" + get_time_HMS() + "</b> " + msg + "</p>\n");
+          console.log(strip_html_tags(msg));
+        }
+        document.getElementById("debug").style.display = "inline-block";
+        document.getElementById("debug").style.width = "30%";
+        document.getElementById("maincontent").style.width = "70%";
+        document.getElementById("maincontent").style.backgroundColor = "#ef2";
+        document.body.style.padding = "0.5%";
+      } 
+    } else {
+      mylog("[DEBUG mode OFF]");
+    }
+
   };
 
   function getUrlParm(name, url) {
@@ -879,6 +906,7 @@
     var w = window.innerWidth;
     var h = window.innerHeight;
     mylog("w: "+w+", h: "+h+", ratio: "+ratio+"");
+    if ( is_debug() && ! is_hidedebug() ) w = w * 0.7;
     max_cols_per_row = parseInt(w/min_col_width)>max_cols_per_row ?
       max_cols_per_row : parseInt(w/min_col_width);
 
@@ -899,6 +927,7 @@
     <div id="bks">初始化中 ...</div>
     <center><a href="javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')"><div id="weatherinfo">氣象</div></a></center>
   </div><!-- END: main div --><div id="debug"></div>
+  <div id="debugctrl"><a href="javascript:toggle_hidedebug();">Toggle Debug</a></div>
 </body>
 </html>
 
