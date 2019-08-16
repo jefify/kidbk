@@ -51,10 +51,13 @@
       text-align: center;
     }
     /* end: nekman keynavigator*/
+    .menucell, .sitecell {
+      height: 100%;
+      width: auto;
+      padding: 0.2rem 0.3rem;
+    }
     .sitecell {
       border-radius: 5px;
-      height: 100%;
-      width: 100%;
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -63,8 +66,6 @@
     }
     .menucell {
       border-radius: 15px;
-      height: 100%;
-      width: 100%;
       text-align: center;
       line-height: 16px;
     }
@@ -74,19 +75,24 @@
     }
     /* ini: td hover */
     #example5 td:not(.emptycell):hover{
-      border-radius: 15px;
-      transition: all 250ms ease-in;
       /*background: #b292f2;*/
-      background: #e0d3f0;
-      transform: scale(1.25) !important;
-      z-index: 2;
-      box-shadow: 0 2px 4px 0 #b292f2;
       /*border-top: 2px solid #97d;
       border-left: 2px solid #97d;*/
+      /*border-radius: 15px;*/
     }
     #example5 td:hover .sitecell, #example5 td:hover .menucell{
       /*background: #e0d3f0;*/
       /*overflow: visible;*/
+      background: #e0d3f0;
+      z-index: 2;
+      transform: scale(1.25) !important;
+      transition: all 250ms ease-in;
+      box-shadow: 0 2px 4px 0 #b292f2;
+    }
+    #example5 td:hover .menucell{
+      text-shadow: 2px 2px 8px #8252b2;
+      font-weight: bold;
+      color: #456789;
     }
     #example5 td:hover .ellipsis {
       color:transparent;
@@ -96,12 +102,11 @@
       transition: all 250ms ease-in;
       content: attr(data-text);
       overflow: visible;
-      text-overflow: inherit;
       background: #ebddf4;
       position: absolute;
       left: 0;
       top: 128px;
-      width: auto%;
+      width: auto;
       /*max-width: 20rem;*/
       padding: 0.3rem 0.5rem;
       box-shadow: 2px 4px 8px 2px #b292f2;
@@ -689,8 +694,8 @@
             // images failback https://stackoverflow.com/a/13118956
             menu_html += '<a href="' + url + '"><div class="menucell">';
             menu_html += "<center><img src='https://jefify.github.io/data/saved.io/" + menu_item + ".png' onerror='this.src=\"https://jefify.github.io/data/saved.io/default-menu.png\"' class='menuimg'></center><br>";
-            menu_html += title + '</div></a>';
-            menu_html += '</td>';
+            menu_html += title + '</div>';
+            menu_html += '</a></td>';
             if ( menu_count % cols_per_row == 0 ) {
               menu_html += '</tr>\n';
             }
