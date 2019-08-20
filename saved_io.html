@@ -34,6 +34,7 @@
     td {
       font-size: 18px;
       background-color: #e5e3ff;
+      z-index: 0;
     }
     th {
       font-size: 23px;
@@ -52,22 +53,39 @@
     }
     /* end: nekman keynavigator*/
     .menucell, .sitecell {
-      height: 100%;
       width: auto;
       padding: 0.2rem 0.3rem;
+      transform: scale(1) !important;
+      transition: all 250ms ease-out;
     }
     .sitecell {
+      max-height: 100%;
       border-radius: 5px;
       overflow: hidden;
+      display: block;
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      line-height: 110%;
+      -webkit-line-clamp: 2;
+      text-overflow: ellipsis;
     }
     .menucell {
       border-radius: 15px;
       text-align: center;
       line-height: 16px;
+      height: 128px;
+      background-repeat: no-repeat;
+      background-position: center; 
+      background-size: 128px 128px; 
+    }
+    .menucell p{
+      text-align: center;
+      position: relative;
+      top: 92%;
+      text-shadow: 2px 2px 8px #345678;
+      font-weight: bold;
+      color: #cdefff;
+      transform: translateY(-8%) scale(1) !important;
+      transition: all 500ms ease-out;
     }
     #example5 a{
       text-decoration: none;
@@ -79,20 +97,25 @@
       /*border-top: 2px solid #97d;
       border-left: 2px solid #97d;*/
       /*border-radius: 15px;*/
+      z-index: 9;
     }
     #example5 td:hover .sitecell, #example5 td:hover .menucell{
       /*background: #e0d3f0;*/
       /*overflow: visible;*/
-      background: #e0d3f0;
-      z-index: 2;
+      box-shadow: 0 2px 4px 0 #b292f2;
       transform: scale(1.25) !important;
       transition: all 250ms ease-in;
-      box-shadow: 0 2px 4px 0 #b292f2;
+      overflow: visible;
     }
-    #example5 td:hover .menucell{
-      text-shadow: 2px 2px 8px #8252b2;
-      font-weight: bold;
-      color: #456789;
+    #example5 td:hover .sitecell{
+      background: #e0d3f0;
+    }
+    #example5 td:hover .menucell p{
+      color: #cdefff;
+      text-shadow: 2px 2px 8px #012345;
+      top: 60%;
+      transform: translateY(-40%) scale(1.3) !important;
+      transition: all 500ms ease-in;
     }
     #example5 td:hover .ellipsis {
       color:transparent;
@@ -110,11 +133,11 @@
       /*max-width: 20rem;*/
       padding: 0.3rem 0.5rem;
       box-shadow: 2px 4px 8px 2px #b292f2;
-      display: block;
       color: #123456;
       margin-top: -1rem;
       border-radius: 5px;
       transform: scale(0.95) !important;
+      z-index: 3;
     }
     /* fin: td hover */
     #headerinfo {
@@ -192,7 +215,7 @@
       font-size: 10px;
       display: none;
       background-color: #ffdfdf;
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
     }
@@ -206,6 +229,7 @@
     }
     .siteimg, .menuimg {
       object-fit: contain;
+      z-index: 0;
     }
     </style>    
 
@@ -692,9 +716,11 @@
             url = "javascript:goto_list('" + menu_item + "');";
             menu_html += '<td>';
             // images failback https://stackoverflow.com/a/13118956
-            menu_html += '<a href="' + url + '"><div class="menucell">';
-            menu_html += "<center><img src='https://jefify.github.io/data/saved.io/" + menu_item + ".png' onerror='this.src=\"https://jefify.github.io/data/saved.io/default-menu.png\"' class='menuimg'></center><br>";
-            menu_html += title + '</div>';
+            menu_html += '<a href="' + url + '">';
+            //menu_html += "<div class='menucell'><center><img src='https://jefify.github.io/data/saved.io/" + menu_item + ".png' onerror='this.src=\"https://jefify.github.io/data/saved.io/default-menu.png\"' class='menuimg'></center><br>";
+            // https://stackoverflow.com/questions/22287474/onerror-event-using-background-url
+            menu_html += "<div class='menucell' style=\"background-image: linear-gradient(to bottom, rgba(229, 227, 255, 0), rgba(229, 227, 255, 0) 70%, rgba(229, 227, 255, 1)), url('https://jefify.github.io/data/saved.io/" + menu_item + ".png');\"><img style='display: none;' src='https://jefify.github.io/data/saved.io/" + menu_item + ".png' onerror='this.parentNode.style.backgroundImage=\"url(https://jefify.github.io/data/saved.io/default-menu.png)\";'>";
+            menu_html += '<p>' + title + '<p></div>';
             menu_html += '</a></td>';
             if ( menu_count % cols_per_row == 0 ) {
               menu_html += '</tr>\n';
