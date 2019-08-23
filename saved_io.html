@@ -23,6 +23,13 @@
   <script src="scripts/calendar.js"></script>
 
   <style>
+    :root {
+      --cellcolor: #e5e3ff;
+      --cellhightlightcolor: #e0d3f0;
+      --linkcolor: #123456;
+      --sitetextlineheight: 16px;
+      --ellipsislines: 2;
+    }
     body {
       padding: 3%;
       background-color: #dae0d2;
@@ -37,9 +44,9 @@
     }
     /* ini: td hover */
     td {
-      line-height: 16px;
+      line-height: var(--sitetextlineheight);
       font-size: 18px;
-      background-color: #e5e3ff;
+      background-color: var(--cellcolor);
       z-index: 0;
     }
     #maintable td:not(.emptycell):hover{
@@ -50,18 +57,19 @@
     }
     #maintable a{
       text-decoration: none;
-      color: #123456;
+      color: var(--linkcolor);
     }
     .sitecell {
       max-height: 100%;
       border-radius: 5px;
       transition: all 250ms ease-out;
+      /* Importante para ter um conexto comum
+         a fim de funcionar z-index
+         https://stackoverflow.com/a/20852489 */
       position: relative;
     }
     #maintable td:hover .sitecell{
-      /*overflow: visible;*/
-      /*transform: scale(1.1) !important;*/
-      background: #e0d3f0;
+      background: var(--cellhightlightcolor);
       transition: all 250ms ease-in;
       overflow: visible;
       z-index: 1 !important;
@@ -74,37 +82,34 @@
     .sitecell:after, .sitecell p{
       padding: 3%;
       text-align: center;
-      width: 94%;
       display: block;
+      width: 94%;
+      max-height: calc(calc(var(--ellipsislines) * calc(var(--sitetextlineheight) * 1.25)) - 7px);
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: var(--ellipsislines);
       overflow: hidden;
     }
-    .sitecell:after {
+    .sitecell:after { /* falso, para manter espaço*/
       content: attr(data-text);
       color: transparent;
     }
-    .sitecell p{
-      /* Importante para ter um conexto comum a fim de funcionar z-index https://stackoverflow.com/a/20852489 */
+    .sitecell p{ /* */
       position: absolute;
       z-index: 0;
       border-radius: 5px;
       top: 78px;
-      max-height: 32px;
-      /*min-height: 3.5rem;*/
-      /*max-width: 20rem;*/
-      /*margin-left: -0.5px;*/
-      color: #123456;
+      color: var(--linkcolor);
       transition: all 250ms ease-out;
-      background-color: #e5e3ff;
+      background-color: var(--cellcolor);
     }
     #maintable td:hover .sitecell p{
       transition: all 250ms ease-in;
       -webkit-line-clamp: unset;
-      background: #e0d3f0;
+      background: var(--cellhightlightcolor);
       height: auto;
       max-height: unset;
+      /*bottom: ???? para ter o efeito de slide ...*/
     }
     .menucell {
       position: relative;
@@ -116,7 +121,7 @@
       background-size: 128px 128px; 
     }
     #maintable td:hover .menucell{
-      background-color: #e0d3f0;
+      background-color: var(--cellhightlightcolor);
       box-shadow: 0 2px 4px 0 #b292f2;
       transition: all 100ms ease-in;
     }
