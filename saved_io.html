@@ -24,13 +24,15 @@
   <script src="scripts/calendar.js"></script>
 
   <style>
+    /* Lg WebOS3 = Chrome38 ... incompatible with var() or nested cacl()
+       http://webostv.developer.lge.com/discover/specifications/web-engine/
     :root {
       --cellcolor: #e5e3ff;
       --cellhightlightcolor: #e0d3f0;
       --linkcolor: #123456;
       --sitetextlineheight: 16px;
       --ellipsislines: 2;
-    }
+    }*/
     body {
       padding: 3%;
       background-color: #dae0d2;
@@ -45,9 +47,9 @@
     }
     /* ini: td hover */
     td {
-      line-height: var(--sitetextlineheight);
+      line-height: 16px; /*var(--sitetextlineheight)*/
       font-size: 18px;
-      background-color: var(--cellcolor);
+      background-color: #e5e3ff; /*var(--cellcolor)*/
       z-index: 0;
     }
     #maintable td:not(.emptycell):hover{
@@ -58,7 +60,7 @@
     }
     #maintable a{
       text-decoration: none;
-      color: var(--linkcolor);
+      color: #123456; /*(var(--linkcolor)*/
     }
     .sitecell {
       max-height: 100%;
@@ -70,7 +72,7 @@
       position: relative;
     }
     #maintable td:hover .sitecell{
-      background: var(--cellhightlightcolor);
+      background: #e0d3f0; /*var(--cellhightlightcolor)*/
       transition: all 250ms ease-in;
       overflow: visible;
       z-index: 1 !important;
@@ -85,32 +87,33 @@
       text-align: center;
       display: block;
       width: 94%;
-      max-height: calc(calc(var(--ellipsislines) * calc(var(--sitetextlineheight) * 1.25)) - 7px);
+      max-height: 33px; /* calc(calc(var(--ellipsislines) * calc(var(--sitetextlineheight) * 1.25)) - 7px) */
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: var(--ellipsislines);
+      -webkit-line-clamp: 2; /* var(--ellipsislines)*/
       overflow: hidden;
     }
     .sitecell:after { /* falso, para manter espaço*/
       content: attr(data-text);
       color: transparent;
+      margin-bottom: 10px;
     }
     .sitecell p{ /* */
       position: absolute;
       z-index: 0;
       border-radius: 5px;
       top: 78px;
-      color: var(--linkcolor);
+      color: #123456; /*var(--linkcolor)*/
       transition: all 250ms ease-out;
-      background-color: var(--cellcolor);
+      background-color: #e5e3ff; /*var(--cellcolor)*/
     }
     #maintable td:hover .sitecell p{
       transition: all 250ms ease-in;
       -webkit-line-clamp: unset;
-      background: var(--cellhightlightcolor);
+      background: #e0d3f0; /*var(--cellhightlightcolor)*/
       height: auto;
       max-height: unset;
-      /*bottom: ???? para ter o efeito de slide ...*/
+      /*bottom: ???? para ter o efeito de slide ... https://stackoverflow.com/a/5627286 */
     }
     .menucell {
       position: relative;
@@ -122,7 +125,7 @@
       background-size: 128px 128px; 
     }
     #maintable td:hover .menucell{
-      background-color: var(--cellhightlightcolor);
+      background-color: #e0d3f0; /*var(--cellhightlightcolor)*/
       box-shadow: 0 2px 4px 0 #b292f2;
       transition: all 100ms ease-in;
     }
@@ -915,10 +918,14 @@
         write_bookmark_table(histctrl_init());
       });
 
-    /* https://jhildenbiddle.github.io/css-vars-ponyfill/#/ */
-    cssVars({
-      exclude: 'link'
-    }); 
+    $(".sitecell").hover()(
+      function() {
+        mylog("func1");
+      },
+      function() {
+        mylog("func2");
+      }
+    );
 
   };
 //]]></script>
