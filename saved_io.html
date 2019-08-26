@@ -20,6 +20,7 @@
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script><!-- Lg WebOS3 = Chrome 38, cannot wrap var()  -->
   <script src="scripts/calendar.js"></script>
 
   <style>
@@ -913,6 +914,12 @@
       .done(function() {
         write_bookmark_table(histctrl_init());
       });
+
+    /* https://jhildenbiddle.github.io/css-vars-ponyfill/#/ */
+    cssVars({
+      exclude: 'link'
+    }); 
+
   };
 //]]></script>
 
