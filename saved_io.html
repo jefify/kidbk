@@ -87,25 +87,26 @@
       text-align: center;
       display: block;
       width: 94%;
-      max-height: 33px; /* calc(calc(var(--ellipsislines) * calc(var(--sitetextlineheight) * 1.25)) - 7px) */
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2; /* var(--ellipsislines)*/
       overflow: hidden;
+      margin-bottom: 0;
     }
     .sitecell:after { /* falso, para manter espaço*/
       content: attr(data-text);
       color: transparent;
-      margin-bottom: 10px;
     }
     .sitecell p{ /* */
       position: absolute;
       z-index: 0;
       border-radius: 5px;
+      max-height: 33px; /* calc(calc(var(--ellipsislines) * calc(var(--sitetextlineheight) * 1.25)) - 7px) */
       top: 78px;
       color: #123456; /*var(--linkcolor)*/
       transition: all 250ms ease-out;
       background-color: #e5e3ff; /*var(--cellcolor)*/
+      bottom: 0;
     }
     #maintable td:hover .sitecell p{
       transition: all 250ms ease-in;
@@ -113,7 +114,6 @@
       background: #e0d3f0; /*var(--cellhightlightcolor)*/
       height: auto;
       max-height: unset;
-      /*bottom: ???? para ter o efeito de slide ... https://stackoverflow.com/a/5627286 */
     }
     .menucell {
       position: relative;
@@ -759,6 +759,20 @@
 
       document.getElementById("weatherinfo").style.display = "inline-block";
 
+      console.log("aqui");
+      var sitecells = document.getElementsByClassName("sitecell");
+      var p, h, lh, nl;
+      for(var i = 0; i < sitecells.length; i++)
+      {
+         p = sitecells.item(i).getElementsByTagName('p')[0];
+         h = p.scrollHeight;
+         lh = window.getComputedStyle(p).getPropertyValue('line-height').replace(/px$/, "");
+         nl = parseInt( h / lh );
+         p.classList.add("sitetext" + nl + "l");
+      }
+      console.log("aqui2");
+
+
     });
   }, 250); //end: write_bookmark_table()
 
@@ -893,6 +907,16 @@
       return;
     }
 
+    // dynamic css https://stackoverflow.com/a/1720483
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    var css = "";
+    for (var i=3; i<20; i++)
+        css += "#maintable td:hover .sitetext" + i + "l { bottom: -" + (2+(i-2)*20)+ "px} ";
+    style.innerHTML = css;
+    mylog(css);
+    document.getElementsByTagName('head')[0].appendChild(style);
+
     mylog('jsonobj decrypted successfully.');
     start_timeclock();
     set_dateinfo();
@@ -917,15 +941,6 @@
       .done(function() {
         write_bookmark_table(histctrl_init());
       });
-
-    $(".sitecell").hover()(
-      function() {
-        mylog("func1");
-      },
-      function() {
-        mylog("func2");
-      }
-    );
 
   };
 //]]></script>
