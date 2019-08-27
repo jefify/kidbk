@@ -74,7 +74,6 @@
     #maintable td:hover .sitecell{
       background: #e0d3f0; /*var(--cellhightlightcolor)*/
       transition: all 250ms ease-in;
-      overflow: visible;
       z-index: 1 !important;
     }
     .siteimg {
@@ -101,19 +100,25 @@
       position: absolute;
       z-index: 0;
       border-radius: 5px;
-      max-height: 33px; /* calc(calc(var(--ellipsislines) * calc(var(--sitetextlineheight) * 1.25)) - 7px) */
       top: 78px;
       color: #123456; /*var(--linkcolor)*/
       transition: all 250ms ease-out;
       background-color: #e5e3ff; /*var(--cellcolor)*/
-      bottom: 0;
     }
     #maintable td:hover .sitecell p{
       transition: all 250ms ease-in;
       -webkit-line-clamp: unset;
       background: #e0d3f0; /*var(--cellhightlightcolor)*/
-      height: auto;
       max-height: unset;
+    }
+    .sitetext1l {
+      height: 13px;
+    }
+    [class^=sitetext]:not(.sitetext1l) {
+      /*not() pois o wildcard fica mais prioritario ...*/
+      height: 33px;
+      bottom: 0;
+      /* hover injetado pelo javascript*/
     }
     .menucell {
       position: relative;
@@ -911,8 +916,9 @@
     var style = document.createElement('style');
     style.type = 'text/css';
     var css = "";
-    for (var i=3; i<20; i++)
-        css += "#maintable td:hover .sitetext" + i + "l { bottom: -" + (2+(i-2)*20)+ "px} ";
+    for (var i=2; i<20; i++)
+        //css += ".sitetext" + i + "l { bottom: -" + (2+(i-2)*20)+ "px; } ";
+        css += "#maintable td:hover .sitetext" + i + "l { height: " + (20*i-7) + "px; bottom: -" + (2+(i-2)*20)+ "px} ";
     style.innerHTML = css;
     mylog(css);
     document.getElementsByTagName('head')[0].appendChild(style);
