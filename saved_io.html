@@ -705,7 +705,7 @@
               t += '<tr>\n';
             }
             t += '<td>';
-            t += '<a href="javascript:goto_ext_url(' + "'" + url + "'" + ');"><div class="sitecell" data-text="' + title + '">';
+            t += '<a class="a_ext_url" href="' + url + '"><div class="sitecell" data-text="' + title + '">';
             t += "<center><img class='siteimg' src='https://jefify.github.io/data/saved.io/site/" + id + ".jpg' onerror='this.src=fallbackImageSrc(\"" + url + "\")' title=" + id + "></center>";
             //t += '<img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ';
             t += '<p>' + title + '</p>';
@@ -764,7 +764,7 @@
 
       document.getElementById("weatherinfo").style.display = "inline-block";
 
-      console.log("aqui");
+      // dynamically define class for sitecell according to num of lines
       var sitecells = document.getElementsByClassName("sitecell");
       var p, h, lh, nl;
       for(var i = 0; i < sitecells.length; i++)
@@ -775,8 +775,18 @@
          nl = parseInt( h / lh );
          p.classList.add("sitetext" + nl + "l");
       }
-      console.log("aqui2");
 
+      // https://stackoverflow.com/a/9945582 Do something before going to external link
+      $('.a_ext_url').click(function(event) {
+        // Remember the link href
+        var url = this.href;
+    
+        // Don't follow the link
+        event.preventDefault();
+
+        mylog('prevented Default href action to: ' + url);
+        window.location.href = (/:\/\//.test(url)?"":"https://") + url;
+      });
 
     });
   }, 250); //end: write_bookmark_table()
@@ -796,9 +806,9 @@
         } else {
           mylog("<pre>money_resp: " + JSON.stringify( resp, null, 4) + "</pre>");
           // images from https://lipis.github.io/flag-icon-css/flags/4x3/
-          t  = "<a href='javascript:goto_ext_url(\"https://br.financas.yahoo.com/quote/USDBRL=X/\")'><div style='display: inline-block;'><img class='flag' src='images/us.svg'>" + resp.USD_BRL.val.toFixed(3) + "<img class='flag' src='images/br.svg'></div></a>&nbsp;";
-          t += "<a href='javascript:goto_ext_url(\"https://tw.money.yahoo.com/currency/USDTWD=X\")'><div style='display: inline-block;'><img class='flag' src='images/us.svg'>" + resp.USD_TWD.val.toFixed(2) + "<img class='flag' src='images/tw.svg'></div></a>&nbsp;";
-          t += "<a href='javascript:goto_ext_url(\"https://finance.yahoo.com/quote/BRLTWD=X/\")'><div style='display: inline-block;'><img class='flag' src='images/br.svg'>" + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3) + "<img class='flag' src='images/tw.svg'></div></a>";
+          t  = "<a class='a_ext_url' href='https://br.financas.yahoo.com/quote/USDBRL=X/'><div style='display: inline-block;'><img class='flag' src='images/us.svg'>" + resp.USD_BRL.val.toFixed(3) + "<img class='flag' src='images/br.svg'></div></a>&nbsp;";
+          t += "<a class='a_ext_url' href='https://tw.money.yahoo.com/currency/USDTWD=X'><div style='display: inline-block;'><img class='flag' src='images/us.svg'>" + resp.USD_TWD.val.toFixed(2) + "<img class='flag' src='images/tw.svg'></div></a>&nbsp;";
+          t += "<a class='a_ext_url' href='https://finance.yahoo.com/quote/BRLTWD=X/'><div style='display: inline-block;'><img class='flag' src='images/br.svg'>" + (resp.USD_TWD.val / resp.USD_BRL.val).toFixed(3) + "<img class='flag' src='images/tw.svg'></div></a>";
         }
         $("#moneyinfo").html(t);
         mylog("write_moneyinfo() AJAX done");
@@ -827,10 +837,6 @@
     document.getElementById("weatherinfo").style.backgroundImage="url(https://www.tempo.com/wimages/foto4904aceac4f03f8ba10db0073528b0e9.png?t=" + (new Date()).getTime() + ")";
   }
 
-  function goto_ext_url (u) {
-    mylog ("goto_ext_url: " + u);
-    window.location.href = (/:\/\//.test(u)?"":"http://") + u;
-  }
 
   function goto_myself_p () {
     if (!p) return;
@@ -957,7 +963,7 @@
     <h2><center>網 · 路 · 電 · 視 · 書 · 籤</center></h2>
     <h4><tt><div id="headerinfo"><div id="dateinfo">國曆 農曆 星期 節氣</div><div id="timeinfo"><span id="timespan">hh:mm:ss</span></div><div id="moneyinfo">匯率</div></div></tt></h4>
     <div id="bks">初始化中 ...</div>
-    <center><a href="javascript:goto_ext_url('https://www.tempo.com/sao-paulo.htm')"><div id="weatherinfo">氣象</div></a></center>
+    <center><a class="a_ext_url" href="https://www.tempo.com/sao-paulo.htm"><div id="weatherinfo">氣象</div></a></center>
   </div><!-- END: main div --><div id="debug"></div>
   <div id="debugctrl"><a href="javascript:toggle_hidedebug();">Toggle Debug</a></div>
 </body>
