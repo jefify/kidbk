@@ -33,6 +33,6 @@ git checkout h
 
 
 # local test to have /h/ path
-ln -s ~/workspace@cloud/GitHub/kidbk/ /tmp/h
+ln -s ~/workspace@cloud/GitHub/ /tmp/h
 
 # wmctrl -i -r "$(wmctrl -l -p | sed '/\([^ ][^ ]*\) .*書籤.* - Google Chrome$/! d; s//\1/'))" -e 0,0,0,1351,693

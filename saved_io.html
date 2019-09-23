@@ -92,9 +92,10 @@
       overflow: hidden;
       margin-bottom: 0;
     }
-    .sitecell:after { /* falso, para manter espaço*/
+    .sitecell:after { /* falso, para manter espaço que quero*/
       content: attr(data-text);
       color: transparent;
+      height: 33px;
     }
     .sitecell p{ /* */
       position: absolute;
@@ -114,7 +115,7 @@
     .sitetext1l {
       height: 13px;
     }
-    [class^=sitetext]:not(.sitetext1l) {
+    [class^=sitetext]:not(.sitetext1L) {
       /*not() pois o wildcard fica mais prioritario ...*/
       height: 33px;
       bottom: 0;
@@ -706,7 +707,7 @@
             }
             t += '<td>';
             t += '<a class="a_ext_url" href="' + url + '"><div class="sitecell" data-text="' + title + '">';
-            t += "<center><img class='siteimg' src='https://jefify.github.io/data/saved.io/site/" + id + ".jpg' onerror='this.src=fallbackImageSrc(\"" + url + "\")' title=" + id + "></center>";
+            t += "<center><img class='siteimg' src='" + ( /file:\/\/.*\/h\//.test(window.location.href)?"../":"https://jefify.github.io/" ) + "data/saved.io/site/" + id + ".jpg' onerror='this.src=fallbackImageSrc(\"" + url + "\")' title=" + id + "></center>";
             //t += '<img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ';
             t += '<p>' + title + '</p>';
             t += '</div>';
@@ -764,19 +765,7 @@
 
       document.getElementById("weatherinfo").style.display = "inline-block";
 
-      // dynamically define class for sitecell according to num of lines
-      var sitecells = document.getElementsByClassName("sitecell");
-      var p, h, lh, nl;
-      for(var i = 0; i < sitecells.length; i++)
-      {
-         p = sitecells.item(i).getElementsByTagName('p')[0];
-         h = p.scrollHeight;
-         lh = window.getComputedStyle(p).getPropertyValue('line-height').replace(/px$/, "");
-         nl = parseInt( h / lh );
-         p.classList.add("sitetext" + nl + "l");
-      }
-
-      // https://stackoverflow.com/a/9945582 Do something before going to external link
+      // Do something before going to external link https://stackoverflow.com/a/9945582
       $('.a_ext_url').click(function(event) {
         // Remember the link href
         var url = this.href;
@@ -787,6 +776,19 @@
         mylog('prevented Default href action to: ' + url);
         window.location.href = (/:\/\//.test(url)?"":"https://") + url;
       });
+
+      // Dynamically define class for sitecell according to num of lines
+      var sitecells = document.getElementsByClassName("sitecell");
+      var p, h, lh, nl;
+      for(var i = 0; i < sitecells.length; i++)
+      {
+         p = sitecells.item(i).getElementsByTagName('p')[0];
+         h = p.scrollHeight;
+         lh = window.getComputedStyle(p).getPropertyValue('line-height').replace(/px$/, "");
+         nl = parseInt( h / lh );
+         p.classList.add("sitetext" + nl + "L");
+      }
+
 
     });
   }, 250); //end: write_bookmark_table()
@@ -924,9 +926,9 @@
     var css = "";
     for (var i=2; i<20; i++)
         //css += ".sitetext" + i + "l { bottom: -" + (2+(i-2)*20)+ "px; } ";
-        css += "#maintable td:hover .sitetext" + i + "l { height: " + (20*i-7) + "px; bottom: -" + (2+(i-2)*20)+ "px} ";
+        css += "#maintable td:hover .sitetext" + i + "L { height: " + (20*i-7) + "px; bottom: -" + (2+(i-2)*20)+ "px;} ";
     style.innerHTML = css;
-    mylog(css);
+    //mylog(css);
     document.getElementsByTagName('head')[0].appendChild(style);
 
     mylog('jsonobj decrypted successfully.');
