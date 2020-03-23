@@ -769,7 +769,7 @@
       // Do something before going to external link https://stackoverflow.com/a/9945582
       $('.a_ext_url').click(function(event) {
         // Remember the link href
-        var url = this.href;
+        var url = this.getAttribute("href");
     
         // Don't follow the link
         event.preventDefault();

@@ -27,7 +27,7 @@ git rebase origin/master
 
 # aplicar modificacao ao master
 git checkout master &&
-git merge h --summary &&
+git merge h -m "$(date +%Y%m%d): ${m:- h->master}" --summary &&
 git push &&
 git checkout h
 
