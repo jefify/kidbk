@@ -244,6 +244,31 @@
       top: 0;
       left: 0;
     }
+    /* The whole menu */
+    .custom-menu {
+      display: none;
+      z-index: 1000;
+      position: absolute;
+      overflow: hidden;
+      border: 1px solid #CCC;
+      white-space: nowrap;
+      font-family: sans-serif;
+      background: #FFF;
+      color: #333;
+      border-radius: 5px;
+      padding: 0;
+    }
+    /* Each of the items in the list */
+    .custom-menu li {
+      padding: 8px 12px;
+      cursor: pointer;
+      list-style-type: none;
+      transition: all .3s ease;
+      user-select: none;
+    }
+    .custom-menu li:hover {
+      background-color: #DEF;
+    }
     </style>    
 
 <script type="text/javascript">//<![CDATA[
@@ -268,6 +293,7 @@
   var t_ajax_list = 30000;
   var jqXHR_ajax_list;
   var t_ajax_enc_backup = 10000;
+  var selected_menu_area = undefined;
 
   // https://icons8.com.br/ #613E0F
 
@@ -707,7 +733,7 @@
               t += '<tr>\n';
             }
             t += '<td>';
-            t += '<a class="a_ext_url" href="' + url + '"><div class="sitecell" data-text="' + title + '">';
+            t += '<a class="a_ext_url" href="' + url + '"><div class="sitecell" data-text="' + title + '" data-item="' + id + '">';
             // show local relative image when in file://.../h/ (local homol)
             t += "<center><img class='siteimg' src='" + ( /file:\/\/.*\/h\//.test(window.location.href)?"../":"https://jefify.github.io/" ) + "data/saved.io/site/" + id + ".jpg' onerror='this.src=fallbackImageSrc(\"" + url + "\")' title=" + id + "></center>";
             //t += '<img class="favicon" src="https://www.google.com/s2/favicons?domain=' + getUrlDomain(url) + '"> ';
@@ -791,6 +817,23 @@
          p.classList.add("sitetext" + nl + "L");
       }
 
+      // CustomMenu: create Listener for sitecells menus
+      $(".sitecell").bind("contextmenu", function (event) {
+
+        // Avoid the real one
+        event.preventDefault();
+
+        selected_menu_area = $(this);
+
+        // Show contextmenu
+        $(".custom-menu").finish().toggle(100).
+
+        // In the right position (the mouse)
+        css({
+          top: event.pageY + "px",
+          left: event.pageX + "px"
+        });
+      });
 
     });
   }, 250); //end: write_bookmark_table()
@@ -864,7 +907,7 @@
       .done(function() {
         write_bookmark_table(histctrl_init());
       });
-}
+  }
 
   // time
   function twoDigitTime(i) {
@@ -899,6 +942,18 @@
     $('#dateinfo').html(get_dateinfo());
   }
  
+  // CustomMenu: menu invocation
+
+  function menu_edit_item(item, title) {
+    var popup_width = 500;
+    var popup_height = 850;
+    window.open("https://saved.io/edit/" + item, "kidbk_menu_edit_item", "location=false,height=" + popup_height + ",width=" + popup_width + ",top=" + ((screen.height - popup_height) / 2) + ",left=" + ((screen.width - popup_width) / 2));
+  }
+
+  function menu_recycle_item(item, title) {
+    alert("Triggered recycle_item on " + item);
+  }
+
   // no final
   window.onload = function() {
     set_debug();
@@ -958,7 +1013,42 @@
         write_bookmark_table(histctrl_init());
       });
 
-  };
+    // CustomMenu: If the document is clicked somewhere
+    $(document).bind("mousedown", function (e) {
+
+      // If the clicked element is not the menu
+      if (!$(e.target).parents(".custom-menu").length > 0) {
+
+        // Hide it
+        $(".custom-menu").hide(100);
+        if (selected_menu_area) {
+          selected_menu_area = undefined;
+        }
+      }
+    });
+
+    // CustomMenu: If the menu element is clicked
+    $(".custom-menu li").click(function(){
+
+      // This is the triggered action name
+     console.log (selected_menu_area.attr("data-item") + ": " + $(this).attr("data-action") + " clicked");
+
+      switch($(this).attr("data-action")) {
+
+        // A case for each action. Your actions here
+        case "menu_edit_item": menu_edit_item(selected_menu_area.attr("data-item"), selected_menu_area.attr("data-text")); break;
+        case "menu_recycle_item": menu_recycle_item(selected_menu_area.attr("data-item"), selected_menu_area.attr("data-text")); break;
+      }
+
+      // Hide it AFTER the action was triggered
+      $(".custom-menu").hide(100);
+      if (selected_menu_area) {
+        selected_menu_area = undefined;
+      }
+    });
+
+  }; //end: Window.onload
+
 //]]></script>
 
 </head>
@@ -970,7 +1060,10 @@
     <center><a class="a_ext_url" href="https://www.tempo.com/sao-paulo.htm"><div id="weatherinfo">氣象</div></a></center>
   </div><!-- END: main div --><div id="debug"></div>
   <div id="debugctrl"><a href="javascript:toggle_hidedebug();">Toggle Debug</a></div>
-</body>
+  <ul class='custom-menu'>
+    <li data-action="menu_edit_item">&#128221; 編輯</li>
+    <li data-action="menu_recycle_item">&#128465; 移至垃圾桶</li>
+  </body>
 </html>
 
 
