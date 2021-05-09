@@ -20,6 +20,7 @@
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script><!-- Lg WebOS3 = Chrome 38, cannot wrap var()  -->
   <script src="scripts/calendar.js"></script>
 
@@ -831,7 +832,7 @@
         // In the right position (the mouse)
         css({
           top: event.pageY + "px",
-          left: event.pageX + "px"
+          left: (event.pageX-25) + "px"
         });
       });
 
@@ -950,8 +951,29 @@
     window.open("https://saved.io/edit/" + item, "kidbk_menu_edit_item", "location=false,height=" + popup_height + ",width=" + popup_width + ",top=" + ((screen.height - popup_height) / 2) + ",left=" + ((screen.width - popup_width) / 2));
   }
 
-  function menu_recycle_item(item, title) {
-    alert("Triggered recycle_item on " + item);
+  function menu_delete_item(item, title) {
+    var d = new $.Deferred(); // https://stackoverflow.com/a/9647438
+
+    if (confirm("確定刪除 [" + item + "]: " + title) == true) {
+      mylog("Deleting " + item);
+
+      $.ajax({
+        timeout: t_ajax_list,
+        type: "DELETE",
+        url: 'https://corsanywhere.herokuapp.com/https://devapi.saved.io/bookmarks/?id=' + item + '&devkey=' + mydevkey + '&key=' + mykey
+      })
+        .done( function(resp) {
+          mylog("menu_delete_item(" + item + "): Success. resp=" + resp);
+          d.resolve();
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+          mylog("menu_delete_item(" + item + "): AJAX error=" + textStatus);
+          d.resolve();
+        })
+    } else {
+      mylog("Abort deletion of " + item);
+    }
+    return d.promise();
   }
 
   // no final
@@ -1013,6 +1035,11 @@
         write_bookmark_table(histctrl_init());
       });
 
+    // Disable Mounse Right-Click event
+    $(document).bind("contextmenu", function (e) {
+      e.preventDefault();
+    }, false);
+
     // CustomMenu: If the document is clicked somewhere
     $(document).bind("mousedown", function (e) {
 
@@ -1031,13 +1058,13 @@
     $(".custom-menu li").click(function(){
 
       // This is the triggered action name
-     console.log (selected_menu_area.attr("data-item") + ": " + $(this).attr("data-action") + " clicked");
+      mylog (selected_menu_area.attr("data-item") + ": " + $(this).attr("data-action") + " clicked");
 
       switch($(this).attr("data-action")) {
 
         // A case for each action. Your actions here
         case "menu_edit_item": menu_edit_item(selected_menu_area.attr("data-item"), selected_menu_area.attr("data-text")); break;
-        case "menu_recycle_item": menu_recycle_item(selected_menu_area.attr("data-item"), selected_menu_area.attr("data-text")); break;
+        case "menu_delete_item": menu_delete_item(selected_menu_area.attr("data-item"), selected_menu_area.attr("data-text")); break;
       }
 
       // Hide it AFTER the action was triggered
@@ -1062,7 +1089,7 @@
   <div id="debugctrl"><a href="javascript:toggle_hidedebug();">Toggle Debug</a></div>
   <ul class='custom-menu'>
     <li data-action="menu_edit_item">&#128221; 編輯</li>
-    <li data-action="menu_recycle_item">&#128465; 移至垃圾桶</li>
+    <li data-action="menu_delete_item">&#128465; 刪除</li>
   </body>
 </html>
 
